@@ -70,7 +70,6 @@ import { MarketplaceManager } from "../../services/marketplace"
 import { ShadowCheckpointService } from "../../services/checkpoints/ShadowCheckpointService"
 import { CodeIndexManager } from "../../services/code-index/manager"
 import type { IndexProgressUpdate } from "../../services/code-index/interfaces/manager"
-import { MdmService } from "../../services/mdm/MdmService"
 import { SkillsManager } from "../../services/skills/SkillsManager"
 
 import { fileExistsAtPath } from "../../utils/fs"
@@ -139,7 +138,6 @@ export class ClineProvider
 	protected mcpHub?: McpHub // Change from private to protected
 	protected skillsManager?: SkillsManager
 	private marketplaceManager: MarketplaceManager
-	private mdmService?: MdmService
 	private taskCreationCallback: (task: Task) => void
 	private taskEventListeners: WeakMap<Task, Array<() => void>> = new WeakMap()
 	private currentWorkspacePath: string | undefined
@@ -170,14 +168,12 @@ export class ClineProvider
 		private readonly outputChannel: vscode.OutputChannel,
 		private readonly renderContext: "sidebar" | "editor" = "sidebar",
 		public readonly contextProxy: ContextProxy,
-		mdmService?: MdmService,
 	) {
 		super()
 		this.currentWorkspacePath = getWorkspacePath()
 
 		ClineProvider.activeInstances.add(this)
 
-		this.mdmService = mdmService
 		this.updateGlobalState("codebaseIndexModels", EMBEDDING_MODEL_PROFILES)
 
 		// Initialize the per-task file-based history store.
@@ -2175,9 +2171,6 @@ export class ClineProvider
 				codebaseIndexBedrockProfile: codebaseIndexConfig?.codebaseIndexBedrockProfile,
 				codebaseIndexOpenRouterSpecificProvider: codebaseIndexConfig?.codebaseIndexOpenRouterSpecificProvider,
 			},
-			// Only set mdmCompliant if there's an actual MDM policy
-			// undefined means no MDM policy, true means compliant, false means non-compliant
-			mdmCompliant: this.mdmService?.requiresCloudAuth() ? this.checkMdmCompliance() : undefined,
 			profileThresholds: profileThresholds ?? {},
 			hasOpenedModeSelector: this.getGlobalState("hasOpenedModeSelector") ?? false,
 			lockApiConfigAcrossModes: lockApiConfigAcrossModes ?? false,
@@ -2511,24 +2504,6 @@ export class ClineProvider
 
 	public getSkillsManager(): SkillsManager | undefined {
 		return this.skillsManager
-	}
-
-	/**
-	 * Check if the current state is compliant with MDM policy
-	 * @returns true if compliant or no MDM policy exists, false if MDM policy exists and user is non-compliant
-	 */
-	public checkMdmCompliance(): boolean {
-		if (!this.mdmService) {
-			return true // No MDM service, allow operation
-		}
-
-		const compliance = this.mdmService.isCompliant()
-
-		if (!compliance.compliant) {
-			return false
-		}
-
-		return true
 	}
 
 	/**

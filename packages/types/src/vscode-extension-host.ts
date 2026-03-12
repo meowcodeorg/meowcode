@@ -370,7 +370,6 @@ export type ExtensionState = Pick<
 	lastShownAnnouncementId?: string
 	apiModelId?: string
 	mcpServers?: McpServer[]
-	mdmCompliant?: boolean
 	taskSyncEnabled: boolean
 	openAiCodexIsAuthenticated?: boolean
 	debug?: boolean

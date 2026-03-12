@@ -59,7 +59,6 @@ const App = () => {
 		telemetryKey,
 		machineId,
 		renderContext,
-		mdmCompliant,
 	} = useExtensionState()
 
 	// Create a persistent state manager
@@ -87,14 +86,6 @@ const App = () => {
 
 	const switchTab = useCallback(
 		(newTab: Tab) => {
-			// Only check MDM compliance if mdmCompliant is explicitly false (meaning there's an MDM policy and user is non-compliant)
-			// If mdmCompliant is undefined or true, allow tab switching
-			if (mdmCompliant === false) {
-				// Notify the user that authentication is required by their organization
-				vscode.postMessage({ type: "showMdmAuthRequiredNotification" })
-				return
-			}
-
 			setCurrentSection(undefined)
 			setCurrentMarketplaceTab(undefined)
 
@@ -104,7 +95,7 @@ const App = () => {
 				setTab(newTab)
 			}
 		},
-		[mdmCompliant],
+		[],
 	)
 
 	const [currentSection, setCurrentSection] = useState<string | undefined>(undefined)

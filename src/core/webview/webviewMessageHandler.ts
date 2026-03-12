@@ -2965,12 +2965,6 @@ export const webviewMessageHandler = async (
 			}
 			break
 		}
-		case "showMdmAuthRequiredNotification": {
-			// Show notification that organization requires authentication
-			vscode.window.showWarningMessage(t("common:mdm.info.organization_requires_auth"))
-			break
-		}
-
 		/**
 		 * Chat Message Queue
 		 */

@@ -33,7 +33,6 @@ import { TerminalRegistry } from "./integrations/terminal/TerminalRegistry"
 import { openAiCodexOAuthManager } from "./integrations/openai-codex/oauth"
 import { McpServerManager } from "./services/mcp/McpServerManager"
 import { CodeIndexManager } from "./services/code-index/manager"
-import { MdmService } from "./services/mdm/MdmService"
 import { migrateSettings } from "./utils/migrateSettings"
 import { autoImportSettings } from "./utils/autoImportSettings"
 import { API } from "./extension/api"
@@ -139,9 +138,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Create logger for extension services.
 	const logger = createDualLogger(createOutputChannelLogger(outputChannel))
 
-	// Initialize MDM service
-	const mdmService = await MdmService.createInstance(logger)
-
 	// Initialize i18n for internationalization support.
 	initializeI18n(context.globalState.get("language") ?? formatLanguage(vscode.env.language))
 
@@ -185,7 +181,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Initialize the provider.
-	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy, mdmService)
+	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy)
 
 	// Finish initializing the provider.
 	TelemetryService.instance.setProvider(provider)
