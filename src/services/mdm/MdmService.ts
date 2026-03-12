@@ -3,8 +3,6 @@ import * as path from "path"
 import * as os from "os"
 import { z } from "zod"
 
-import { CloudService, getClerkBaseUrl, PRODUCTION_CLERK_BASE_URL } from "@roo-code/cloud"
-
 import { t } from "../../i18n"
 
 // MDM Configuration Schema
@@ -57,7 +55,8 @@ export class MdmService {
 	}
 
 	/**
-	 * Check if the current state is compliant with MDM policy
+	 * Check if the current state is compliant with MDM policy.
+	 * Cloud integration has been removed, so cloud-auth MDM policies are never compliant.
 	 */
 	public isCompliant(): ComplianceResult {
 		// If no MDM policy, always compliant
@@ -65,52 +64,11 @@ export class MdmService {
 			return { compliant: true }
 		}
 
-		// Check if cloud service is available and has active or attempting session
-		if (!CloudService.hasInstance() || !CloudService.instance.hasOrIsAcquiringActiveSession()) {
-			return {
-				compliant: false,
-				reason: t("mdm.errors.cloud_auth_required"),
-			}
+		// Cloud integration has been removed; MDM cloud-auth requirements cannot be satisfied.
+		return {
+			compliant: false,
+			reason: t("mdm.errors.cloud_auth_required"),
 		}
-
-		// Check organization match if specified
-		const requiredOrgId = this.getRequiredOrganizationId()
-		if (requiredOrgId) {
-			try {
-				// First try to get from active session
-				let currentOrgId = CloudService.instance.getOrganizationId()
-
-				// If no active session, check stored credentials
-				if (!currentOrgId) {
-					const storedOrgId = CloudService.instance.getStoredOrganizationId()
-
-					// null means personal account, which is not compliant for org requirements
-					if (storedOrgId === null || storedOrgId !== requiredOrgId) {
-						return {
-							compliant: false,
-							reason: t("mdm.errors.organization_mismatch"),
-						}
-					}
-
-					currentOrgId = storedOrgId
-				}
-
-				if (currentOrgId !== requiredOrgId) {
-					return {
-						compliant: false,
-						reason: t("mdm.errors.organization_mismatch"),
-					}
-				}
-			} catch (error) {
-				this.log("[MDM] Error checking organization ID:", error)
-				return {
-					compliant: false,
-					reason: t("mdm.errors.verification_failed"),
-				}
-			}
-		}
-
-		return { compliant: true }
 	}
 
 	/**
@@ -142,23 +100,22 @@ export class MdmService {
 	 */
 	private getMdmConfigPath(): string {
 		const platform = os.platform()
-		const isProduction = getClerkBaseUrl() === PRODUCTION_CLERK_BASE_URL
-		const configFileName = isProduction ? "mdm.json" : "mdm.dev.json"
+		const configFileName = "mdm.json"
 
 		switch (platform) {
 			case "win32": {
-				// Windows: %ProgramData%\RooCode\mdm.json or mdm.dev.json
+				// Windows: %ProgramData%\RooCode\mdm.json
 				const programData = process.env.PROGRAMDATA || "C:\\ProgramData"
 				return path.join(programData, "RooCode", configFileName)
 			}
 
 			case "darwin":
-				// macOS: /Library/Application Support/RooCode/mdm.json or mdm.dev.json
+				// macOS: /Library/Application Support/RooCode/mdm.json
 				return `/Library/Application Support/RooCode/${configFileName}`
 
 			case "linux":
 			default:
-				// Linux: /etc/roo-code/mdm.json or mdm.dev.json
+				// Linux: /etc/roo-code/mdm.json
 				return `/etc/roo-code/${configFileName}`
 		}
 	}

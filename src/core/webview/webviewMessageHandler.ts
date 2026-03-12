@@ -11,7 +11,6 @@ import {
 	type GlobalState,
 	type ClineMessage,
 	type TelemetrySetting,
-	type UserSettingsConfig,
 	type ModelRecord,
 	type Command as SlashCommand,
 	type WebviewMessage,
@@ -23,7 +22,6 @@ import {
 	checkoutRestorePayloadSchema,
 } from "@roo-code/types"
 import { customToolRegistry } from "@roo-code/core"
-import { CloudService } from "@roo-code/cloud"
 import { TelemetryService } from "@roo-code/telemetry"
 
 import { type ApiMessage } from "../task-persistence/apiMessages"
@@ -781,51 +779,6 @@ export const webviewMessageHandler = async (
 				provider.exportTaskWithId(currentTaskId)
 			}
 			break
-		case "shareCurrentTask":
-			const shareTaskId = provider.getCurrentTask()?.taskId
-			const clineMessages = provider.getCurrentTask()?.clineMessages
-
-			if (!shareTaskId) {
-				vscode.window.showErrorMessage(t("common:errors.share_no_active_task"))
-				break
-			}
-
-			try {
-				const visibility = message.visibility || "organization"
-				const result = await CloudService.instance.shareTask(shareTaskId, visibility, clineMessages)
-
-				if (result.success && result.shareUrl) {
-					// Show success notification
-					const messageKey =
-						visibility === "public"
-							? "common:info.public_share_link_copied"
-							: "common:info.organization_share_link_copied"
-					vscode.window.showInformationMessage(t(messageKey))
-
-					// Send success feedback to webview for inline display
-					await provider.postMessageToWebview({
-						type: "shareTaskSuccess",
-						visibility,
-						text: result.shareUrl,
-					})
-				} else {
-					// Handle error
-					const errorMessage = result.error || "Failed to create share link"
-					if (errorMessage.includes("Authentication")) {
-						vscode.window.showErrorMessage(t("common:errors.share_auth_required"))
-					} else if (errorMessage.includes("sharing is not enabled")) {
-						vscode.window.showErrorMessage(t("common:errors.share_not_enabled"))
-					} else if (errorMessage.includes("not found")) {
-						vscode.window.showErrorMessage(t("common:errors.share_task_not_found"))
-					} else {
-						vscode.window.showErrorMessage(errorMessage)
-					}
-				}
-			} catch (error) {
-				provider.log(`[shareCurrentTask] Unexpected error: ${error}`)
-				vscode.window.showErrorMessage(t("common:errors.share_task_failed"))
-			}
-			break
 		case "showTaskWithId":
 			provider.showTaskWithId(message.text!)
 			break
@@ -994,9 +947,7 @@ export const webviewMessageHandler = async (
 					options: {
 						provider: "roo",
 						baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
-						apiKey: CloudService.hasInstance()
-							? CloudService.instance.authService?.getSessionToken()
-							: undefined,
+						apiKey: undefined,
 					},
 				},
 			]
@@ -1119,9 +1070,7 @@ export const webviewMessageHandler = async (
 				const rooOptions = {
 					provider: "roo" as const,
 					baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
-					apiKey: CloudService.hasInstance()
-						? CloudService.instance.authService?.getSessionToken()
-						: undefined,
+					apiKey: undefined,
 				}
 				// Flush cache and refresh to ensure fresh models with current auth state
 				await flushModels(rooOptions, true)
@@ -1142,31 +1091,6 @@ export const webviewMessageHandler = async (
 					success: false,
 					error: errorMessage,
 					values: { provider: "roo" },
-				})
-			}
-			break
-		}
-		case "requestRooCreditBalance": {
-			// Fetch Roo credit balance using CloudAPI
-			const requestId = message.requestId
-			try {
-				if (!CloudService.hasInstance() || !CloudService.instance.cloudAPI) {
-					throw new Error("Cloud service not available")
-				}
-
-				const balance = await CloudService.instance.cloudAPI.creditBalance()
-
-				provider.postMessageToWebview({
-					type: "rooCreditBalance",
-					requestId,
-					values: { balance },
-				})
-			} catch (error) {
-				const errorMessage = error instanceof Error ? error.message : String(error)
-				provider.postMessageToWebview({
-					type: "rooCreditBalance",
-					requestId,
-					values: { error: errorMessage },
 				})
 			}
 			break
@@ -1474,18 +1398,6 @@ export const webviewMessageHandler = async (
 			}
 			break
 		}
-		case "taskSyncEnabled":
-			const enabled = message.bool ?? false
-			const updatedSettings: Partial<UserSettingsConfig> = { taskSyncEnabled: enabled }
-
-			try {
-				await CloudService.instance.updateUserSettings(updatedSettings)
-			} catch (error) {
-				provider.log(`Failed to update cloud settings for task sync: ${error}`)
-			}
-
-			break
-
 		case "refreshAllMcpServers": {
 			const mcpHub = provider.getMcpHub()
 
@@ -2329,166 +2241,6 @@ export const webviewMessageHandler = async (
 			await provider.postStateToWebview()
 			break
 		}
-		case "cloudButtonClicked": {
-			// Navigate to the cloud tab.
-			provider.postMessageToWebview({ type: "action", action: "cloudButtonClicked" })
-			break
-		}
-		case "rooCloudSignIn": {
-			try {
-				TelemetryService.instance.captureEvent(TelemetryEventName.AUTHENTICATION_INITIATED)
-				// Use provider signup flow if useProviderSignup is explicitly true
-				await CloudService.instance.login(undefined, message.useProviderSignup ?? false)
-			} catch (error) {
-				provider.log(`AuthService#login failed: ${error}`)
-				vscode.window.showErrorMessage("Sign in failed.")
-			}
-
-			break
-		}
-		case "cloudLandingPageSignIn": {
-			try {
-				const landingPageSlug = message.text || "supernova"
-				TelemetryService.instance.captureEvent(TelemetryEventName.AUTHENTICATION_INITIATED)
-				await CloudService.instance.login(landingPageSlug)
-			} catch (error) {
-				provider.log(`CloudService#login failed: ${error}`)
-				vscode.window.showErrorMessage("Sign in failed.")
-			}
-			break
-		}
-		case "rooCloudSignOut": {
-			try {
-				await CloudService.instance.logout()
-				await provider.postStateToWebview()
-				provider.postMessageToWebview({ type: "authenticatedUser", userInfo: undefined })
-			} catch (error) {
-				provider.log(`AuthService#logout failed: ${error}`)
-				vscode.window.showErrorMessage("Sign out failed.")
-			}
-
-			break
-		}
-		case "openAiCodexSignIn": {
-			try {
-				const { openAiCodexOAuthManager } = await import("../../integrations/openai-codex/oauth")
-				const authUrl = openAiCodexOAuthManager.startAuthorizationFlow()
-
-				// Open the authorization URL in the browser
-				await vscode.env.openExternal(vscode.Uri.parse(authUrl))
-
-				// Wait for the callback in a separate promise (non-blocking)
-				openAiCodexOAuthManager
-					.waitForCallback()
-					.then(async () => {
-						vscode.window.showInformationMessage("Successfully signed in to OpenAI Codex")
-						await provider.postStateToWebview()
-					})
-					.catch((error) => {
-						provider.log(`OpenAI Codex OAuth callback failed: ${error}`)
-						if (!String(error).includes("timed out")) {
-							vscode.window.showErrorMessage(`OpenAI Codex sign in failed: ${error.message || error}`)
-						}
-					})
-			} catch (error) {
-				provider.log(`OpenAI Codex OAuth failed: ${error}`)
-				vscode.window.showErrorMessage("OpenAI Codex sign in failed.")
-			}
-			break
-		}
-		case "openAiCodexSignOut": {
-			try {
-				const { openAiCodexOAuthManager } = await import("../../integrations/openai-codex/oauth")
-				await openAiCodexOAuthManager.clearCredentials()
-				vscode.window.showInformationMessage("Signed out from OpenAI Codex")
-				await provider.postStateToWebview()
-			} catch (error) {
-				provider.log(`OpenAI Codex sign out failed: ${error}`)
-				vscode.window.showErrorMessage("OpenAI Codex sign out failed.")
-			}
-			break
-		}
-		case "rooCloudManualUrl": {
-			try {
-				if (!message.text) {
-					vscode.window.showErrorMessage(t("common:errors.manual_url_empty"))
-					break
-				}
-
-				// Parse the callback URL to extract parameters
-				const callbackUrl = message.text.trim()
-				const uri = vscode.Uri.parse(callbackUrl)
-
-				if (!uri.query) {
-					throw new Error(t("common:errors.manual_url_no_query"))
-				}
-
-				const query = new URLSearchParams(uri.query)
-				const code = query.get("code")
-				const state = query.get("state")
-				const organizationId = query.get("organizationId")
-
-				if (!code || !state) {
-					throw new Error(t("common:errors.manual_url_missing_params"))
-				}
-
-				// Reuse the existing authentication flow
-				await CloudService.instance.handleAuthCallback(
-					code,
-					state,
-					organizationId === "null" ? null : organizationId,
-				)
-
-				await provider.postStateToWebview()
-			} catch (error) {
-				provider.log(`ManualUrl#handleAuthCallback failed: ${error}`)
-				const errorMessage = error instanceof Error ? error.message : t("common:errors.manual_url_auth_failed")
-
-				// Show error message through VS Code UI
-				vscode.window.showErrorMessage(`${t("common:errors.manual_url_auth_error")}: ${errorMessage}`)
-			}
-
-			break
-		}
-		case "clearCloudAuthSkipModel": {
-			// Clear the flag that indicates auth completed without model selection
-			await provider.context.globalState.update("roo-auth-skip-model", undefined)
-			await provider.postStateToWebview()
-			break
-		}
-		case "switchOrganization": {
-			try {
-				const organizationId = message.organizationId ?? null
-
-				// Switch to the new organization context
-				await CloudService.instance.switchOrganization(organizationId)
-
-				// Refresh the state to update UI
-				await provider.postStateToWebview()
-
-				// Send success response back to webview
-				await provider.postMessageToWebview({
-					type: "organizationSwitchResult",
-					success: true,
-					organizationId: organizationId,
-				})
-			} catch (error) {
-				provider.log(`Organization switch failed: ${error}`)
-				const errorMessage = error instanceof Error ? error.message : String(error)
-
-				// Send error response back to webview
-				await provider.postMessageToWebview({
-					type: "organizationSwitchResult",
-					success: false,
-					error: errorMessage,
-					organizationId: message.organizationId ?? null,
-				})
-
-				vscode.window.showErrorMessage(`Failed to switch organization: ${errorMessage}`)
-			}
-			break
-		}
-
 		case "saveCodeIndexSettingsAtomic": {
 			if (!message.codeIndexSettings) {
 				break

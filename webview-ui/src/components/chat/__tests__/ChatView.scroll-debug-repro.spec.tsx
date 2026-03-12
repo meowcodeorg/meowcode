@@ -69,16 +69,6 @@ function nullDefaultModule() {
 
 vi.mock("@src/utils/vscode", () => ({ vscode: { postMessage: vi.fn() } }))
 vi.mock("use-sound", () => ({ default: vi.fn().mockImplementation(() => [vi.fn()]) }))
-vi.mock("@src/components/cloud/CloudUpsellDialog", () => ({ CloudUpsellDialog: () => null }))
-vi.mock("@src/hooks/useCloudUpsell", () => ({
-	useCloudUpsell: () => ({
-		isOpen: false,
-		openUpsell: vi.fn(),
-		closeUpsell: vi.fn(),
-		handleConnect: vi.fn(),
-	}),
-}))
-
 vi.mock("../common/TelemetryBanner", nullDefaultModule)
 vi.mock("../common/VersionIndicator", nullDefaultModule)
 vi.mock("../history/HistoryPreview", nullDefaultModule)
@@ -87,7 +77,6 @@ vi.mock("@src/components/welcome/RooTips", nullDefaultModule)
 vi.mock("../Announcement", nullDefaultModule)
 vi.mock("./TaskHeader", () => ({ default: () => <div data-testid="task-header" /> }))
 vi.mock("./ProfileViolationWarning", nullDefaultModule)
-vi.mock("../common/DismissibleUpsell", nullDefaultModule)
 
 vi.mock("./CheckpointWarning", () => ({ CheckpointWarning: () => null }))
 vi.mock("./QueuedMessages", () => ({ QueuedMessages: () => null }))

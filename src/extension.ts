@@ -17,8 +17,6 @@ if (fs.existsSync(envPath)) {
 	}
 }
 
-import type { CloudUserInfo, AuthState } from "@roo-code/types"
-import { CloudService } from "@roo-code/cloud"
 import { TelemetryService, PostHogTelemetryClient } from "@roo-code/telemetry"
 import { customToolRegistry } from "@roo-code/core"
 
@@ -48,7 +46,7 @@ import {
 	CodeActionProvider,
 } from "./activate"
 import { initializeI18n } from "./i18n"
-import { flushModels, initializeModelCacheRefresh, refreshModels } from "./api/providers/fetchers/modelCache"
+import { initializeModelCacheRefresh } from "./api/providers/fetchers/modelCache"
 
 /**
  * Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -60,11 +58,6 @@ import { flushModels, initializeModelCacheRefresh, refreshModels } from "./api/p
 
 let outputChannel: vscode.OutputChannel
 let extensionContext: vscode.ExtensionContext
-let cloudService: CloudService | undefined
-
-let authStateChangedHandler: ((data: { state: AuthState; previousState: AuthState }) => Promise<void>) | undefined
-let settingsUpdatedHandler: (() => void) | undefined
-let userInfoHandler: ((data: { userInfo: CloudUserInfo }) => Promise<void>) | undefined
 
 /**
  * Check if we should auto-open the Roo Code sidebar after switching to a worktree.
@@ -143,11 +136,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		console.warn("Failed to register PostHogTelemetryClient:", error)
 	}
 
-	// Create logger for cloud services.
-	const cloudLogger = createDualLogger(createOutputChannelLogger(outputChannel))
+	// Create logger for extension services.
+	const logger = createDualLogger(createOutputChannelLogger(outputChannel))
 
 	// Initialize MDM service
-	const mdmService = await MdmService.createInstance(cloudLogger)
+	const mdmService = await MdmService.createInstance(logger)
 
 	// Initialize i18n for internationalization support.
 	initializeI18n(context.globalState.get("language") ?? formatLanguage(vscode.env.language))
@@ -191,104 +184,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}
 
-	// Initialize the provider *before* the Roo Code Cloud service.
+	// Initialize the provider.
 	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy, mdmService)
-
-	// Initialize Roo Code Cloud service.
-	const postStateListener = () => ClineProvider.getVisibleInstance()?.postStateToWebviewWithoutClineMessages()
-
-	authStateChangedHandler = async (data: { state: AuthState; previousState: AuthState }) => {
-		postStateListener()
-
-		// Handle Roo models cache based on auth state (ROO-202)
-		const handleRooModelsCache = async () => {
-			try {
-				if (data.state === "active-session") {
-					// Refresh with auth token to get authenticated models
-					const sessionToken = CloudService.hasInstance()
-						? CloudService.instance.authService?.getSessionToken()
-						: undefined
-					await refreshModels({
-						provider: "roo",
-						baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
-						apiKey: sessionToken,
-					})
-				} else {
-					// Flush without refresh on logout
-					await flushModels({ provider: "roo" }, false)
-				}
-			} catch (error) {
-				cloudLogger(
-					`[authStateChangedHandler] Failed to handle Roo models cache: ${error instanceof Error ? error.message : String(error)}`,
-				)
-			}
-		}
-
-		if (data.state === "active-session" || data.state === "logged-out") {
-			await handleRooModelsCache()
-
-			// Apply stored provider model to API configuration if present
-			if (data.state === "active-session") {
-				try {
-					const storedModel = context.globalState.get<string>("roo-provider-model")
-					if (storedModel) {
-						cloudLogger(`[authStateChangedHandler] Applying stored provider model: ${storedModel}`)
-						// Get the current API configuration name
-						const currentConfigName =
-							provider.contextProxy.getGlobalState("currentApiConfigName") || "default"
-						// Update it with the stored model using upsertProviderProfile
-						await provider.upsertProviderProfile(currentConfigName, {
-							apiProvider: "roo",
-							apiModelId: storedModel,
-						})
-						// Clear the stored model after applying
-						await context.globalState.update("roo-provider-model", undefined)
-						cloudLogger(`[authStateChangedHandler] Applied and cleared stored provider model`)
-					}
-				} catch (error) {
-					cloudLogger(
-						`[authStateChangedHandler] Failed to apply stored provider model: ${error instanceof Error ? error.message : String(error)}`,
-					)
-				}
-			}
-		}
-	}
-
-	settingsUpdatedHandler = async () => {
-		postStateListener()
-	}
-
-	userInfoHandler = async ({ userInfo }: { userInfo: CloudUserInfo }) => {
-		postStateListener()
-	}
-
-	cloudService = await CloudService.createInstance(context, cloudLogger, {
-		"auth-state-changed": authStateChangedHandler,
-		"settings-updated": settingsUpdatedHandler,
-		"user-info": userInfoHandler,
-	})
-
-	try {
-		if (cloudService.telemetryClient) {
-			TelemetryService.instance.register(cloudService.telemetryClient)
-		}
-	} catch (error) {
-		outputChannel.appendLine(
-			`[CloudService] Failed to register TelemetryClient: ${error instanceof Error ? error.message : String(error)}`,
-		)
-	}
-
-	// Add to subscriptions for proper cleanup on deactivate.
-	context.subscriptions.push(cloudService)
-
-	// Trigger initial cloud profile sync now that CloudService is ready.
-	try {
-		await provider.initializeCloudProfileSyncWhenReady()
-	} catch (error) {
-		outputChannel.appendLine(
-			`[CloudService] Failed to initialize cloud profile sync: ${error instanceof Error ? error.message : String(error)}`,
-		)
-	}
 
 	// Finish initializing the provider.
 	TelemetryService.instance.setProvider(provider)
@@ -368,7 +265,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			{ path: context.extensionPath, pattern: "**/*.ts" },
 			{ path: path.join(context.extensionPath, "../packages/types"), pattern: "**/*.ts" },
 			{ path: path.join(context.extensionPath, "../packages/telemetry"), pattern: "**/*.ts" },
-			{ path: path.join(context.extensionPath, "node_modules/@roo-code/cloud"), pattern: "**/*" },
 		]
 
 		console.log(
@@ -423,28 +319,6 @@ export async function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated.
 export async function deactivate() {
 	outputChannel.appendLine(`${Package.name} extension deactivated`)
-
-	if (cloudService && CloudService.hasInstance()) {
-		try {
-			if (authStateChangedHandler) {
-				CloudService.instance.off("auth-state-changed", authStateChangedHandler)
-			}
-
-			if (settingsUpdatedHandler) {
-				CloudService.instance.off("settings-updated", settingsUpdatedHandler)
-			}
-
-			if (userInfoHandler) {
-				CloudService.instance.off("user-info", userInfoHandler as any)
-			}
-
-			outputChannel.appendLine("CloudService event handlers cleaned up")
-		} catch (error) {
-			outputChannel.appendLine(
-				`Failed to clean up CloudService event handlers: ${error instanceof Error ? error.message : String(error)}`,
-			)
-		}
-	}
 
 	await McpServerManager.cleanup(extensionContext)
 	TelemetryService.instance.shutdown()

@@ -21,7 +21,6 @@ import {
 	IpcMessageType,
 } from "@roo-code/types"
 import { IpcServer } from "@roo-code/ipc"
-import { CloudService } from "@roo-code/cloud"
 
 import { Package } from "../shared/package"
 import { ClineProvider } from "../core/webview/ClineProvider"
@@ -140,9 +139,7 @@ export class API extends EventEmitter<RooCodeEvents> implements RooCodeAPI {
 							const models = await getModels({
 								provider: "roo" as const,
 								baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
-								apiKey: CloudService.hasInstance()
-									? CloudService.instance.authService?.getSessionToken()
-									: undefined,
+								apiKey: undefined,
 							})
 
 							sendResponse(RooCodeEventName.ModelsResponse, [models])
