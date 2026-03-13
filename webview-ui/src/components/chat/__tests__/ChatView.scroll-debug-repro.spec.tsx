@@ -2,7 +2,7 @@ import React, { useEffect, useImperativeHandle, useRef } from "react"
 import { act, fireEvent, render, waitFor } from "@/utils/test-utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
-import type { ClineMessage } from "@meow-code/types"
+import type { MeowCodeMessage } from "@meow-code/types"
 
 import { ExtensionStateContextProvider } from "@src/context/ExtensionStateContext"
 
@@ -14,7 +14,7 @@ interface ExtensionStateMessage {
 	type: "state"
 	state: {
 		version: string
-		clineMessages: ClineMessage[]
+		meowCodeMessages: MeowCodeMessage[]
 		taskHistory: unknown[]
 		shouldShowAnnouncement: boolean
 		allowedCommands: string[]
@@ -33,8 +33,8 @@ interface MockVirtuosoHandle {
 }
 
 interface MockVirtuosoProps {
-	data: ClineMessage[]
-	itemContent: (index: number, item: ClineMessage) => React.ReactNode
+	data: MeowCodeMessage[]
+	itemContent: (index: number, item: MeowCodeMessage) => React.ReactNode
 	atBottomStateChange?: (isAtBottom: boolean) => void
 	followOutput?: FollowOutput
 	className?: string
@@ -123,7 +123,7 @@ vi.mock("../ChatTextArea", () => {
 })
 
 vi.mock("../ChatRow", () => ({
-	default: ({ message }: { message: ClineMessage }) => <div data-testid="chat-row">{message.ts}</div>,
+	default: ({ message }: { message: MeowCodeMessage }) => <div data-testid="chat-row">{message.ts}</div>,
 }))
 
 vi.mock("react-virtuoso", () => {
@@ -198,7 +198,7 @@ const props: ChatViewProps = {
 
 const sleep = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms))
 
-const buildMessages = (baseTs: number): ClineMessage[] => [
+const buildMessages = (baseTs: number): MeowCodeMessage[] => [
 	{ type: "say", say: "text", ts: baseTs, text: "task" },
 	{ type: "say", say: "text", ts: baseTs + 1, text: "row-1" },
 	{ type: "say", say: "text", ts: baseTs + 2, text: "row-2" },
@@ -212,12 +212,12 @@ const resolveFollowOutput = (isAtBottom: boolean): "auto" | false => {
 	return followOutput === "auto" ? "auto" : false
 }
 
-const postState = (clineMessages: ClineMessage[]) => {
+const postState = (meowCodeMessages: MeowCodeMessage[]) => {
 	const message: ExtensionStateMessage = {
 		type: "state",
 		state: {
 			version: "1.0.0",
-			clineMessages,
+			meowCodeMessages,
 			taskHistory: [],
 			shouldShowAnnouncement: false,
 			allowedCommands: [],

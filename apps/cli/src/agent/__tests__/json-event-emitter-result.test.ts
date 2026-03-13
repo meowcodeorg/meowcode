@@ -1,4 +1,4 @@
-import type { ClineMessage } from "@meow-code/types"
+import type { MeowCodeMessage } from "@meow-code/types"
 import { Writable } from "stream"
 
 import type { TaskCompletedEvent } from "../events.js"
@@ -25,8 +25,8 @@ function createMockStdout(): { stdout: NodeJS.WriteStream; lines: () => Record<s
 	return { stdout: writable, lines }
 }
 
-function emitMessage(emitter: JsonEventEmitter, message: ClineMessage): void {
-	;(emitter as unknown as { handleMessage: (msg: ClineMessage, isUpdate: boolean) => void }).handleMessage(
+function emitMessage(emitter: JsonEventEmitter, message: MeowCodeMessage): void {
+	;(emitter as unknown as { handleMessage: (msg: MeowCodeMessage, isUpdate: boolean) => void }).handleMessage(
 		message,
 		false,
 	)
@@ -38,17 +38,17 @@ function emitTaskCompleted(emitter: JsonEventEmitter, event: TaskCompletedEvent)
 	)
 }
 
-function createAskCompletionMessage(ts: number, text = ""): ClineMessage {
+function createAskCompletionMessage(ts: number, text = ""): MeowCodeMessage {
 	return {
 		ts,
 		type: "ask",
 		ask: "completion_result",
 		partial: false,
 		text,
-	} as ClineMessage
+	} as MeowCodeMessage
 }
 
-function createCompletedStateInfo(message: ClineMessage): AgentStateInfo {
+function createCompletedStateInfo(message: MeowCodeMessage): AgentStateInfo {
 	return {
 		state: AgentLoopState.IDLE,
 		isWaitingForInput: true,
@@ -73,7 +73,7 @@ describe("JsonEventEmitter result emission", () => {
 			say: "completion_result",
 			partial: false,
 			text: "FIRST",
-		} as ClineMessage)
+		} as MeowCodeMessage)
 
 		const firstCompletionMessage = createAskCompletionMessage(101, "")
 		emitTaskCompleted(emitter, {
@@ -105,7 +105,7 @@ describe("JsonEventEmitter result emission", () => {
 			say: "completion_result",
 			partial: false,
 			text: "FIRST",
-		} as ClineMessage)
+		} as MeowCodeMessage)
 
 		const firstCompletionMessage = createAskCompletionMessage(201, "")
 		emitTaskCompleted(emitter, {

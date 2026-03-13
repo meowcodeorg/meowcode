@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { ChevronDown, ChevronRight, FileDiff } from "lucide-react"
 import { createTwoFilesPatch } from "diff"
 
-import type { ClineMessage, ExtensionMessage } from "@meow-code/types"
+import type { MeowCodeMessage, ExtensionMessage } from "@meow-code/types"
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui"
 import { cn } from "@/lib/utils"
@@ -13,11 +13,11 @@ import { fileChangesFromMessages, type FileChangeEntry } from "./utils/fileChang
 import CodeAccordion from "../common/CodeAccordion"
 
 interface FileChangesPanelProps {
-	clineMessages: ClineMessage[] | undefined
+	meowCodeMessages: MeowCodeMessage[] | undefined
 	className?: string
 }
 
-const FileChangesPanel = memo(({ clineMessages, className }: FileChangesPanelProps) => {
+const FileChangesPanel = memo(({ meowCodeMessages, className }: FileChangesPanelProps) => {
 	const { t } = useTranslation()
 	const [panelExpanded, setPanelExpanded] = useState(false)
 	const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set())
@@ -29,9 +29,9 @@ const FileChangesPanel = memo(({ clineMessages, className }: FileChangesPanelPro
 		setExpandedPaths(new Set())
 		setFinalContentByPath({})
 		pendingPathsRef.current = new Set()
-	}, [clineMessages])
+	}, [meowCodeMessages])
 
-	const fileChanges = useMemo(() => fileChangesFromMessages(clineMessages), [clineMessages])
+	const fileChanges = useMemo(() => fileChangesFromMessages(meowCodeMessages), [meowCodeMessages])
 
 	// Group by path so we show one row per file (multiple edits to same file combined for display)
 	const byPath = useMemo(() => {

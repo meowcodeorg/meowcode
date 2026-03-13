@@ -213,7 +213,7 @@ describe("useCLIStore", () => {
 			expect(store().availableModes.length).toBe(1) // Preserved.
 			expect(store().allSlashCommands.length).toBe(1) // Preserved.
 
-			// Step 4: Extension sends state message with clineMessages
+			// Step 4: Extension sends state message with meowCodeMessages
 			// (simulated by adding messages).
 			store().addMessage({ id: "old1", role: "user", content: "Previous task prompt" })
 			store().addMessage({ id: "old2", role: "assistant", content: "Previous response" })

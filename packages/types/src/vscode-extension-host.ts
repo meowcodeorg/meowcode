@@ -6,7 +6,7 @@ import type { HistoryItem } from "./history.js"
 import type { ModeConfig, PromptComponent } from "./mode.js"
 import type { TelemetrySetting } from "./telemetry.js"
 import type { Experiments } from "./experiment.js"
-import type { ClineMessage, QueuedMessage } from "./message.js"
+import type { MeowCodeMessage, QueuedMessage } from "./message.js"
 import {
 	type MarketplaceItem,
 	type MarketplaceInstalledMetadata,
@@ -135,7 +135,7 @@ export interface ExtensionMessage {
 		isActive: boolean
 		path?: string
 	}>
-	clineMessage?: ClineMessage
+	meowCodeMessage?: MeowCodeMessage
 	routerModels?: RouterModels
 	openAiModels?: string[]
 	ollamaModels?: ModelRecord
@@ -309,7 +309,7 @@ export type ExtensionState = Pick<
 > & {
 	lockApiConfigAcrossModes?: boolean
 	version: string
-	clineMessages: ClineMessage[]
+	meowCodeMessages: MeowCodeMessage[]
 	currentTaskId?: string
 	currentTaskItem?: HistoryItem
 	currentTaskTodos?: TodoItem[] // Initial todos for the current task
@@ -375,12 +375,12 @@ export type ExtensionState = Pick<
 	debug?: boolean
 
 	/**
-	 * Monotonically increasing sequence number for clineMessages state pushes.
-	 * When present, the frontend should only apply clineMessages from a state push
+	 * Monotonically increasing sequence number for meowCodeMessages state pushes.
+	 * When present, the frontend should only apply meowCodeMessages from a state push
 	 * if its seq is greater than the last applied seq. This prevents stale state
 	 * (captured during async getStateToPostToWebview) from overwriting newer messages.
 	 */
-	clineMessagesSeq?: number
+	meowCodeMessagesSeq?: number
 }
 
 export interface Command {
@@ -396,7 +396,7 @@ export interface Command {
  * Webview | CLI -> Extension
  */
 
-export type ClineAskResponse = "yesButtonClicked" | "noButtonClicked" | "messageResponse" | "objectResponse"
+export type MeowCodeAskResponse = "yesButtonClicked" | "noButtonClicked" | "messageResponse" | "objectResponse"
 
 export type AudioType = "notification" | "celebration" | "progress_loop"
 
@@ -587,7 +587,7 @@ export interface WebviewMessage {
 	disabled?: boolean
 	context?: string
 	dataUri?: string
-	askResponse?: ClineAskResponse
+	askResponse?: MeowCodeAskResponse
 	apiConfiguration?: ProviderSettings
 	images?: string[]
 	bool?: boolean
@@ -763,7 +763,7 @@ export interface LanguageModelChatSelector {
 	id?: string
 }
 
-export interface ClineSayTool {
+export interface MeowCodeSayTool {
 	tool:
 		| "editedExistingFile"
 		| "appliedDiff"
@@ -841,7 +841,7 @@ export interface ClineSayTool {
 	skill?: string
 }
 
-export interface ClineAskUseMcpServer {
+export interface MeowCodeAskUseMcpServer {
 	serverName: string
 	type: "use_mcp_tool" | "access_mcp_resource"
 	toolName?: string
@@ -850,16 +850,16 @@ export interface ClineAskUseMcpServer {
 	response?: string
 }
 
-export interface ClineApiReqInfo {
+export interface MeowCodeApiReqInfo {
 	request?: string
 	tokensIn?: number
 	tokensOut?: number
 	cacheWrites?: number
 	cacheReads?: number
 	cost?: number
-	cancelReason?: ClineApiReqCancelReason
+	cancelReason?: MeowCodeApiReqCancelReason
 	streamingFailedMessage?: string
 	apiProtocol?: "anthropic" | "openai"
 }
 
-export type ClineApiReqCancelReason = "streaming_failed" | "user_cancelled"
+export type MeowCodeApiReqCancelReason = "streaming_failed" | "user_cancelled"

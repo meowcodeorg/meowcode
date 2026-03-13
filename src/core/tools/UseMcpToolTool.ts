@@ -1,4 +1,4 @@
-import type { ClineAskUseMcpServer, McpExecutionStatus } from "@meow-code/types"
+import type { MeowCodeAskUseMcpServer, McpExecutionStatus } from "@meow-code/types"
 
 import { Task } from "../task/Task"
 import { formatResponse } from "../prompts/responses"
@@ -57,7 +57,7 @@ export class UseMcpToolTool extends BaseTool<"use_mcp_tool"> {
 				serverName,
 				toolName: resolvedToolName,
 				arguments: params.arguments ? JSON.stringify(params.arguments) : undefined,
-			} satisfies ClineAskUseMcpServer)
+			} satisfies MeowCodeAskUseMcpServer)
 
 			const executionId = task.lastMessageTs?.toString() ?? Date.now().toString()
 			const didApprove = await askApproval("use_mcp_server", completeMessage)
@@ -87,7 +87,7 @@ export class UseMcpToolTool extends BaseTool<"use_mcp_tool"> {
 			serverName: params.server_name ?? "",
 			toolName: params.tool_name ?? "",
 			arguments: params.arguments,
-		} satisfies ClineAskUseMcpServer)
+		} satisfies MeowCodeAskUseMcpServer)
 
 		await task.ask("use_mcp_server", partialMessage, true).catch(() => {})
 	}
@@ -248,8 +248,8 @@ export class UseMcpToolTool extends BaseTool<"use_mcp_tool"> {
 	}
 
 	private async sendExecutionStatus(task: Task, status: McpExecutionStatus): Promise<void> {
-		const clineProvider = await task.providerRef.deref()
-		clineProvider?.postMessageToWebview({
+		const meowCodeProvider = await task.providerRef.deref()
+		meowCodeProvider?.postMessageToWebview({
 			type: "mcpExecutionStatus",
 			text: JSON.stringify(status),
 		})

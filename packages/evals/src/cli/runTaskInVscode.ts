@@ -6,7 +6,7 @@ import pWaitFor from "p-wait-for"
 import { execa } from "execa"
 
 import {
-	type ClineSay,
+	type MeowCodeSay,
 	type ToolUsage,
 	TaskCommandName,
 	MeowCodeEventName,
@@ -98,7 +98,7 @@ export const runTaskInVscode = async ({ run, task, publish, logger, jobToken }: 
 		log: [MeowCodeEventName.TaskTokenUsageUpdated, MeowCodeEventName.TaskAskResponded],
 	}
 
-	const loggableSays: ClineSay[] = [
+	const loggableSays: MeowCodeSay[] = [
 		"error",
 		"command_output",
 		"rooignore_error",

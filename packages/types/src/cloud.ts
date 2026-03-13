@@ -7,7 +7,7 @@ import { TaskStatus, taskMetadataSchema } from "./task.js"
 import { globalSettingsSchema } from "./global-settings.js"
 import { providerSettingsWithIdSchema } from "./provider-settings.js"
 import { mcpMarketplaceItemSchema } from "./marketplace.js"
-import { clineMessageSchema, queuedMessageSchema, tokenUsageSchema } from "./message.js"
+import { meowCodeMessageSchema, queuedMessageSchema, tokenUsageSchema } from "./message.js"
 import { staticAppPropertiesSchema, gitPropertiesSchema } from "./telemetry.js"
 
 /**
@@ -391,7 +391,7 @@ export const INSTANCE_TTL_SECONDS = 60
 const extensionTaskSchema = z.object({
 	taskId: z.string(),
 	taskStatus: z.nativeEnum(TaskStatus),
-	taskAsk: clineMessageSchema.optional(),
+	taskAsk: meowCodeMessageSchema.optional(),
 	queuedMessages: z.array(queuedMessageSchema).optional(),
 	parentTaskId: z.string().optional(),
 	childTaskId: z.string().optional(),
@@ -413,7 +413,7 @@ export const extensionInstanceSchema = z.object({
 	gitProperties: gitPropertiesSchema.optional(),
 	lastHeartbeat: z.coerce.number(),
 	task: extensionTaskSchema,
-	taskAsk: clineMessageSchema.optional(),
+	taskAsk: meowCodeMessageSchema.optional(),
 	taskHistory: z.array(z.string()),
 	mode: z.string().optional(),
 	modes: z.array(z.object({ slug: z.string(), name: z.string() })).optional(),
@@ -439,7 +439,7 @@ export const taskBridgeEventSchema = z.discriminatedUnion("type", [
 		type: z.literal(TaskBridgeEventName.Message),
 		taskId: z.string(),
 		action: z.string(),
-		message: clineMessageSchema,
+		message: meowCodeMessageSchema,
 	}),
 	z.object({
 		type: z.literal(TaskBridgeEventName.TaskModeSwitched),

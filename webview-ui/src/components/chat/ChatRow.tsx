@@ -5,12 +5,12 @@ import deepEqual from "fast-deep-equal"
 import { VSCodeBadge } from "@vscode/webview-ui-toolkit/react"
 
 import type {
-	ClineMessage,
+	MeowCodeMessage,
 	FollowUpData,
 	SuggestionItem,
-	ClineApiReqInfo,
-	ClineAskUseMcpServer,
-	ClineSayTool,
+	MeowCodeApiReqInfo,
+	MeowCodeAskUseMcpServer,
+	MeowCodeSayTool,
 } from "@meow-code/types"
 
 import { Mode } from "@roo/modes"
@@ -77,7 +77,7 @@ import { PathTooltip } from "../ui/PathTooltip"
 import { OpenMarkdownPreviewButton } from "./OpenMarkdownPreviewButton"
 
 // Helper function to get previous todos before a specific message
-function getPreviousTodos(messages: ClineMessage[], currentMessageTs: number): any[] {
+function getPreviousTodos(messages: MeowCodeMessage[], currentMessageTs: number): any[] {
 	// Find the previous updateTodoList message before the current one
 	const previousUpdateIndex = messages
 		.slice()
@@ -110,8 +110,8 @@ function getPreviousTodos(messages: ClineMessage[], currentMessageTs: number): a
 }
 
 interface ChatRowProps {
-	message: ClineMessage
-	lastModifiedMessage?: ClineMessage
+	message: MeowCodeMessage
+	lastModifiedMessage?: MeowCodeMessage
 	isExpanded: boolean
 	isLast: boolean
 	isStreaming: boolean
@@ -180,7 +180,7 @@ export const ChatRowContent = ({
 }: ChatRowContentProps) => {
 	const { t, i18n } = useTranslation()
 
-	const { mcpServers, alwaysAllowMcp, currentCheckpoint, mode, apiConfiguration, clineMessages, currentTaskItem } =
+	const { mcpServers, alwaysAllowMcp, currentCheckpoint, mode, apiConfiguration, meowCodeMessages, currentTaskItem } =
 		useExtensionState()
 	const { info: model } = useSelectedModel(apiConfiguration)
 	const [isEditing, setIsEditing] = useState(false)
@@ -243,7 +243,7 @@ export const ChatRowContent = ({
 
 	const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] = useMemo(() => {
 		if (message.text !== null && message.text !== undefined && message.say === "api_req_started") {
-			const info = safeJsonParse<ClineApiReqInfo>(message.text)
+			const info = safeJsonParse<MeowCodeApiReqInfo>(message.text)
 			return [info?.cost, info?.cancelReason, info?.streamingFailedMessage]
 		}
 
@@ -287,7 +287,7 @@ export const ChatRowContent = ({
 					</span>,
 				]
 			case "use_mcp_server":
-				const mcpServerUse = safeJsonParse<ClineAskUseMcpServer>(message.text)
+				const mcpServerUse = safeJsonParse<MeowCodeAskUseMcpServer>(message.text)
 				if (mcpServerUse === undefined) {
 					return [null, null]
 				}
@@ -396,7 +396,7 @@ export const ChatRowContent = ({
 	}
 
 	const tool = useMemo(
-		() => (message.ask === "tool" ? safeJsonParse<ClineSayTool>(message.text) : null),
+		() => (message.ask === "tool" ? safeJsonParse<MeowCodeSayTool>(message.text) : null),
 		[message.ask, message.text],
 	)
 
@@ -552,7 +552,7 @@ export const ChatRowContent = ({
 			case "updateTodoList" as any: {
 				const todos = (tool as any).todos || []
 				// Get previous todos from the latest todos in the task context
-				const previousTodos = getPreviousTodos(clineMessages, message.ts)
+				const previousTodos = getPreviousTodos(meowCodeMessages, message.ts)
 
 				return <TodoChangeDisplay previousTodos={previousTodos} newTodos={todos} />
 			}
@@ -830,9 +830,9 @@ export const ChatRowContent = ({
 				)
 			case "newTask":
 				// Find all newTask messages to determine which child task ID corresponds to this message
-				const newTaskMessages = clineMessages.filter((msg) => {
+				const newTaskMessages = meowCodeMessages.filter((msg) => {
 					if (msg.type === "ask" && msg.ask === "tool") {
-						const t = safeJsonParse<ClineSayTool>(msg.text)
+						const t = safeJsonParse<MeowCodeSayTool>(msg.text)
 						return t?.tool === "newTask"
 					}
 					return false
@@ -849,8 +849,8 @@ export const ChatRowContent = ({
 
 				// Check if the next message is a subtask_result - if so, don't show the button
 				// since the result is displayed right after this message
-				const currentMessageIndex = clineMessages.findIndex((msg) => msg.ts === message.ts)
-				const nextMessage = currentMessageIndex >= 0 ? clineMessages[currentMessageIndex + 1] : undefined
+				const currentMessageIndex = meowCodeMessages.findIndex((msg) => msg.ts === message.ts)
+				const nextMessage = currentMessageIndex >= 0 ? meowCodeMessages[currentMessageIndex + 1] : undefined
 				const isFollowedBySubtaskResult = nextMessage?.type === "say" && nextMessage?.say === "subtask_result"
 
 				return (
@@ -1086,7 +1086,7 @@ export const ChatRowContent = ({
 									message={apiRequestFailedMessage || apiReqStreamingFailedMessage || ""}
 									docsURL={
 										apiRequestFailedMessage?.toLowerCase().includes("powershell")
-											? "https://github.com/cline/cline/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+											? "https://github.com/meowCode/meowCode/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
 											: undefined
 									}
 									errorDetails={apiReqStreamingFailedMessage}
@@ -1275,7 +1275,7 @@ export const ChatRowContent = ({
 						</div>
 					)
 				case "user_feedback_diff":
-					const tool = safeJsonParse<ClineSayTool>(message.text)
+					const tool = safeJsonParse<MeowCodeSayTool>(message.text)
 					return (
 						<div style={{ marginTop: -10, width: "100%" }}>
 							<CodeAccordion
@@ -1399,7 +1399,7 @@ export const ChatRowContent = ({
 					return <UpdateTodoListToolBlock userEdited onChange={() => {}} />
 				case "tool" as any:
 					// Handle say tool messages
-					const sayTool = safeJsonParse<ClineSayTool>(message.text)
+					const sayTool = safeJsonParse<MeowCodeSayTool>(message.text)
 					if (!sayTool) return null
 
 					switch (sayTool.tool) {
@@ -1595,7 +1595,7 @@ export const ChatRowContent = ({
 					const { response, ...mcpServerRequest } = messageJson
 
 					// Create the useMcpServer object with the response field
-					const useMcpServer: ClineAskUseMcpServer = {
+					const useMcpServer: MeowCodeAskUseMcpServer = {
 						...mcpServerRequest,
 						response,
 					}

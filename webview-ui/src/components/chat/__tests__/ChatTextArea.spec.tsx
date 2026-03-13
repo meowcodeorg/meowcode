@@ -489,7 +489,7 @@ describe("ChatTextArea", () => {
 		})
 
 		describe("prompt history navigation", () => {
-			const mockClineMessages = [
+			const mockMeowCodeMessages = [
 				{ type: "say", say: "user_feedback", text: "First prompt", ts: 1000 },
 				{ type: "say", say: "user_feedback", text: "Second prompt", ts: 2000 },
 				{ type: "say", say: "user_feedback", text: "Third prompt", ts: 3000 },
@@ -503,7 +503,7 @@ describe("ChatTextArea", () => {
 						apiProvider: "anthropic",
 					},
 					taskHistory: [],
-					clineMessages: mockClineMessages,
+					meowCodeMessages: mockMeowCodeMessages,
 					cwd: "/test/workspace",
 				})
 			})
@@ -643,7 +643,7 @@ describe("ChatTextArea", () => {
 			})
 
 			it("should filter history by current workspace", () => {
-				const mixedClineMessages = [
+				const mixedMeowCodeMessages = [
 					{ type: "say", say: "user_feedback", text: "Workspace 1 prompt", ts: 1000 },
 					{ type: "say", say: "user_feedback", text: "Other workspace prompt", ts: 2000 },
 					{ type: "say", say: "user_feedback", text: "Workspace 1 prompt 2", ts: 3000 },
@@ -656,7 +656,7 @@ describe("ChatTextArea", () => {
 						apiProvider: "anthropic",
 					},
 					taskHistory: [],
-					clineMessages: mixedClineMessages,
+					meowCodeMessages: mixedMeowCodeMessages,
 					cwd: "/test/workspace",
 				})
 
@@ -684,7 +684,7 @@ describe("ChatTextArea", () => {
 						apiProvider: "anthropic",
 					},
 					taskHistory: [],
-					clineMessages: [],
+					meowCodeMessages: [],
 					cwd: "/test/workspace",
 				})
 
@@ -701,7 +701,7 @@ describe("ChatTextArea", () => {
 			})
 
 			it("should ignore empty or whitespace-only messages", () => {
-				const clineMessagesWithEmpty = [
+				const meowCodeMessagesWithEmpty = [
 					{ type: "say", say: "user_feedback", text: "Valid prompt", ts: 1000 },
 					{ type: "say", say: "user_feedback", text: "", ts: 2000 },
 					{ type: "say", say: "user_feedback", text: "   ", ts: 3000 },
@@ -715,7 +715,7 @@ describe("ChatTextArea", () => {
 						apiProvider: "anthropic",
 					},
 					taskHistory: [],
-					clineMessages: clineMessagesWithEmpty,
+					meowCodeMessages: meowCodeMessagesWithEmpty,
 					cwd: "/test/workspace",
 				})
 
@@ -749,7 +749,7 @@ describe("ChatTextArea", () => {
 						apiProvider: "anthropic",
 					},
 					taskHistory: mockTaskHistory,
-					clineMessages: [], // No conversation messages
+					meowCodeMessages: [], // No conversation messages
 					cwd: "/test/workspace",
 				})
 
@@ -786,7 +786,7 @@ describe("ChatTextArea", () => {
 						{ task: "Task 1", workspace: "/test/workspace" },
 						{ task: "Task 2", workspace: "/test/workspace" },
 					],
-					clineMessages: [],
+					meowCodeMessages: [],
 					cwd: "/test/workspace",
 				})
 
@@ -806,7 +806,7 @@ describe("ChatTextArea", () => {
 						apiProvider: "anthropic",
 					},
 					taskHistory: [],
-					clineMessages: [
+					meowCodeMessages: [
 						{ type: "say", say: "user_feedback", text: "Message 1", ts: 1000 },
 						{ type: "say", say: "user_feedback", text: "Message 2", ts: 2000 },
 					],

@@ -10,7 +10,7 @@ import { appendImages } from "@src/utils/imageUtils"
 import { getCostBreakdownIfNeeded } from "@src/utils/costFormatting"
 import { batchConsecutive } from "@src/utils/batchConsecutive"
 
-import type { ClineAsk, ClineSayTool, ClineMessage, ExtensionMessage, AudioType } from "@meow-code/types"
+import type { MeowCodeAsk, MeowCodeSayTool, MeowCodeMessage, ExtensionMessage, AudioType } from "@meow-code/types"
 import { isRetiredProvider } from "@meow-code/types"
 
 import { findLast } from "@roo/array"
@@ -71,7 +71,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	const modeShortcutText = `${isMac ? "⌘" : "Ctrl"} + . ${t("chat:forNextMode")}, ${isMac ? "⌘" : "Ctrl"} + Shift + . ${t("chat:forPreviousMode")}`
 
 	const {
-		clineMessages: messages,
+		meowCodeMessages: messages,
 		currentTaskItem,
 		currentTaskTodos,
 		taskHistory,
@@ -105,7 +105,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 	// Leaving this less safe version here since if the first message is not a
 	// task, then the extension is in a bad state and needs to be debugged (see
-	// Cline.abort).
+	// MeowCode.abort).
 	const task = useMemo(() => messages.at(0), [messages])
 
 	const latestTodos = useMemo(() => {
@@ -139,7 +139,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	// let us know when an ask comes in and handle it, but by the time
 	// handleMessage is called, the last message might not be the ask anymore
 	// (it could be a say that followed).
-	const [clineAsk, setClineAsk] = useState<ClineAsk | undefined>(undefined)
+	const [meowCodeAsk, setMeowCodeAsk] = useState<MeowCodeAsk | undefined>(undefined)
 	const [enableButtons, setEnableButtons] = useState<boolean>(false)
 	const [primaryButtonText, setPrimaryButtonText] = useState<string | undefined>(undefined)
 	const [secondaryButtonText, setSecondaryButtonText] = useState<string | undefined>(undefined)
@@ -175,10 +175,10 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		>
 	>(new Map())
 
-	const clineAskRef = useRef(clineAsk)
+	const meowCodeAskRef = useRef(meowCodeAsk)
 	useEffect(() => {
-		clineAskRef.current = clineAsk
-	}, [clineAsk])
+		meowCodeAskRef.current = meowCodeAsk
+	}, [meowCodeAsk])
 
 	// Keep inputValueRef in sync with inputValue state
 	useEffect(() => {
@@ -187,8 +187,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 	// Compute whether auto-approval is paused (user is typing in a followup)
 	const isFollowUpAutoApprovalPaused = useMemo(() => {
-		return !!(inputValue && inputValue.trim().length > 0 && clineAsk === "followup")
-	}, [inputValue, clineAsk])
+		return !!(inputValue && inputValue.trim().length > 0 && meowCodeAsk === "followup")
+	}, [inputValue, meowCodeAsk])
 
 	// Cancel auto-approval timeout when user starts typing
 	useEffect(() => {
@@ -266,7 +266,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 						case "api_req_failed":
 							playSound("progress_loop")
 							setSendingDisabled(true)
-							setClineAsk("api_req_failed")
+							setMeowCodeAsk("api_req_failed")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:retry.title"))
 							setSecondaryButtonText(t("chat:startNewTask.title"))
@@ -274,14 +274,14 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 						case "mistake_limit_reached":
 							playSound("progress_loop")
 							setSendingDisabled(false)
-							setClineAsk("mistake_limit_reached")
+							setMeowCodeAsk("mistake_limit_reached")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:proceedAnyways.title"))
 							setSecondaryButtonText(t("chat:startNewTask.title"))
 							break
 						case "followup":
 							setSendingDisabled(isPartial)
-							setClineAsk("followup")
+							setMeowCodeAsk("followup")
 							// setting enable buttons to `false` would trigger a focus grab when
 							// the text area is enabled which is undesirable.
 							// We have no buttons for this tool, so no problem having them "enabled"
@@ -292,9 +292,9 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							break
 						case "tool":
 							setSendingDisabled(isPartial)
-							setClineAsk("tool")
+							setMeowCodeAsk("tool")
 							setEnableButtons(!isPartial)
-							const tool = JSON.parse(lastMessage.text || "{}") as ClineSayTool
+							const tool = JSON.parse(lastMessage.text || "{}") as MeowCodeSayTool
 							switch (tool.tool) {
 								case "editedExistingFile":
 								case "appliedDiff":
@@ -342,21 +342,21 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							break
 						case "command":
 							setSendingDisabled(isPartial)
-							setClineAsk("command")
+							setMeowCodeAsk("command")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:runCommand.title"))
 							setSecondaryButtonText(t("chat:reject.title"))
 							break
 						case "command_output":
 							setSendingDisabled(false)
-							setClineAsk("command_output")
+							setMeowCodeAsk("command_output")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:proceedWhileRunning.title"))
 							setSecondaryButtonText(t("chat:killCommand.title"))
 							break
 						case "use_mcp_server":
 							setSendingDisabled(isPartial)
-							setClineAsk("use_mcp_server")
+							setMeowCodeAsk("use_mcp_server")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:approve.title"))
 							setSecondaryButtonText(t("chat:reject.title"))
@@ -368,14 +368,14 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 								playSound("celebration")
 							}
 							setSendingDisabled(isPartial)
-							setClineAsk("completion_result")
+							setMeowCodeAsk("completion_result")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:startNewTask.title"))
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
 							setSendingDisabled(false)
-							setClineAsk("resume_task")
+							setMeowCodeAsk("resume_task")
 							setEnableButtons(true)
 							// For completed subtasks, show "Start New Task" instead of "Resume"
 							// A subtask is considered completed if:
@@ -397,7 +397,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							break
 						case "resume_completed_task":
 							setSendingDisabled(false)
-							setClineAsk("resume_completed_task")
+							setMeowCodeAsk("resume_completed_task")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:startNewTask.title"))
 							setSecondaryButtonText(undefined)
@@ -422,7 +422,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							// images the user has pasted while the chat is in progress.
 							// Images are already cleared in the appropriate user-action
 							// handlers (handleSendMessage, handlePrimaryButtonClick, etc.).
-							setClineAsk(undefined)
+							setMeowCodeAsk(undefined)
 							setEnableButtons(false)
 							setPrimaryButtonText(undefined)
 							setSecondaryButtonText(undefined)
@@ -443,7 +443,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 	// Update button text when messages change (e.g., completion_result is added) for subtasks in resume_task state
 	useEffect(() => {
-		if (clineAsk === "resume_task" && currentTaskItem?.parentTaskId) {
+		if (meowCodeAsk === "resume_task" && currentTaskItem?.parentTaskId) {
 			const hasCompletionResult = messages.some(
 				(msg) => msg.ask === "completion_result" || msg.say === "completion_result",
 			)
@@ -452,12 +452,12 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				setSecondaryButtonText(undefined)
 			}
 		}
-	}, [clineAsk, currentTaskItem?.parentTaskId, messages, t])
+	}, [meowCodeAsk, currentTaskItem?.parentTaskId, messages, t])
 
 	useEffect(() => {
 		if (messages.length === 0) {
 			setSendingDisabled(false)
-			setClineAsk(undefined)
+			setMeowCodeAsk(undefined)
 			setEnableButtons(false)
 			setPrimaryButtonText(undefined)
 			setSecondaryButtonText(undefined)
@@ -505,8 +505,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	}, [])
 
 	const isStreaming = useMemo(() => {
-		// Checking clineAsk isn't enough since messages effect may be called
-		// again for a tool for example, set clineAsk to its value, and if the
+		// Checking meowCodeAsk isn't enough since messages effect may be called
+		// again for a tool for example, set meowCodeAsk to its value, and if the
 		// next message is not an ask then it doesn't reset. This is likely due
 		// to how much more often we're updating messages as compared to before,
 		// and should be resolved with optimizations as it's likely a rendering
@@ -515,7 +515,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		const isLastAsk = !!modifiedMessages.at(-1)?.ask
 
 		const isToolCurrentlyAsking =
-			isLastAsk && clineAsk !== undefined && enableButtons && primaryButtonText !== undefined
+			isLastAsk && meowCodeAsk !== undefined && enableButtons && primaryButtonText !== undefined
 
 		if (isToolCurrentlyAsking) {
 			return false
@@ -528,7 +528,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		} else {
 			const lastApiReqStarted = findLast(
 				modifiedMessages,
-				(message: ClineMessage) => message.say === "api_req_started",
+				(message: MeowCodeMessage) => message.say === "api_req_started",
 			)
 
 			if (
@@ -546,10 +546,10 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 
 		return false
-	}, [modifiedMessages, clineAsk, enableButtons, primaryButtonText])
+	}, [modifiedMessages, meowCodeAsk, enableButtons, primaryButtonText])
 
 	const markFollowUpAsAnswered = useCallback(() => {
-		const lastFollowUpMessage = messagesRef.current.findLast((msg: ClineMessage) => msg.ask === "followup")
+		const lastFollowUpMessage = messagesRef.current.findLast((msg: MeowCodeMessage) => msg.ask === "followup")
 		if (lastFollowUpMessage) {
 			setCurrentFollowUpTs(lastFollowUpMessage.ts)
 		}
@@ -568,7 +568,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		setInputValue("")
 		setSendingDisabled(true)
 		setSelectedImages([])
-		setClineAsk(undefined)
+		setMeowCodeAsk(undefined)
 		setEnableButtons(false)
 		// Do not reset mode here as it should persist.
 		// setPrimaryButtonText(undefined)
@@ -601,7 +601,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					sendingDisabled ||
 					isStreaming ||
 					messageQueue.length > 0 ||
-					clineAskRef.current === "command_output"
+					meowCodeAskRef.current === "command_output"
 				) {
 					try {
 						console.log("queueMessage", text, images)
@@ -622,14 +622,14 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 				if (messagesRef.current.length === 0) {
 					vscode.postMessage({ type: "newTask", text, images })
-				} else if (clineAskRef.current) {
-					if (clineAskRef.current === "followup") {
+				} else if (meowCodeAskRef.current) {
+					if (meowCodeAskRef.current === "followup") {
 						markFollowUpAsAnswered()
 					}
 
-					// Use clineAskRef.current
+					// Use meowCodeAskRef.current
 					switch (
-						clineAskRef.current // Use clineAskRef.current
+						meowCodeAskRef.current // Use meowCodeAskRef.current
 					) {
 						case "followup":
 						case "tool":
@@ -663,7 +663,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			isStreaming,
 			messageQueue.length,
 			apiConfiguration?.apiProvider,
-		], // messagesRef and clineAskRef are stable
+		], // messagesRef and meowCodeAskRef are stable
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -706,7 +706,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 	}, [inputValue, selectedImages])
 
-	// This logic depends on the useEffect[messages] above to set clineAsk,
+	// This logic depends on the useEffect[messages] above to set meowCodeAsk,
 	// after which buttons are shown and we then send an askResponse to the
 	// extension.
 	const handlePrimaryButtonClick = useCallback(
@@ -716,7 +716,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 			const trimmedInput = text?.trim()
 
-			switch (clineAsk) {
+			switch (meowCodeAsk) {
 				case "api_req_failed":
 				case "command":
 				case "tool":
@@ -775,12 +775,12 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			}
 
 			setSendingDisabled(true)
-			setClineAsk(undefined)
+			setMeowCodeAsk(undefined)
 			setEnableButtons(false)
 			setPrimaryButtonText(undefined)
 			setSecondaryButtonText(undefined)
 		},
-		[clineAsk, startNewTask, currentTaskItem?.parentTaskId],
+		[meowCodeAsk, startNewTask, currentTaskItem?.parentTaskId],
 	)
 
 	const handleSecondaryButtonClick = useCallback(
@@ -796,7 +796,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				return
 			}
 
-			switch (clineAsk) {
+			switch (meowCodeAsk) {
 				case "api_req_failed":
 				case "mistake_limit_reached":
 				case "resume_task":
@@ -826,10 +826,10 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					break
 			}
 			setSendingDisabled(true)
-			setClineAsk(undefined)
+			setMeowCodeAsk(undefined)
 			setEnableButtons(false)
 		},
-		[clineAsk, startNewTask, isStreaming, setDidClickCancel],
+		[meowCodeAsk, startNewTask, isStreaming, setDidClickCancel],
 	)
 
 	const { info: model } = useSelectedModel(apiConfiguration)
@@ -976,7 +976,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			}
 
 			if (everVisibleMessagesTsRef.current.has(message.ts)) {
-				const alwaysHiddenOnceProcessedAsk: ClineAsk[] = [
+				const alwaysHiddenOnceProcessedAsk: MeowCodeAsk[] = [
 					"api_req_failed",
 					"resume_task",
 					"resume_completed_task",
@@ -1031,7 +1031,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		const viewportStart = Math.max(0, newVisibleMessages.length - 100)
 		newVisibleMessages
 			.slice(viewportStart)
-			.forEach((msg: ClineMessage) => everVisibleMessagesTsRef.current.set(msg.ts, true))
+			.forEach((msg: MeowCodeMessage) => everVisibleMessagesTsRef.current.set(msg.ts, true))
 
 		return newVisibleMessages
 	}, [modifiedMessages])
@@ -1039,9 +1039,9 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	useEffect(() => {
 		const cleanupInterval = setInterval(() => {
 			const cache = everVisibleMessagesTsRef.current
-			const currentMessageIds = new Set(modifiedMessages.map((m: ClineMessage) => m.ts))
+			const currentMessageIds = new Set(modifiedMessages.map((m: MeowCodeMessage) => m.ts))
 			const viewportMessages = visibleMessages.slice(Math.max(0, visibleMessages.length - 100))
-			const viewportMessageIds = new Set(viewportMessages.map((m: ClineMessage) => m.ts))
+			const viewportMessageIds = new Set(viewportMessages.map((m: MeowCodeMessage) => m.ts))
 
 			cache.forEach((_value: boolean, key: number) => {
 				if (!currentMessageIds.has(key) && !viewportMessageIds.has(key)) {
@@ -1097,10 +1097,10 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	}, [isStreaming, lastMessage, wasStreaming, messages.length])
 
 	const groupedMessages = useMemo(() => {
-		const filtered: ClineMessage[] = visibleMessages
+		const filtered: MeowCodeMessage[] = visibleMessages
 
 		// Helper to check if a message is a read_file ask that should be batched
-		const isReadFileAsk = (msg: ClineMessage): boolean => {
+		const isReadFileAsk = (msg: MeowCodeMessage): boolean => {
 			if (msg.type !== "ask" || msg.ask !== "tool") return false
 			try {
 				const tool = JSON.parse(msg.text || "{}")
@@ -1111,7 +1111,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 
 		// Helper to check if a message is a list_files ask that should be batched
-		const isListFilesAsk = (msg: ClineMessage): boolean => {
+		const isListFilesAsk = (msg: MeowCodeMessage): boolean => {
 			if (msg.type !== "ask" || msg.ask !== "tool") return false
 			try {
 				const tool = JSON.parse(msg.text || "{}")
@@ -1133,7 +1133,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		])
 
 		// Helper to check if a message is a file-edit ask that should be batched
-		const isEditFileAsk = (msg: ClineMessage): boolean => {
+		const isEditFileAsk = (msg: MeowCodeMessage): boolean => {
 			if (msg.type !== "ask" || msg.ask !== "tool") return false
 			try {
 				const tool = JSON.parse(msg.text || "{}")
@@ -1144,7 +1144,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 
 		// Synthesize a batch of consecutive read_file asks into a single message
-		const synthesizeReadFileBatch = (batch: ClineMessage[]): ClineMessage => {
+		const synthesizeReadFileBatch = (batch: MeowCodeMessage[]): MeowCodeMessage => {
 			const batchFiles = batch.map((batchMsg) => {
 				try {
 					const tool = JSON.parse(batchMsg.text || "{}")
@@ -1173,7 +1173,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 
 		// Synthesize a batch of consecutive list_files asks into a single message
-		const synthesizeListFilesBatch = (batch: ClineMessage[]): ClineMessage => {
+		const synthesizeListFilesBatch = (batch: MeowCodeMessage[]): MeowCodeMessage => {
 			const batchDirs = batch.map((batchMsg) => {
 				try {
 					const tool = JSON.parse(batchMsg.text || "{}")
@@ -1201,7 +1201,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 
 		// Synthesize a batch of consecutive file-edit asks into a single message
-		const synthesizeEditFileBatch = (batch: ClineMessage[]): ClineMessage => {
+		const synthesizeEditFileBatch = (batch: MeowCodeMessage[]): MeowCodeMessage => {
 			const batchDiffs = batch.map((batchMsg) => {
 				try {
 					const tool = JSON.parse(batchMsg.text || "{}")
@@ -1240,7 +1240,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				say: "condense_context",
 				ts: Date.now(),
 				partial: true,
-			} as ClineMessage)
+			} as MeowCodeMessage)
 		}
 		return result
 	}, [isCondensing, visibleMessages])
@@ -1336,7 +1336,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			}
 
 			// Mark the current follow-up question as answered when a suggestion is clicked
-			if (clineAsk === "followup" && !event?.shiftKey) {
+			if (meowCodeAsk === "followup" && !event?.shiftKey) {
 				markFollowUpAsAnswered()
 			}
 
@@ -1364,7 +1364,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				setInputValue(preservedInput)
 			}
 		},
-		[handleSendMessage, setInputValue, switchToMode, alwaysAllowModeSwitch, clineAsk, markFollowUpAsAnswered],
+		[handleSendMessage, setInputValue, switchToMode, alwaysAllowModeSwitch, meowCodeAsk, markFollowUpAsAnswered],
 	)
 
 	const handleBatchFileResponse = useCallback((response: { [key: string]: boolean }) => {
@@ -1379,7 +1379,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	}, [])
 
 	const itemContent = useCallback(
-		(index: number, messageOrGroup: ClineMessage) => {
+		(index: number, messageOrGroup: MeowCodeMessage) => {
 			const hasCheckpoint = modifiedMessages.some((message) => message.say === "checkpoint_saved")
 
 			// regular message
@@ -1482,7 +1482,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 			// Special case: during command_output, queue the message instead of
 			// triggering the primary button action (which would lose the message)
-			if (clineAskRef.current === "command_output" && hasInput) {
+			if (meowCodeAskRef.current === "command_output" && hasInput) {
 				vscode.postMessage({ type: "queueMessage", text: inputValue.trim(), images: selectedImages })
 				setInputValue("")
 				setSelectedImages([])
@@ -1602,7 +1602,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							atBottomThreshold={10}
 						/>
 					</div>
-					<FileChangesPanel clineMessages={messages} />
+					<FileChangesPanel meowCodeMessages={messages} />
 					{areButtonsVisible && (
 						<div
 							className={`flex h-9 items-center mb-1 px-[15px] ${
@@ -1711,7 +1711,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				inputValue={inputValue}
 				setInputValue={setInputValue}
 				sendingDisabled={sendingDisabled || isProfileDisabled}
-				selectApiConfigDisabled={sendingDisabled && clineAsk !== "api_req_failed"}
+				selectApiConfigDisabled={sendingDisabled && meowCodeAsk !== "api_req_failed"}
 				placeholderText={placeholderText}
 				selectedImages={selectedImages}
 				setSelectedImages={setSelectedImages}

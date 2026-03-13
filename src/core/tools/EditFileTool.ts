@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
 
-import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
+import { type MeowCodeSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
 
 import { getReadablePath } from "../../utils/path"
 import { isPathOutsideWorkspace } from "../../utils/pathUtils"
@@ -159,7 +159,7 @@ export class EditFileTool extends BaseTool<"edit_file"> {
 			const absolutePath = path.resolve(task.cwd, relPath)
 			const isOutsideWorkspace = isPathOutsideWorkspace(absolutePath)
 
-			const sharedMessageProps: ClineSayTool = {
+			const sharedMessageProps: MeowCodeSayTool = {
 				tool: "appliedDiff",
 				path: getReadablePath(task.cwd, relPath),
 				diff: operationPreviewForErrorHandling,
@@ -401,7 +401,7 @@ export class EditFileTool extends BaseTool<"edit_file"> {
 			const diffStats = computeDiffStats(sanitizedDiff) || undefined
 			const isOutsideWorkspace = isPathOutsideWorkspace(absolutePath)
 
-			const sharedMessageProps: ClineSayTool = {
+			const sharedMessageProps: MeowCodeSayTool = {
 				tool: isNewFile ? "newFileCreated" : "appliedDiff",
 				path: getReadablePath(task.cwd, relPath),
 				diff: sanitizedDiff,
@@ -413,7 +413,7 @@ export class EditFileTool extends BaseTool<"edit_file"> {
 				content: sanitizedDiff,
 				isProtected: isWriteProtected,
 				diffStats,
-			} satisfies ClineSayTool)
+			} satisfies MeowCodeSayTool)
 
 			// Show diff view if focus disruption prevention is disabled
 			if (!isPreventFocusDisruptionEnabled) {
@@ -514,7 +514,7 @@ export class EditFileTool extends BaseTool<"edit_file"> {
 		const absolutePath = path.resolve(task.cwd, relPath)
 		const isOutsideWorkspace = isPathOutsideWorkspace(absolutePath)
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "appliedDiff",
 			path: getReadablePath(task.cwd, relPath),
 			diff: operationPreview,

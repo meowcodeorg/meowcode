@@ -9,7 +9,7 @@ import * as vscode from "vscode"
 import {
 	type Language,
 	type GlobalState,
-	type ClineMessage,
+	type MeowCodeMessage,
 	type TelemetrySetting,
 	type ModelRecord,
 	type Command as SlashCommand,
@@ -27,7 +27,7 @@ import { TelemetryService } from "@meow-code/telemetry"
 import { type ApiMessage } from "../task-persistence/apiMessages"
 import { saveTaskMessages } from "../task-persistence"
 
-import { ClineProvider } from "./ClineProvider"
+import { MeowCodeProvider } from "./MeowCodeProvider"
 import { handleCheckpointRestoreOperation } from "./checkpointRestoreHandler"
 import { generateErrorDiagnostics } from "./diagnosticsHandler"
 import {
@@ -88,7 +88,7 @@ import {
 } from "./worktree"
 
 export const webviewMessageHandler = async (
-	provider: ClineProvider,
+	provider: MeowCodeProvider,
 	message: WebviewMessage,
 	marketplaceManager?: MarketplaceManager,
 ) => {
@@ -192,12 +192,12 @@ export const webviewMessageHandler = async (
 	 * this function prefers non-summary messages to ensure user operations
 	 * target the intended message rather than the summary.
 	 */
-	const findMessageIndices = (messageTs: number, currentCline: any) => {
+	const findMessageIndices = (messageTs: number, currentMeowCode: any) => {
 		// Find the exact message by timestamp, not the first one after a cutoff
-		const messageIndex = currentCline.clineMessages.findIndex((msg: ClineMessage) => msg.ts === messageTs)
+		const messageIndex = currentMeowCode.meowCodeMessages.findIndex((msg: MeowCodeMessage) => msg.ts === messageTs)
 
 		// Find all matching API messages by timestamp
-		const allApiMatches = currentCline.apiConversationHistory
+		const allApiMatches = currentMeowCode.apiConversationHistory
 			.map((msg: ApiMessage, idx: number) => ({ msg, idx }))
 			.filter(({ msg }: { msg: ApiMessage }) => msg.ts === messageTs)
 
@@ -212,9 +212,9 @@ export const webviewMessageHandler = async (
 	 * Fallback: find first API history index at or after a timestamp.
 	 * Used when the exact user message isn't present in apiConversationHistory (e.g., after condense).
 	 */
-	const findFirstApiIndexAtOrAfter = (ts: number, currentCline: any) => {
+	const findFirstApiIndexAtOrAfter = (ts: number, currentMeowCode: any) => {
 		if (typeof ts !== "number") return -1
-		return currentCline.apiConversationHistory.findIndex(
+		return currentMeowCode.apiConversationHistory.findIndex(
 			(msg: ApiMessage) => typeof msg?.ts === "number" && (msg.ts as number) >= ts,
 		)
 	}
@@ -224,19 +224,19 @@ export const webviewMessageHandler = async (
 	 */
 	const handleDeleteOperation = async (messageTs: number): Promise<void> => {
 		// Check if there's a checkpoint before this message
-		const currentCline = provider.getCurrentTask()
+		const currentMeowCode = provider.getCurrentTask()
 		let hasCheckpoint = false
 
-		if (!currentCline) {
+		if (!currentMeowCode) {
 			await vscode.window.showErrorMessage(t("common:errors.message.no_active_task_to_delete"))
 			return
 		}
 
-		const { messageIndex } = findMessageIndices(messageTs, currentCline)
+		const { messageIndex } = findMessageIndices(messageTs, currentMeowCode)
 
 		if (messageIndex !== -1) {
 			// Find the last checkpoint before this message
-			const checkpoints = currentCline.clineMessages.filter(
+			const checkpoints = currentMeowCode.meowCodeMessages.filter(
 				(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 			)
 			hasCheckpoint = checkpoints.length > 0
@@ -254,18 +254,18 @@ export const webviewMessageHandler = async (
 	 * Handles confirmed message deletion from webview dialog
 	 */
 	const handleDeleteMessageConfirm = async (messageTs: number, restoreCheckpoint?: boolean): Promise<void> => {
-		const currentCline = provider.getCurrentTask()
-		if (!currentCline) {
-			console.error("[handleDeleteMessageConfirm] No current cline available")
+		const currentMeowCode = provider.getCurrentTask()
+		if (!currentMeowCode) {
+			console.error("[handleDeleteMessageConfirm] No current meowCode available")
 			return
 		}
 
-		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentCline)
+		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentMeowCode)
 		// Determine API truncation index with timestamp fallback if exact match not found
 		let apiIndexToUse = apiConversationHistoryIndex
-		const tsThreshold = currentCline.clineMessages[messageIndex]?.ts
+		const tsThreshold = currentMeowCode.meowCodeMessages[messageIndex]?.ts
 		if (apiIndexToUse === -1 && typeof tsThreshold === "number") {
-			apiIndexToUse = findFirstApiIndexAtOrAfter(tsThreshold, currentCline)
+			apiIndexToUse = findFirstApiIndexAtOrAfter(tsThreshold, currentMeowCode)
 		}
 
 		if (messageIndex === -1) {
@@ -274,12 +274,12 @@ export const webviewMessageHandler = async (
 		}
 
 		try {
-			const targetMessage = currentCline.clineMessages[messageIndex]
+			const targetMessage = currentMeowCode.meowCodeMessages[messageIndex]
 
 			// If checkpoint restoration is requested, find and restore to the last checkpoint before this message
 			if (restoreCheckpoint) {
 				// Find the last checkpoint before this message
-				const checkpoints = currentCline.clineMessages.filter(
+				const checkpoints = currentMeowCode.meowCodeMessages.filter(
 					(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 				)
 
@@ -288,7 +288,7 @@ export const webviewMessageHandler = async (
 				if (nextCheckpoint && nextCheckpoint.text) {
 					await handleCheckpointRestoreOperation({
 						provider,
-						currentCline,
+						currentMeowCode,
 						messageTs: targetMessage.ts!,
 						messageIndex,
 						checkpoint: { hash: nextCheckpoint.text },
@@ -304,27 +304,27 @@ export const webviewMessageHandler = async (
 				// Store checkpoints from messages that will be preserved
 				const preservedCheckpoints = new Map<number, any>()
 				for (let i = 0; i < messageIndex; i++) {
-					const msg = currentCline.clineMessages[i]
+					const msg = currentMeowCode.meowCodeMessages[i]
 					if (msg?.checkpoint && msg.ts) {
 						preservedCheckpoints.set(msg.ts, msg.checkpoint)
 					}
 				}
 
 				// Delete this message and all subsequent messages using MessageManager
-				await currentCline.messageManager.rewindToTimestamp(targetMessage.ts!, { includeTargetMessage: false })
+				await currentMeowCode.messageManager.rewindToTimestamp(targetMessage.ts!, { includeTargetMessage: false })
 
 				// Restore checkpoint associations for preserved messages
 				for (const [ts, checkpoint] of preservedCheckpoints) {
-					const msgIndex = currentCline.clineMessages.findIndex((msg) => msg.ts === ts)
+					const msgIndex = currentMeowCode.meowCodeMessages.findIndex((msg) => msg.ts === ts)
 					if (msgIndex !== -1) {
-						currentCline.clineMessages[msgIndex].checkpoint = checkpoint
+						currentMeowCode.meowCodeMessages[msgIndex].checkpoint = checkpoint
 					}
 				}
 
 				// Save the updated messages with restored checkpoints
 				await saveTaskMessages({
-					messages: currentCline.clineMessages,
-					taskId: currentCline.taskId,
+					messages: currentMeowCode.meowCodeMessages,
+					taskId: currentMeowCode.taskId,
 					globalStoragePath: provider.contextProxy.globalStorageUri.fsPath,
 				})
 
@@ -346,22 +346,22 @@ export const webviewMessageHandler = async (
 	 */
 	const handleEditOperation = async (messageTs: number, editedContent: string, images?: string[]): Promise<void> => {
 		// Check if there's a checkpoint before this message
-		const currentCline = provider.getCurrentTask()
+		const currentMeowCode = provider.getCurrentTask()
 		let hasCheckpoint = false
-		if (currentCline) {
-			const { messageIndex } = findMessageIndices(messageTs, currentCline)
+		if (currentMeowCode) {
+			const { messageIndex } = findMessageIndices(messageTs, currentMeowCode)
 			if (messageIndex !== -1) {
 				// Find the last checkpoint before this message
-				const checkpoints = currentCline.clineMessages.filter(
+				const checkpoints = currentMeowCode.meowCodeMessages.filter(
 					(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 				)
 
 				hasCheckpoint = checkpoints.length > 0
 			} else {
-				console.log("[webviewMessageHandler] Edit - Message not found in clineMessages!")
+				console.log("[webviewMessageHandler] Edit - Message not found in meowCodeMessages!")
 			}
 		} else {
-			console.log("[webviewMessageHandler] Edit - No currentCline available!")
+			console.log("[webviewMessageHandler] Edit - No currentMeowCode available!")
 		}
 
 		// Send message to webview to show edit confirmation dialog
@@ -383,14 +383,14 @@ export const webviewMessageHandler = async (
 		restoreCheckpoint?: boolean,
 		images?: string[],
 	): Promise<void> => {
-		const currentCline = provider.getCurrentTask()
-		if (!currentCline) {
-			console.error("[handleEditMessageConfirm] No current cline available")
+		const currentMeowCode = provider.getCurrentTask()
+		if (!currentMeowCode) {
+			console.error("[handleEditMessageConfirm] No current meowCode available")
 			return
 		}
 
 		// Use findMessageIndices to find messages based on timestamp
-		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentCline)
+		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentMeowCode)
 
 		if (messageIndex === -1) {
 			const errorMessage = t("common:errors.message.message_not_found", { messageTs })
@@ -400,12 +400,12 @@ export const webviewMessageHandler = async (
 		}
 
 		try {
-			const targetMessage = currentCline.clineMessages[messageIndex]
+			const targetMessage = currentMeowCode.meowCodeMessages[messageIndex]
 
 			// If checkpoint restoration is requested, find and restore to the last checkpoint before this message
 			if (restoreCheckpoint) {
 				// Find the last checkpoint before this message
-				const checkpoints = currentCline.clineMessages.filter(
+				const checkpoints = currentMeowCode.meowCodeMessages.filter(
 					(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 				)
 
@@ -414,7 +414,7 @@ export const webviewMessageHandler = async (
 				if (nextCheckpoint && nextCheckpoint.text) {
 					await handleCheckpointRestoreOperation({
 						provider,
-						currentCline,
+						currentMeowCode,
 						messageTs: targetMessage.ts!,
 						messageIndex,
 						checkpoint: { hash: nextCheckpoint.text },
@@ -443,13 +443,13 @@ export const webviewMessageHandler = async (
 
 			// Find the nearest preceding user message to ensure we replace the original, not just the assistant reply
 			for (let i = messageIndex; i >= 0; i--) {
-				const m = currentCline.clineMessages[i]
+				const m = currentMeowCode.meowCodeMessages[i]
 				if (m?.say === "user_feedback") {
 					deleteFromMessageIndex = i
 					// Align API history truncation to the same user message timestamp if present
 					const userTs = m.ts
 					if (typeof userTs === "number") {
-						const apiIdx = currentCline.apiConversationHistory.findIndex(
+						const apiIdx = currentMeowCode.apiConversationHistory.findIndex(
 							(am: ApiMessage) => am.ts === userTs,
 						)
 						if (apiIdx !== -1) {
@@ -462,46 +462,46 @@ export const webviewMessageHandler = async (
 
 			// Timestamp fallback for API history when exact user message isn't present
 			if (deleteFromApiIndex === -1) {
-				const tsThresholdForEdit = currentCline.clineMessages[deleteFromMessageIndex]?.ts
+				const tsThresholdForEdit = currentMeowCode.meowCodeMessages[deleteFromMessageIndex]?.ts
 				if (typeof tsThresholdForEdit === "number") {
-					deleteFromApiIndex = findFirstApiIndexAtOrAfter(tsThresholdForEdit, currentCline)
+					deleteFromApiIndex = findFirstApiIndexAtOrAfter(tsThresholdForEdit, currentMeowCode)
 				}
 			}
 
 			// Store checkpoints from messages that will be preserved
 			const preservedCheckpoints = new Map<number, any>()
 			for (let i = 0; i < deleteFromMessageIndex; i++) {
-				const msg = currentCline.clineMessages[i]
+				const msg = currentMeowCode.meowCodeMessages[i]
 				if (msg?.checkpoint && msg.ts) {
 					preservedCheckpoints.set(msg.ts, msg.checkpoint)
 				}
 			}
 
 			// Delete the original (user) message and all subsequent messages using MessageManager
-			const rewindTs = currentCline.clineMessages[deleteFromMessageIndex]?.ts
+			const rewindTs = currentMeowCode.meowCodeMessages[deleteFromMessageIndex]?.ts
 			if (rewindTs) {
-				await currentCline.messageManager.rewindToTimestamp(rewindTs, { includeTargetMessage: false })
+				await currentMeowCode.messageManager.rewindToTimestamp(rewindTs, { includeTargetMessage: false })
 			}
 
 			// Restore checkpoint associations for preserved messages
 			for (const [ts, checkpoint] of preservedCheckpoints) {
-				const msgIndex = currentCline.clineMessages.findIndex((msg) => msg.ts === ts)
+				const msgIndex = currentMeowCode.meowCodeMessages.findIndex((msg) => msg.ts === ts)
 				if (msgIndex !== -1) {
-					currentCline.clineMessages[msgIndex].checkpoint = checkpoint
+					currentMeowCode.meowCodeMessages[msgIndex].checkpoint = checkpoint
 				}
 			}
 
 			// Save the updated messages with restored checkpoints
 			await saveTaskMessages({
-				messages: currentCline.clineMessages,
-				taskId: currentCline.taskId,
+				messages: currentMeowCode.meowCodeMessages,
+				taskId: currentMeowCode.taskId,
 				globalStoragePath: provider.contextProxy.globalStorageUri.fsPath,
 			})
 
 			// Update the UI to reflect the deletion
 			await provider.postStateToWebview()
 
-			await currentCline.submitUserMessage(editedContent, images)
+			await currentMeowCode.submitUserMessage(editedContent, images)
 		} catch (error) {
 			console.error("Error in edit message:", error)
 			vscode.window.showErrorMessage(
@@ -614,7 +614,7 @@ export const webviewMessageHandler = async (
 			provider.isViewLaunched = true
 			break
 		case "newTask":
-			// Initializing new instance of Cline will make sure that any
+			// Initializing new instance of MeowCode will make sure that any
 			// agentically running promises in old instance don't affect our new
 			// task. This essentially creates a fresh slate for the new task.
 			try {
@@ -1583,7 +1583,7 @@ export const webviewMessageHandler = async (
 						includeTaskHistoryInEnhance,
 					} = state
 
-					const currentCline = provider.getCurrentTask()
+					const currentMeowCode = provider.getCurrentTask()
 
 					const result = await MessageEnhancer.enhanceMessage({
 						text: message.text,
@@ -1592,12 +1592,12 @@ export const webviewMessageHandler = async (
 						listApiConfigMeta,
 						enhancementApiConfigId,
 						includeTaskHistoryInEnhance,
-						currentClineMessages: currentCline?.clineMessages,
+						currentMeowCodeMessages: currentMeowCode?.meowCodeMessages,
 						providerSettingsManager: provider.providerSettingsManager,
 					})
 
 					if (result.success && result.enhancedText) {
-						MessageEnhancer.captureTelemetry(currentCline?.taskId, includeTaskHistoryInEnhance)
+						MessageEnhancer.captureTelemetry(currentMeowCode?.taskId, includeTaskHistoryInEnhance)
 						await provider.postMessageToWebview({ type: "enhancedPrompt", text: result.enhancedText })
 					} else {
 						throw new Error(result.error || "Unknown error")

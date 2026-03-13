@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
 
-import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
+import { type MeowCodeSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
 
 import { getReadablePath } from "../../utils/path"
 import { isPathOutsideWorkspace } from "../../utils/pathUtils"
@@ -181,7 +181,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 		const sanitizedDiff = sanitizeUnifiedDiff(diff || "")
 		const diffStats = computeDiffStats(sanitizedDiff) || undefined
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "appliedDiff",
 			path: getReadablePath(task.cwd, relPath),
 			diff: sanitizedDiff,
@@ -193,7 +193,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 			content: sanitizedDiff,
 			isProtected: isWriteProtected,
 			diffStats,
-		} satisfies ClineSayTool)
+		} satisfies MeowCodeSayTool)
 
 		// Show diff view if focus disruption prevention is disabled
 		if (!isPreventFocusDisruptionEnabled) {
@@ -252,7 +252,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 
 		const isOutsideWorkspace = isPathOutsideWorkspace(absolutePath)
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "appliedDiff",
 			path: getReadablePath(task.cwd, relPath),
 			diff: `File will be deleted: ${relPath}`,
@@ -263,7 +263,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 			...sharedMessageProps,
 			content: `Delete file: ${relPath}`,
 			isProtected: isWriteProtected,
-		} satisfies ClineSayTool)
+		} satisfies MeowCodeSayTool)
 
 		const didApprove = await askApproval("tool", completeMessage, undefined, isWriteProtected)
 
@@ -337,7 +337,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 		const sanitizedDiff = sanitizeUnifiedDiff(diff)
 		const diffStats = computeDiffStats(sanitizedDiff) || undefined
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "appliedDiff",
 			path: getReadablePath(task.cwd, relPath),
 			diff: sanitizedDiff,
@@ -350,7 +350,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 			content: sanitizedDiff,
 			isProtected: isWriteProtected,
 			diffStats,
-		} satisfies ClineSayTool)
+		} satisfies MeowCodeSayTool)
 
 		// Show diff view if focus disruption prevention is disabled
 		if (!isPreventFocusDisruptionEnabled) {
@@ -465,7 +465,7 @@ export class ApplyPatchTool extends BaseTool<"apply_patch"> {
 			patchPreview = lines.join("\n") + (patch.split("\n").length > 5 ? "\n..." : "")
 		}
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "appliedDiff",
 			path: displayPath || path.basename(task.cwd) || "workspace",
 			diff: patchPreview || "Parsing patch...",

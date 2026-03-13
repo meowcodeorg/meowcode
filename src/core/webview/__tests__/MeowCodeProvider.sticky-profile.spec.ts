@@ -1,8 +1,8 @@
-// npx vitest run core/webview/__tests__/ClineProvider.sticky-profile.spec.ts
+// npx vitest run core/webview/__tests__/MeowCodeProvider.sticky-profile.spec.ts
 
 import * as vscode from "vscode"
 import { TelemetryService } from "@meow-code/telemetry"
-import { ClineProvider } from "../ClineProvider"
+import { MeowCodeProvider } from "../MeowCodeProvider"
 import { ContextProxy } from "../../config/ContextProxy"
 import type { HistoryItem } from "@meow-code/types"
 
@@ -59,10 +59,10 @@ let taskIdCounter = 0
 vi.mock("../../task/Task", () => ({
 	Task: vi.fn().mockImplementation((options) => ({
 		taskId: options.taskId || `test-task-id-${++taskIdCounter}`,
-		saveClineMessages: vi.fn(),
-		clineMessages: [],
+		saveMeowCodeMessages: vi.fn(),
+		meowCodeMessages: [],
 		apiConversationHistory: [],
-		overwriteClineMessages: vi.fn(),
+		overwriteMeowCodeMessages: vi.fn(),
 		overwriteApiConversationHistory: vi.fn(),
 		abortTask: vi.fn(),
 		handleWebviewAskResponse: vi.fn(),
@@ -195,8 +195,8 @@ vi.mock("@meow-code/telemetry", () => ({
 	},
 }))
 
-describe("ClineProvider - Sticky Provider Profile", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider - Sticky Provider Profile", () => {
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -281,7 +281,7 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 			onDidChangeVisibility: vi.fn().mockImplementation(() => ({ dispose: vi.fn() })),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		// Wait for the async TaskHistoryStore initialization to complete
 		await new Promise((resolve) => setTimeout(resolve, 10))
@@ -316,14 +316,14 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 				_taskApiConfigName: "default-profile",
 				setTaskApiConfigName: vi.fn(),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
 
 			// Add task to provider stack
-			await provider.addClineToStack(mockTask as any)
+			await provider.addMeowCodeToStack(mockTask as any)
 
 			// Populate the store so persistStickyProviderProfileToCurrentTask finds the task
 			await provider.taskHistoryStore.upsert({
@@ -377,14 +377,14 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 					this._taskApiConfigName = name
 				}),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
 
 			// Add task to provider stack
-			await provider.addClineToStack(mockTask as any)
+			await provider.addMeowCodeToStack(mockTask as any)
 
 			// Mock getGlobalState to return task history
 			vi.spyOn(provider as any, "getGlobalState").mockReturnValue([
@@ -433,13 +433,13 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 					this._taskApiConfigName = name
 				}),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
 
-			await provider.addClineToStack(mockTask as any)
+			await provider.addMeowCodeToStack(mockTask as any)
 
 			// No history item exists yet
 			vi.spyOn(provider as any, "getGlobalState").mockReturnValue([])
@@ -687,8 +687,8 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 				_taskApiConfigName: "test-profile",
 				setTaskApiConfigName: vi.fn(),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
@@ -712,7 +712,7 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 			})
 
 			// Add task to provider stack
-			await provider.addClineToStack(mockTask as any)
+			await provider.addMeowCodeToStack(mockTask as any)
 
 			// Mock providerSettingsManager.activateProfile
 			vi.spyOn(provider.providerSettingsManager, "activateProfile").mockResolvedValue({
@@ -750,8 +750,8 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 					this._taskApiConfigName = name
 				}),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
@@ -764,14 +764,14 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 					this._taskApiConfigName = name
 				}),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
 
 			// Add task 1 to stack
-			await provider.addClineToStack(task1 as any)
+			await provider.addMeowCodeToStack(task1 as any)
 
 			// Mock getGlobalState to return task history for both tasks
 			const taskHistory = [
@@ -851,14 +851,14 @@ describe("ClineProvider - Sticky Provider Profile", () => {
 				_taskApiConfigName: "default-profile",
 				setTaskApiConfigName: vi.fn(),
 				emit: vi.fn(),
-				saveClineMessages: vi.fn(),
-				clineMessages: [],
+				saveMeowCodeMessages: vi.fn(),
+				meowCodeMessages: [],
 				apiConversationHistory: [],
 				updateApiConfiguration: vi.fn(),
 			}
 
 			// Add task to provider stack
-			await provider.addClineToStack(mockTask as any)
+			await provider.addMeowCodeToStack(mockTask as any)
 
 			// Populate the store
 			await provider.taskHistoryStore.upsert({

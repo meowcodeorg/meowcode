@@ -149,13 +149,13 @@ vi.mock("../i18n", () => ({
 	t: vi.fn((key) => key),
 }))
 
-// Mock ClineProvider
-vi.mock("../core/webview/ClineProvider", async () => {
+// Mock MeowCodeProvider
+vi.mock("../core/webview/MeowCodeProvider", async () => {
 	const mockInstance = {
 		resolveWebviewView: vi.fn(),
 		postMessageToWebview: vi.fn(),
 		postStateToWebview: vi.fn(),
-		postStateToWebviewWithoutClineMessages: vi.fn(),
+		postStateToWebviewWithoutMeowCodeMessages: vi.fn(),
 		getState: vi.fn().mockResolvedValue({}),
 		providerSettingsManager: {},
 		contextProxy: { getGlobalState: vi.fn() },
@@ -163,7 +163,7 @@ vi.mock("../core/webview/ClineProvider", async () => {
 		upsertProviderProfile: vi.fn().mockResolvedValue(undefined),
 	}
 	return {
-		ClineProvider: Object.assign(
+		MeowCodeProvider: Object.assign(
 			vi.fn().mockImplementation(() => mockInstance),
 			{
 				// Static method used by extension.ts

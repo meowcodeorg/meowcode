@@ -27,7 +27,7 @@ import { initializeNetworkProxy } from "./utils/networkProxy"
 import { Package } from "./shared/package"
 import { formatLanguage } from "./shared/language"
 import { ContextProxy } from "./core/config/ContextProxy"
-import { ClineProvider } from "./core/webview/ClineProvider"
+import { MeowCodeProvider } from "./core/webview/MeowCodeProvider"
 import { DIFF_VIEW_URI_SCHEME } from "./integrations/editor/DiffViewProvider"
 import { TerminalRegistry } from "./integrations/terminal/TerminalRegistry"
 import { openAiCodexOAuthManager } from "./integrations/openai-codex/oauth"
@@ -181,13 +181,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Initialize the provider.
-	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy)
+	const provider = new MeowCodeProvider(context, outputChannel, "sidebar", contextProxy)
 
 	// Finish initializing the provider.
 	TelemetryService.instance.setProvider(provider)
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, provider, {
+		vscode.window.registerWebviewViewProvider(MeowCodeProvider.sideBarId, provider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		}),
 	)

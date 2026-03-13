@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { clineMessageSchema, queuedMessageSchema, tokenUsageSchema } from "./message.js"
+import { meowCodeMessageSchema, queuedMessageSchema, tokenUsageSchema } from "./message.js"
 import { modelInfoSchema } from "./model.js"
 import { toolNamesSchema, toolUsageSchema } from "./tool.js"
 
@@ -101,7 +101,7 @@ export const meowCodeEventsSchema = z.object({
 		z.object({
 			taskId: z.string(),
 			action: z.union([z.literal("created"), z.literal("updated")]),
-			message: clineMessageSchema,
+			message: meowCodeMessageSchema,
 		}),
 	]),
 	[MeowCodeEventName.TaskModeSwitched]: z.tuple([z.string(), z.string()]),

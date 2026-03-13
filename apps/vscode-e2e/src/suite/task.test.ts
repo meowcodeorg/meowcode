@@ -1,6 +1,6 @@
 import * as assert from "assert"
 
-import { MeowCodeEventName, type ClineMessage } from "@meow-code/types"
+import { MeowCodeEventName, type MeowCodeMessage } from "@meow-code/types"
 
 import { waitUntilCompleted } from "./utils"
 import { setDefaultSuiteTimeout } from "./test-utils"
@@ -11,7 +11,7 @@ suite("MeowCode Task", function () {
 	test("Should handle prompt and response correctly", async () => {
 		const api = globalThis.api
 
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 
 		api.on(MeowCodeEventName.Message, ({ message }) => {
 			if (message.type === "say" && message.partial === false) {

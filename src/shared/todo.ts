@@ -1,7 +1,7 @@
-import { ClineMessage } from "@meow-code/types"
+import { MeowCodeMessage } from "@meow-code/types"
 
-export function getLatestTodo(clineMessages: ClineMessage[]) {
-	const todos = clineMessages
+export function getLatestTodo(meowCodeMessages: MeowCodeMessage[]) {
+	const todos = meowCodeMessages
 		.filter(
 			(msg) =>
 				(msg.type === "ask" && msg.ask === "tool") || (msg.type === "say" && msg.say === "user_edit_todos"),

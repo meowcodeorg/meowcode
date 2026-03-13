@@ -11,7 +11,7 @@
  *   debugLog("handleModeSwitch", { mode: newMode, configId })
  *
  *   // Or create a named logger for a component
- *   const log = new DebugLogger("ClineProvider")
+ *   const log = new DebugLogger("MeowCodeProvider")
  *   log.info("handleModeSwitch", { mode: newMode })
  */
 

@@ -8,7 +8,7 @@ import type { GlobalState, ProviderSettings } from "@meow-code/types"
 import { TelemetryService } from "@meow-code/telemetry"
 
 import { Task } from "../Task"
-import { ClineProvider } from "../../webview/ClineProvider"
+import { MeowCodeProvider } from "../../webview/MeowCodeProvider"
 import { ContextProxy } from "../../config/ContextProxy"
 
 // Mock @meow-code/core
@@ -191,7 +191,7 @@ describe("Grace Retry Error Handling", () => {
 			dispose: vi.fn(),
 		}
 
-		mockProvider = new ClineProvider(
+		mockProvider = new MeowCodeProvider(
 			mockExtensionContext,
 			mockOutputChannel,
 			"sidebar",

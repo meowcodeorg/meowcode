@@ -35,7 +35,7 @@ vi.mock("../core/task-persistence", () => ({
 	saveTaskMessages: vi.fn().mockResolvedValue(undefined),
 }))
 
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
 import { readTaskMessages } from "../core/task-persistence/taskMessages"
 import { readApiMessages, saveApiMessages, saveTaskMessages } from "../core/task-persistence"
 
@@ -64,7 +64,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		})
 
 		const updateTaskHistory = vi.fn().mockResolvedValue([])
-		const removeClineFromStack = vi.fn().mockResolvedValue(undefined)
+		const removeMeowCodeFromStack = vi.fn().mockResolvedValue(undefined)
 		const createTaskWithHistoryItem = vi.fn().mockResolvedValue({
 			taskId: "parent-1",
 			skipPrevResponseIdOnce: false,
@@ -76,16 +76,16 @@ describe("History resume delegation - parent metadata transitions", () => {
 			getTaskWithId,
 			emit: providerEmit,
 			getCurrentTask: vi.fn(() => ({ taskId: "child-1" })),
-			removeClineFromStack,
+			removeMeowCodeFromStack,
 			createTaskWithHistoryItem,
 			updateTaskHistory,
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		// Mock persistence reads to return empty arrays
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "parent-1",
 			childTaskId: "child-1",
 			completionResultSummary: "Child done",
@@ -109,7 +109,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		expect(updateCall).toBeLessThan(createCall)
 
 		// Verify child closed and parent reopened with updated metadata
-		expect(removeClineFromStack).toHaveBeenCalledTimes(1)
+		expect(removeMeowCodeFromStack).toHaveBeenCalledTimes(1)
 		expect(createTaskWithHistoryItem).toHaveBeenCalledWith(
 			expect.objectContaining({
 				status: "active",
@@ -137,15 +137,15 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => ({ taskId: "c1" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue({
 				taskId: "p1",
 				resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-				overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+				overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 				overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 			}),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		// Start with existing messages in history
 		const existingUiMessages = [{ type: "ask", ask: "tool", text: "Old tool", ts: 50 }]
@@ -154,7 +154,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		vi.mocked(readTaskMessages).mockResolvedValue(existingUiMessages as any)
 		vi.mocked(readApiMessages).mockResolvedValue(existingApiMessages as any)
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "p1",
 			childTaskId: "c1",
 			completionResultSummary: "Subtask completed successfully",
@@ -220,15 +220,15 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => ({ taskId: "c-tool" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue({
 				taskId: "p-tool",
 				resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-				overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+				overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 				overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 			}),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		// Include an assistant message with new_task tool_use to exercise the tool_result path
 		const existingUiMessages = [{ type: "ask", ask: "tool", text: "new_task request", ts: 50 }]
@@ -251,7 +251,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		vi.mocked(readTaskMessages).mockResolvedValue(existingUiMessages as any)
 		vi.mocked(readApiMessages).mockResolvedValue(existingApiMessages as any)
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "p-tool",
 			childTaskId: "c-tool",
 			completionResultSummary: "Subtask completed via tool_result",
@@ -306,15 +306,15 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => ({ taskId: "c-no-tool" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue({
 				taskId: "p-no-tool",
 				resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-				overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+				overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 				overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 			}),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		// No assistant tool_use in history
 		const existingUiMessages = [{ type: "ask", ask: "tool", text: "subtask request", ts: 50 }]
@@ -323,7 +323,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		vi.mocked(readTaskMessages).mockResolvedValue(existingUiMessages as any)
 		vi.mocked(readApiMessages).mockResolvedValue(existingApiMessages as any)
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "p-no-tool",
 			childTaskId: "c-no-tool",
 			completionResultSummary: "Subtask completed without tool_use",
@@ -345,7 +345,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 				// Simulate what the real resumeAfterDelegation does
 				this.skipPrevResponseIdOnce = true
 			}),
-			overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+			overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 			overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 		}
 
@@ -366,15 +366,15 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => ({ taskId: "child-2" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue(parentInstance),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "parent-2",
 			childTaskId: "child-2",
 			completionResultSummary: "Done",
@@ -406,19 +406,19 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: emitSpy,
 			getCurrentTask: vi.fn(() => ({ taskId: "c3" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue({
 				resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-				overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+				overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 				overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 			}),
 			updateTaskHistory,
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "p3",
 			childTaskId: "c3",
 			completionResultSummary: "Summary",
@@ -451,7 +451,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		const emitSpy = vi.fn()
 		const parentInstance = {
 			resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-			overwriteClineMessages: vi.fn().mockRejectedValue(new Error("ui overwrite failed")),
+			overwriteMeowCodeMessages: vi.fn().mockRejectedValue(new Error("ui overwrite failed")),
 			overwriteApiConversationHistory: vi.fn().mockRejectedValue(new Error("api overwrite failed")),
 		}
 
@@ -488,23 +488,23 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: emitSpy,
 			getCurrentTask: vi.fn(() => ({ taskId: "child-rpd06" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue(parentInstance),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
 		await expect(
-			(ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+			(MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 				parentTaskId: "parent-rpd06",
 				childTaskId: "child-rpd06",
 				completionResultSummary: "Subtask finished despite overwrite failures",
 			}),
 		).resolves.toBeUndefined()
 
-		expect(parentInstance.overwriteClineMessages).toHaveBeenCalledTimes(1)
+		expect(parentInstance.overwriteMeowCodeMessages).toHaveBeenCalledTimes(1)
 		expect(parentInstance.overwriteApiConversationHistory).toHaveBeenCalledTimes(1)
 		expect(parentInstance.resumeAfterDelegation).toHaveBeenCalledTimes(1)
 
@@ -542,19 +542,19 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: emitSpy,
 			getCurrentTask: vi.fn(() => ({ taskId: "c4" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue({
 				resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-				overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+				overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 				overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 			}),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "p4",
 			childTaskId: "c4",
 			completionResultSummary: "S",
@@ -570,12 +570,12 @@ describe("History resume delegation - parent metadata transitions", () => {
 	it("reopenParentFromDelegation skips child close when current task differs and still reopens parent (RPD-02)", async () => {
 		const parentInstance = {
 			resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-			overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+			overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 			overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 		}
 
 		const updateTaskHistory = vi.fn().mockResolvedValue([])
-		const removeClineFromStack = vi.fn().mockResolvedValue(undefined)
+		const removeMeowCodeFromStack = vi.fn().mockResolvedValue(undefined)
 		const createTaskWithHistoryItem = vi.fn().mockResolvedValue(parentInstance)
 
 		const provider = {
@@ -610,21 +610,21 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => ({ taskId: "different-open-task" })),
-			removeClineFromStack,
+			removeMeowCodeFromStack,
 			createTaskWithHistoryItem,
 			updateTaskHistory,
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
-		await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+		await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 			parentTaskId: "parent-rpd02",
 			childTaskId: "child-rpd02",
 			completionResultSummary: "Child done without being current",
 		})
 
-		expect(removeClineFromStack).not.toHaveBeenCalled()
+		expect(removeMeowCodeFromStack).not.toHaveBeenCalled()
 		expect(updateTaskHistory).toHaveBeenCalledWith(
 			expect.objectContaining({
 				id: "child-rpd02",
@@ -647,7 +647,7 @@ describe("History resume delegation - parent metadata transitions", () => {
 		const emitSpy = vi.fn()
 		const parentInstance = {
 			resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-			overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+			overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 			overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 		}
 
@@ -691,16 +691,16 @@ describe("History resume delegation - parent metadata transitions", () => {
 			emit: emitSpy,
 			log: logSpy,
 			getCurrentTask: vi.fn(() => ({ taskId: "child-rpd04" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue(parentInstance),
 			updateTaskHistory,
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
 		await expect(
-			(ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+			(MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 				parentTaskId: "parent-rpd04",
 				childTaskId: "child-rpd04",
 				completionResultSummary: "Child completion with persistence failure",
@@ -741,21 +741,21 @@ describe("History resume delegation - parent metadata transitions", () => {
 			}),
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => ({ taskId: "c5" })),
-			removeClineFromStack: vi.fn().mockResolvedValue(undefined),
+			removeMeowCodeFromStack: vi.fn().mockResolvedValue(undefined),
 			createTaskWithHistoryItem: vi.fn().mockResolvedValue({
 				resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-				overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+				overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 				overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 			}),
 			updateTaskHistory: vi.fn().mockResolvedValue([]),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		// Mock read failures or empty returns
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
 		await expect(
-			(ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, {
+			(MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, {
 				parentTaskId: "p5",
 				childTaskId: "c5",
 				completionResultSummary: "Result",

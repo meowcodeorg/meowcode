@@ -2,15 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import * as vscode from "vscode"
 
 import { API } from "../api"
-import { ClineProvider } from "../../core/webview/ClineProvider"
+import { MeowCodeProvider } from "../../core/webview/MeowCodeProvider"
 
 vi.mock("vscode")
-vi.mock("../../core/webview/ClineProvider")
+vi.mock("../../core/webview/MeowCodeProvider")
 
 describe("API - DeleteQueuedMessage Command", () => {
 	let api: API
 	let mockOutputChannel: vscode.OutputChannel
-	let mockProvider: ClineProvider
+	let mockProvider: MeowCodeProvider
 	let mockRemoveMessage: ReturnType<typeof vi.fn>
 	let mockLog: ReturnType<typeof vi.fn>
 
@@ -32,7 +32,7 @@ describe("API - DeleteQueuedMessage Command", () => {
 				},
 			}),
 			viewLaunched: true,
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		mockLog = vi.fn()
 

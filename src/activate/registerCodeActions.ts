@@ -4,7 +4,7 @@ import { CodeActionId, CodeActionName } from "@meow-code/types"
 
 import { getCodeActionCommand } from "../utils/commands"
 import { EditorUtils } from "../integrations/editor/EditorUtils"
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
 
 export const registerCodeActions = (context: vscode.ExtensionContext) => {
 	registerCodeAction(context, "explainCode", "EXPLAIN")
@@ -47,7 +47,7 @@ const registerCodeAction = (context: vscode.ExtensionContext, command: CodeActio
 				...(userInput ? { userInput } : {}),
 			}
 
-			await ClineProvider.handleCodeAction(command, promptType, params)
+			await MeowCodeProvider.handleCodeAction(command, promptType, params)
 		}),
 	)
 }

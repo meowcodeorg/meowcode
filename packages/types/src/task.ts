@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import { MeowCodeEventName } from "./events.js"
 import type { MeowCodeSettings } from "./global-settings.js"
-import type { ClineMessage, QueuedMessage, TokenUsage } from "./message.js"
+import type { MeowCodeMessage, QueuedMessage, TokenUsage } from "./message.js"
 import type { ToolUsage, ToolName } from "./tool.js"
 import type { StaticAppProperties, GitProperties, TelemetryProperties } from "./telemetry.js"
 import type { TodoItem } from "./todo.js"
@@ -123,7 +123,7 @@ export interface TaskLike {
 	readonly childTaskId?: string
 	readonly metadata: TaskMetadata
 	readonly taskStatus: TaskStatus
-	readonly taskAsk: ClineMessage | undefined
+	readonly taskAsk: MeowCodeMessage | undefined
 	readonly queuedMessages: QueuedMessage[]
 	readonly tokenUsage: TokenUsage | undefined
 
@@ -154,7 +154,7 @@ export type TaskEvents = {
 	[MeowCodeEventName.TaskSpawned]: [taskId: string]
 
 	// Task Execution
-	[MeowCodeEventName.Message]: [{ action: "created" | "updated"; message: ClineMessage }]
+	[MeowCodeEventName.Message]: [{ action: "created" | "updated"; message: MeowCodeMessage }]
 	[MeowCodeEventName.TaskModeSwitched]: [taskId: string, mode: string]
 	[MeowCodeEventName.TaskAskResponded]: []
 	[MeowCodeEventName.TaskUserMessage]: [taskId: string]

@@ -1,7 +1,7 @@
 import React from "react"
 import { fireEvent, render, screen } from "@/utils/test-utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import type { ClineMessage } from "@meow-code/types"
+import type { MeowCodeMessage } from "@meow-code/types"
 import { ExtensionStateContextProvider } from "@src/context/ExtensionStateContext"
 import { ChatRowContent } from "../ChatRow"
 
@@ -37,7 +37,7 @@ vi.mock("@src/components/common/CodeBlock", () => ({
 
 const queryClient = new QueryClient()
 
-function createToolAskMessage(toolPayload: Record<string, unknown>): ClineMessage {
+function createToolAskMessage(toolPayload: Record<string, unknown>): MeowCodeMessage {
 	return {
 		type: "ask",
 		ask: "tool",
@@ -47,7 +47,7 @@ function createToolAskMessage(toolPayload: Record<string, unknown>): ClineMessag
 	}
 }
 
-function renderChatRow(message: ClineMessage, isExpanded = false) {
+function renderChatRow(message: MeowCodeMessage, isExpanded = false) {
 	return render(
 		<ExtensionStateContextProvider>
 			<QueryClientProvider client={queryClient}>

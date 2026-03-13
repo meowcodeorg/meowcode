@@ -1,4 +1,4 @@
-// pnpm --filter meow-code test core/webview/__tests__/ClineProvider.spec.ts
+// pnpm --filter meow-code test core/webview/__tests__/MeowCodeProvider.spec.ts
 
 import Anthropic from "@anthropic-ai/sdk"
 import * as vscode from "vscode"
@@ -6,7 +6,7 @@ import axios from "axios"
 
 import {
 	type ProviderSettingsEntry,
-	type ClineMessage,
+	type MeowCodeMessage,
 	type ExtensionMessage,
 	type ExtensionState,
 	ORGANIZATION_ALLOW_ALL,
@@ -21,7 +21,7 @@ import { ContextProxy } from "../../config/ContextProxy"
 import { Task, TaskOptions } from "../../task/Task"
 import { safeWriteJson } from "../../../utils/safeWriteJson"
 
-import { ClineProvider } from "../ClineProvider"
+import { MeowCodeProvider } from "../MeowCodeProvider"
 import { MessageManager } from "../../message-manager"
 
 // Mock setup must come before imports.
@@ -186,9 +186,9 @@ vi.mock("../../task/Task", () => ({
 		api: undefined,
 		abortTask: vi.fn(),
 		handleWebviewAskResponse: vi.fn(),
-		clineMessages: [],
+		meowCodeMessages: [],
 		apiConversationHistory: [],
-		overwriteClineMessages: vi.fn(),
+		overwriteMeowCodeMessages: vi.fn(),
 		overwriteApiConversationHistory: vi.fn(),
 		getTaskNumber: vi.fn().mockReturnValue(0),
 		setTaskNumber: vi.fn(),
@@ -295,16 +295,16 @@ afterAll(() => {
 	vi.restoreAllMocks()
 })
 
-describe("ClineProvider", () => {
+describe("MeowCodeProvider", () => {
 	beforeAll(() => {
 		vi.mocked(Task).mockImplementation((options: any) => {
 			const task: any = {
 				api: undefined,
 				abortTask: vi.fn(),
 				handleWebviewAskResponse: vi.fn(),
-				clineMessages: [],
+				meowCodeMessages: [],
 				apiConversationHistory: [],
-				overwriteClineMessages: vi.fn(),
+				overwriteMeowCodeMessages: vi.fn(),
 				overwriteApiConversationHistory: vi.fn(),
 				getTaskNumber: vi.fn().mockReturnValue(0),
 				setTaskNumber: vi.fn(),
@@ -324,7 +324,7 @@ describe("ClineProvider", () => {
 
 	let defaultTaskOptions: TaskOptions
 
-	let provider: ClineProvider
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -408,7 +408,7 @@ describe("ClineProvider", () => {
 			onDidChangeVisibility: vi.fn().mockImplementation(() => ({ dispose: vi.fn() })),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		defaultTaskOptions = {
 			provider,
@@ -434,11 +434,11 @@ describe("ClineProvider", () => {
 	})
 
 	test("constructor initializes correctly", () => {
-		expect(provider).toBeInstanceOf(ClineProvider)
+		expect(provider).toBeInstanceOf(MeowCodeProvider)
 		// Since getVisibleInstance returns the last instance where view.visible is true
 		// @ts-ignore - accessing private property for testing
 		provider.view = mockWebviewView
-		expect(ClineProvider.getVisibleInstance()).toBe(provider)
+		expect(MeowCodeProvider.getVisibleInstance()).toBe(provider)
 	})
 
 	test("resolveWebviewView sets up webview correctly", async () => {
@@ -453,7 +453,7 @@ describe("ClineProvider", () => {
 	})
 
 	test("resolveWebviewView sets up webview correctly in development mode even if local server is not running", async () => {
-		provider = new ClineProvider(
+		provider = new MeowCodeProvider(
 			{ ...mockContext, extensionMode: vscode.ExtensionMode.Development },
 			mockOutputChannel,
 			"sidebar",
@@ -489,7 +489,7 @@ describe("ClineProvider", () => {
 
 		const mockState: ExtensionState = {
 			version: "1.0.0",
-			clineMessages: [],
+			meowCodeMessages: [],
 			taskHistory: [],
 			shouldShowAnnouncement: false,
 			apiConfiguration: {
@@ -581,9 +581,9 @@ describe("ClineProvider", () => {
 		await provider.dispose()
 		await provider.dispose()
 
-		// dispose body runs only once: log "Disposing ClineProvider..." appears once
+		// dispose body runs only once: log "Disposing MeowCodeProvider..." appears once
 		const disposeCalls = (mockOutputChannel.appendLine as ReturnType<typeof vi.fn>).mock.calls.filter(
-			([msg]) => typeof msg === "string" && msg.includes("Disposing ClineProvider..."),
+			([msg]) => typeof msg === "string" && msg.includes("Disposing MeowCodeProvider..."),
 		)
 		expect(disposeCalls).toHaveLength(1)
 	})
@@ -602,23 +602,23 @@ describe("ClineProvider", () => {
 	})
 
 	test("clearTask aborts current task", async () => {
-		// Setup Cline instance with auto-mock from the top of the file
-		const mockCline = new Task(defaultTaskOptions) // Create a new mocked instance
+		// Setup MeowCode instance with auto-mock from the top of the file
+		const mockMeowCode = new Task(defaultTaskOptions) // Create a new mocked instance
 
 		// add the mock object to the stack
-		await provider.addClineToStack(mockCline)
+		await provider.addMeowCodeToStack(mockMeowCode)
 
 		// get the stack size before the abort call
 		const stackSizeBeforeAbort = provider.getTaskStackSize()
 
-		// call the removeClineFromStack method so it will call the current cline abort and remove it from the stack
-		await provider.removeClineFromStack()
+		// call the removeMeowCodeFromStack method so it will call the current meowCode abort and remove it from the stack
+		await provider.removeMeowCodeFromStack()
 
 		// get the stack size after the abort call
 		const stackSizeAfterAbort = provider.getTaskStackSize()
 
 		// check if the abort method was called
-		expect(mockCline.abortTask).toHaveBeenCalled()
+		expect(mockMeowCode.abortTask).toHaveBeenCalled()
 
 		// check if the stack size was decreased
 		expect(stackSizeBeforeAbort - stackSizeAfterAbort).toBe(1)
@@ -631,14 +631,14 @@ describe("ClineProvider", () => {
 
 		test("calls clearTask (delegation handled via metadata)", async () => {
 			// Setup a single task without parent
-			const mockCline = new Task(defaultTaskOptions)
+			const mockMeowCode = new Task(defaultTaskOptions)
 
 			// Mock the provider methods
 			const clearTaskSpy = vi.spyOn(provider, "clearTask").mockResolvedValue(undefined)
 			const postStateToWebviewSpy = vi.spyOn(provider, "postStateToWebview").mockResolvedValue(undefined)
 
 			// Add task to stack
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 
 			// Get the message handler
 			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
@@ -665,8 +665,8 @@ describe("ClineProvider", () => {
 			const postStateToWebviewSpy = vi.spyOn(provider, "postStateToWebview").mockResolvedValue(undefined)
 
 			// Add both tasks to stack (parent first, then child)
-			await provider.addClineToStack(parentTask)
-			await provider.addClineToStack(childTask)
+			await provider.addMeowCodeToStack(parentTask)
+			await provider.addMeowCodeToStack(childTask)
 
 			// Get the message handler
 			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
@@ -701,13 +701,13 @@ describe("ClineProvider", () => {
 			// This test validates the fix for issue #4602
 			// where canceling during API retry correctly uses clearTask
 
-			const mockCline = new Task(defaultTaskOptions)
+			const mockMeowCode = new Task(defaultTaskOptions)
 
 			// Mock the provider methods
 			const clearTaskSpy = vi.spyOn(provider, "clearTask").mockResolvedValue(undefined)
 
 			// Add only one task to stack
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 
 			// Verify stack size is 1
 			expect(provider.getTaskStackSize()).toBe(1)
@@ -723,22 +723,22 @@ describe("ClineProvider", () => {
 		})
 	})
 
-	test("addClineToStack adds multiple Cline instances to the stack", async () => {
-		// Setup Cline instance with auto-mock from the top of the file
-		const mockCline1 = new Task(defaultTaskOptions) // Create a new mocked instance
-		const mockCline2 = new Task(defaultTaskOptions) // Create a new mocked instance
-		Object.defineProperty(mockCline1, "taskId", { value: "test-task-id-1", writable: true })
-		Object.defineProperty(mockCline2, "taskId", { value: "test-task-id-2", writable: true })
+	test("addMeowCodeToStack adds multiple MeowCode instances to the stack", async () => {
+		// Setup MeowCode instance with auto-mock from the top of the file
+		const mockMeowCode1 = new Task(defaultTaskOptions) // Create a new mocked instance
+		const mockMeowCode2 = new Task(defaultTaskOptions) // Create a new mocked instance
+		Object.defineProperty(mockMeowCode1, "taskId", { value: "test-task-id-1", writable: true })
+		Object.defineProperty(mockMeowCode2, "taskId", { value: "test-task-id-2", writable: true })
 
-		// add Cline instances to the stack
-		await provider.addClineToStack(mockCline1)
-		await provider.addClineToStack(mockCline2)
+		// add MeowCode instances to the stack
+		await provider.addMeowCodeToStack(mockMeowCode1)
+		await provider.addMeowCodeToStack(mockMeowCode2)
 
-		// verify cline instances were added to the stack
+		// verify meowCode instances were added to the stack
 		expect(provider.getTaskStackSize()).toBe(2)
 
-		// verify current cline instance is the last one added
-		expect(provider.getCurrentTask()).toBe(mockCline2)
+		// verify current meowCode instance is the last one added
+		expect(provider.getCurrentTask()).toBe(mockMeowCode2)
 	})
 
 	test("getState returns correct initial state", async () => {
@@ -1097,7 +1097,7 @@ describe("ClineProvider", () => {
 		} as unknown as vscode.ExtensionContext
 
 		// Create new provider with updated mock context
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 		await provider.resolveWebviewView(mockWebviewView)
 		const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
 
@@ -1138,7 +1138,7 @@ describe("ClineProvider", () => {
 				{ ts: 4000, type: "say", say: "tool" }, // Message to delete
 				{ ts: 5000, type: "say", say: "user_feedback" }, // Next user message
 				{ ts: 6000, type: "say", say: "user_feedback" }, // Final message
-			] as ClineMessage[]
+			] as MeowCodeMessage[]
 
 			const mockApiHistory = [
 				{ ts: 1000 },
@@ -1150,10 +1150,10 @@ describe("ClineProvider", () => {
 			] as (Anthropic.MessageParam & { ts?: number })[]
 
 			// Setup Task instance with auto-mock from the top of the file
-			const mockCline = new Task(defaultTaskOptions) // Create a new mocked instance
-			mockCline.clineMessages = mockMessages // Set test-specific messages
-			mockCline.apiConversationHistory = mockApiHistory // Set API history
-			await provider.addClineToStack(mockCline) // Add the mocked instance to the stack
+			const mockMeowCode = new Task(defaultTaskOptions) // Create a new mocked instance
+			mockMeowCode.meowCodeMessages = mockMessages // Set test-specific messages
+			mockMeowCode.apiConversationHistory = mockApiHistory // Set API history
+			await provider.addMeowCodeToStack(mockMeowCode) // Add the mocked instance to the stack
 
 			// Mock getTaskWithId
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
@@ -1178,14 +1178,14 @@ describe("ClineProvider", () => {
 			await messageHandler({ type: "deleteMessageConfirm", messageTs: 4000 })
 
 			// Verify only messages before the deleted message were kept
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalledWith([
+			expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalledWith([
 				mockMessages[0],
 				mockMessages[1],
 				mockMessages[2],
 			])
 
 			// Verify only API messages before the deleted message were kept
-			expect(mockCline.overwriteApiConversationHistory).toHaveBeenCalledWith([
+			expect(mockMeowCode.overwriteApiConversationHistory).toHaveBeenCalledWith([
 				mockApiHistory[0],
 				mockApiHistory[1],
 				mockApiHistory[2],
@@ -1196,14 +1196,14 @@ describe("ClineProvider", () => {
 		})
 
 		test("handles case when no current task exists", async () => {
-			// Clear the cline stack
-			;(provider as any).clineStack = []
+			// Clear the meowCode stack
+			;(provider as any).meowCodeStack = []
 
 			// Trigger message deletion
 			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
 			await messageHandler({ type: "deleteMessage", value: 2000 })
 
-			// Verify no dialog was shown since there's no current cline
+			// Verify no dialog was shown since there's no current meowCode
 			expect(mockPostMessage).not.toHaveBeenCalledWith(
 				expect.objectContaining({
 					type: "showDeleteMessageDialog",
@@ -1226,7 +1226,7 @@ describe("ClineProvider", () => {
 				{ ts: 4000, type: "say", say: "tool" }, // Message to edit
 				{ ts: 5000, type: "say", say: "user_feedback" }, // Next user message
 				{ ts: 6000, type: "say", say: "user_feedback" }, // Final message
-			] as ClineMessage[]
+			] as MeowCodeMessage[]
 
 			const mockApiHistory = [
 				{ ts: 1000 },
@@ -1238,16 +1238,16 @@ describe("ClineProvider", () => {
 			] as (Anthropic.MessageParam & { ts?: number })[]
 
 			// Setup Task instance with auto-mock from the top of the file
-			const mockCline = new Task(defaultTaskOptions) // Create a new mocked instance
-			mockCline.clineMessages = mockMessages // Set test-specific messages
-			mockCline.apiConversationHistory = mockApiHistory // Set API history
+			const mockMeowCode = new Task(defaultTaskOptions) // Create a new mocked instance
+			mockMeowCode.meowCodeMessages = mockMessages // Set test-specific messages
+			mockMeowCode.apiConversationHistory = mockApiHistory // Set API history
 
 			// Explicitly mock the overwrite methods since they're not being called in the tests
-			mockCline.overwriteClineMessages = vi.fn()
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.handleWebviewAskResponse = vi.fn()
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-			await provider.addClineToStack(mockCline) // Add the mocked instance to the stack
+			await provider.addMeowCodeToStack(mockMeowCode) // Add the mocked instance to the stack
 
 			// Mock getTaskWithId
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
@@ -1282,10 +1282,10 @@ describe("ClineProvider", () => {
 			})
 
 			// Verify correct messages were kept - delete from the preceding user message to truly replace it
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalledWith([])
+			expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalledWith([])
 
 			// Verify correct API messages were kept
-			expect(mockCline.overwriteApiConversationHistory).toHaveBeenCalledWith([])
+			expect(mockMeowCode.overwriteApiConversationHistory).toHaveBeenCalledWith([])
 
 			// The new flow calls webviewMessageHandler recursively with askResponse
 			// We need to verify the recursive call happened by checking if the handler was called again
@@ -1913,8 +1913,8 @@ describe("ClineProvider", () => {
 			} as any
 
 			// Setup Task instance with auto-mock from the top of the file
-			const mockCline = new Task(defaultTaskOptions) // Create a new mocked instance
-			await provider.addClineToStack(mockCline)
+			const mockMeowCode = new Task(defaultTaskOptions) // Create a new mocked instance
+			await provider.addMeowCodeToStack(mockMeowCode)
 
 			const testApiConfig = {
 				apiProvider: "anthropic" as const,
@@ -1980,7 +1980,7 @@ describe("ClineProvider", () => {
 })
 
 describe("Project MCP Settings", () => {
-	let provider: ClineProvider
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -2037,7 +2037,7 @@ describe("Project MCP Settings", () => {
 			onDidChangeVisibility: vi.fn(),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 	})
 
 	test.skip("handles openProjectMcpSettings message", async () => {
@@ -2121,7 +2121,7 @@ describe("Project MCP Settings", () => {
 })
 
 describe.skip("ContextProxy integration", () => {
-	let provider: ClineProvider
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockContextProxy: any
@@ -2150,7 +2150,7 @@ describe.skip("ContextProxy integration", () => {
 
 		mockOutputChannel = { appendLine: vi.fn() } as unknown as vscode.OutputChannel
 		mockContextProxy = new ContextProxy(mockContext)
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", mockContextProxy)
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", mockContextProxy)
 	})
 
 	test("updateGlobalState uses contextProxy", async () => {
@@ -2182,10 +2182,10 @@ describe.skip("ContextProxy integration", () => {
 
 describe("getTelemetryProperties", () => {
 	let defaultTaskOptions: TaskOptions
-	let provider: ClineProvider
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
-	let mockCline: any
+	let mockMeowCode: any
 
 	beforeEach(() => {
 		// Reset mocks
@@ -2219,7 +2219,7 @@ describe("getTelemetryProperties", () => {
 		} as unknown as vscode.ExtensionContext
 
 		mockOutputChannel = { appendLine: vi.fn() } as unknown as vscode.OutputChannel
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		defaultTaskOptions = {
 			provider,
@@ -2229,8 +2229,8 @@ describe("getTelemetryProperties", () => {
 		}
 
 		// Setup Task instance with mocked getModel method
-		mockCline = new Task(defaultTaskOptions)
-		mockCline.api = {
+		mockMeowCode = new Task(defaultTaskOptions)
+		mockMeowCode.api = {
 			getModel: vi.fn().mockReturnValue({
 				id: "claude-sonnet-4-20250514",
 				info: { contextWindow: 200000 },
@@ -2246,9 +2246,9 @@ describe("getTelemetryProperties", () => {
 		expect(properties).toHaveProperty("appVersion", "1.0.0")
 	})
 
-	test("includes model ID from current Cline instance if available", async () => {
-		// Add mock Cline to stack
-		await provider.addClineToStack(mockCline)
+	test("includes model ID from current MeowCode instance if available", async () => {
+		// Add mock MeowCode to stack
+		await provider.addMeowCodeToStack(mockMeowCode)
 
 		const properties = await provider.getTelemetryProperties()
 
@@ -2257,8 +2257,8 @@ describe("getTelemetryProperties", () => {
 
 })
 
-describe("ClineProvider - Router Models", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider - Router Models", () => {
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -2326,7 +2326,7 @@ describe("ClineProvider - Router Models", () => {
 			TelemetryService.createInstance([])
 		}
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 	})
 
 	test("handles requestRouterModels with successful responses", async () => {
@@ -2565,8 +2565,8 @@ describe("ClineProvider - Router Models", () => {
 	})
 })
 
-describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider - Comprehensive Edit/Delete Edge Cases", () => {
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -2640,7 +2640,7 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			onDidChangeVisibility: vi.fn().mockImplementation(() => ({ dispose: vi.fn() })),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		defaultTaskOptions = {
 			provider,
@@ -2678,16 +2678,16 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 					value: 3000,
 				},
 				{ ts: 3000, type: "say", say: "text", text: "AI response" },
-			] as ClineMessage[]
+			] as MeowCodeMessage[]
 
-			const mockCline = new Task(defaultTaskOptions)
-			mockCline.clineMessages = mockMessages
-			mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }] as any[]
-			mockCline.overwriteClineMessages = vi.fn()
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.submitUserMessage = vi.fn()
+			const mockMeowCode = new Task(defaultTaskOptions)
+			mockMeowCode.meowCodeMessages = mockMessages
+			mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }] as any[]
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.submitUserMessage = vi.fn()
 
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 				historyItem: { id: "test-task-id" },
 			})
@@ -2716,10 +2716,10 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			})
 
 			// Verify messages were edited correctly - the ORIGINAL user message and all subsequent messages are removed
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalledWith([mockMessages[0]])
-			expect(mockCline.overwriteApiConversationHistory).toHaveBeenCalledWith([{ ts: 1000 }])
+			expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalledWith([mockMessages[0]])
+			expect(mockMeowCode.overwriteApiConversationHistory).toHaveBeenCalledWith([{ ts: 1000 }])
 			// Verify submitUserMessage was called with the edited content
-			expect(mockCline.submitUserMessage).toHaveBeenCalledWith("Edited message with preserved images", [])
+			expect(mockMeowCode.submitUserMessage).toHaveBeenCalledWith("Edited message with preserved images", [])
 		})
 
 		test("handles editing messages with file attachments", async () => {
@@ -2734,16 +2734,16 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 					value: 3000,
 				},
 				{ ts: 3000, type: "say", say: "text", text: "AI response" },
-			] as ClineMessage[]
+			] as MeowCodeMessage[]
 
-			const mockCline = new Task(defaultTaskOptions)
-			mockCline.clineMessages = mockMessages
-			mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }] as any[]
-			mockCline.overwriteClineMessages = vi.fn()
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.submitUserMessage = vi.fn()
+			const mockMeowCode = new Task(defaultTaskOptions)
+			mockMeowCode.meowCodeMessages = mockMessages
+			mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }] as any[]
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.submitUserMessage = vi.fn()
 
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 				historyItem: { id: "test-task-id" },
 			})
@@ -2771,8 +2771,8 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				text: "Edited message with file attachment",
 			})
 
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
-			expect(mockCline.submitUserMessage).toHaveBeenCalledWith("Edited message with file attachment", [])
+			expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
+			expect(mockMeowCode.submitUserMessage).toHaveBeenCalledWith("Edited message with file attachment", [])
 		})
 	})
 
@@ -2783,17 +2783,17 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 		})
 
 		test("handles network timeout during edit submission", async () => {
-			const mockCline = new Task(defaultTaskOptions)
-			mockCline.clineMessages = [
+			const mockMeowCode = new Task(defaultTaskOptions)
+			mockMeowCode.meowCodeMessages = [
 				{ ts: 1000, type: "say", say: "user_feedback", text: "Original message", value: 2000 },
 				{ ts: 2000, type: "say", say: "text", text: "AI response" },
-			] as ClineMessage[]
-			mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
-			mockCline.overwriteClineMessages = vi.fn()
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.handleWebviewAskResponse = vi.fn().mockRejectedValue(new Error("Network timeout"))
+			] as MeowCodeMessage[]
+			mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.handleWebviewAskResponse = vi.fn().mockRejectedValue(new Error("Network timeout"))
 
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 				historyItem: { id: "test-task-id" },
 			})
@@ -2821,21 +2821,21 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			// Simulate user confirming the edit
 			await messageHandler({ type: "editMessageConfirm", messageTs: 2000, text: "Edited message" })
 
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
+			expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
 		})
 
 		test("handles connection drops during edit operation", async () => {
-			const mockCline = new Task(defaultTaskOptions)
-			mockCline.clineMessages = [
+			const mockMeowCode = new Task(defaultTaskOptions)
+			mockMeowCode.meowCodeMessages = [
 				{ ts: 1000, type: "say", say: "user_feedback", text: "Original message", value: 2000 },
 				{ ts: 2000, type: "say", say: "text", text: "AI response" },
-			] as ClineMessage[]
-			mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
-			mockCline.overwriteClineMessages = vi.fn().mockRejectedValue(new Error("Connection lost"))
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.handleWebviewAskResponse = vi.fn()
+			] as MeowCodeMessage[]
+			mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn().mockRejectedValue(new Error("Connection lost"))
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 				historyItem: { id: "test-task-id" },
 			})
@@ -2875,19 +2875,19 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 		})
 
 		test("handles race conditions with simultaneous edits", async () => {
-			const mockCline = new Task(defaultTaskOptions)
-			mockCline.clineMessages = [
+			const mockMeowCode = new Task(defaultTaskOptions)
+			mockMeowCode.meowCodeMessages = [
 				{ ts: 1000, type: "say", say: "user_feedback", text: "Message 1", value: 2000 },
 				{ ts: 2000, type: "say", say: "text", text: "AI response 1" },
 				{ ts: 3000, type: "say", say: "user_feedback", text: "Message 2", value: 4000 },
 				{ ts: 4000, type: "say", say: "text", text: "AI response 2" },
-			] as ClineMessage[]
-			mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }, { ts: 4000 }] as any[]
-			mockCline.overwriteClineMessages = vi.fn()
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.handleWebviewAskResponse = vi.fn()
+			] as MeowCodeMessage[]
+			mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }, { ts: 4000 }] as any[]
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 				historyItem: { id: "test-task-id" },
 			})
@@ -2930,7 +2930,7 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			await messageHandler({ type: "editMessageConfirm", messageTs: 4000, text: "Edited message 2" })
 
 			// Both operations should complete without throwing
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
+			expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
 		})
 	})
 
@@ -2941,7 +2941,7 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 		})
 
 		test("handles edit permission failures", async () => {
-			// Mock no current cline (simulating permission failure)
+			// Mock no current meowCode (simulating permission failure)
 			vi.spyOn(provider, "getCurrentTask").mockReturnValue(undefined)
 
 			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
@@ -2952,22 +2952,22 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				editedMessageContent: "Edited message",
 			})
 
-			// Should not show confirmation dialog when no current cline
+			// Should not show confirmation dialog when no current meowCode
 			expect(vscode.window.showInformationMessage).not.toHaveBeenCalled()
 		})
 
 		test("handles authorization failures during edit", async () => {
-			const mockCline = new Task(defaultTaskOptions)
-			mockCline.clineMessages = [
+			const mockMeowCode = new Task(defaultTaskOptions)
+			mockMeowCode.meowCodeMessages = [
 				{ ts: 1000, type: "say", say: "user_feedback", text: "Original message", value: 2000 },
 				{ ts: 2000, type: "say", say: "text", text: "AI response" },
-			] as ClineMessage[]
-			mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
-			mockCline.overwriteClineMessages = vi.fn().mockRejectedValue(new Error("Unauthorized"))
-			mockCline.overwriteApiConversationHistory = vi.fn()
-			mockCline.handleWebviewAskResponse = vi.fn()
+			] as MeowCodeMessage[]
+			mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+			mockMeowCode.overwriteMeowCodeMessages = vi.fn().mockRejectedValue(new Error("Unauthorized"))
+			mockMeowCode.overwriteApiConversationHistory = vi.fn()
+			mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-			await provider.addClineToStack(mockCline)
+			await provider.addMeowCodeToStack(mockMeowCode)
 			;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 				historyItem: { id: "test-task-id" },
 			})
@@ -3045,14 +3045,14 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			test("handles invalid timestamp values", async () => {
 				;(vscode.window.showInformationMessage as any) = vi.fn()
 
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Original message" },
 					{ ts: 2000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 
 				const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
 
@@ -3080,16 +3080,16 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			})
 
 			test("handles edit operations on deleted messages", async () => {
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Existing message" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
-				mockCline.handleWebviewAskResponse = vi.fn()
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
+				mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3120,20 +3120,20 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				})
 
 				// Should not perform any operations since message doesn't exist
-				expect(mockCline.overwriteClineMessages).not.toHaveBeenCalled()
-				expect(mockCline.handleWebviewAskResponse).not.toHaveBeenCalled()
+				expect(mockMeowCode.overwriteMeowCodeMessages).not.toHaveBeenCalled()
+				expect(mockMeowCode.handleWebviewAskResponse).not.toHaveBeenCalled()
 			})
 
 			test("handles delete operations on non-existent messages", async () => {
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Existing message" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3157,7 +3157,7 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				await messageHandler({ type: "deleteMessageConfirm", messageTs: 5000 })
 
 				// Should not perform any operations since message doesn't exist
-				expect(mockCline.overwriteClineMessages).not.toHaveBeenCalled()
+				expect(mockMeowCode.overwriteMeowCodeMessages).not.toHaveBeenCalled()
 			})
 		})
 
@@ -3168,23 +3168,23 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			})
 
 			test("validates proper cleanup during failed edit operations", async () => {
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Original message", value: 2000 },
 					{ ts: 2000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
 
 				// Mock cleanup tracking
 				const cleanupSpy = vi.fn()
-				mockCline.overwriteClineMessages = vi.fn().mockImplementation(() => {
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn().mockImplementation(() => {
 					cleanupSpy()
 					throw new Error("Operation failed")
 				})
-				mockCline.overwriteApiConversationHistory = vi.fn()
-				mockCline.handleWebviewAskResponse = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
+				mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3215,22 +3215,22 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			})
 
 			test("validates proper cleanup during failed delete operations", async () => {
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Message to delete" },
 					{ ts: 2000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
 
 				// Mock cleanup tracking
 				const cleanupSpy = vi.fn()
-				mockCline.overwriteClineMessages = vi.fn().mockImplementation(() => {
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn().mockImplementation(() => {
 					cleanupSpy()
 					throw new Error("Delete operation failed")
 				})
-				mockCline.overwriteApiConversationHistory = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3267,16 +3267,16 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				const mockMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: largeText, value: 2000 },
 					{ ts: 2000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
+				] as MeowCodeMessage[]
 
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = mockMessages
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
-				mockCline.submitUserMessage = vi.fn()
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = mockMessages
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
+				mockMeowCode.submitUserMessage = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3302,8 +3302,8 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				// Simulate user confirming the edit
 				await messageHandler({ type: "editMessageConfirm", messageTs: 2000, text: largeEditedContent })
 
-				expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
-				expect(mockCline.submitUserMessage).toHaveBeenCalledWith(largeEditedContent, [])
+				expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
+				expect(mockMeowCode.submitUserMessage).toHaveBeenCalledWith(largeEditedContent, [])
 			})
 
 			test("handles deleting messages with large payloads", async () => {
@@ -3314,15 +3314,15 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 					{ ts: 2000, type: "say", say: "user_feedback", text: largeText },
 					{ ts: 3000, type: "say", say: "text", text: "AI response" },
 					{ ts: 4000, type: "say", say: "user_feedback", text: "Another large message: " + largeText },
-				] as ClineMessage[]
+				] as MeowCodeMessage[]
 
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = mockMessages
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }, { ts: 4000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = mockMessages
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }, { ts: 4000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3342,8 +3342,8 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				await messageHandler({ type: "deleteMessageConfirm", messageTs: 3000 })
 
 				// Should handle large payloads without issues - keeps messages before the deleted one
-				expect(mockCline.overwriteClineMessages).toHaveBeenCalledWith([mockMessages[0], mockMessages[1]])
-				expect(mockCline.overwriteApiConversationHistory).toHaveBeenCalledWith([{ ts: 1000 }, { ts: 2000 }])
+				expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalledWith([mockMessages[0], mockMessages[1]])
+				expect(mockMeowCode.overwriteApiConversationHistory).toHaveBeenCalledWith([{ ts: 1000 }, { ts: 2000 }])
 			})
 		})
 
@@ -3355,16 +3355,16 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			// Note: Error messaging test removed as the implementation may not have proper error handling in place
 
 			test("provides user feedback for successful operations", async () => {
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Message to delete" },
 					{ ts: 2000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3385,7 +3385,7 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				await messageHandler({ type: "deleteMessageConfirm", messageTs: 2000 })
 
 				// Verify successful operation completed
-				expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
+				expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
 				// createTaskWithHistoryItem is only called when restoring checkpoints or aborting tasks
 				expect(vscode.window.showErrorMessage).not.toHaveBeenCalled()
 			})
@@ -3393,17 +3393,17 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			test("handles user cancellation gracefully", async () => {
 				// Test cancellation by not sending confirmation
 
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Message to edit" },
 					{ ts: 2000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
-				mockCline.handleWebviewAskResponse = vi.fn()
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 2000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
+				mockMeowCode.handleWebviewAskResponse = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 
 				const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as any).mock.calls[0][0]
 
@@ -3414,9 +3414,9 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				})
 
 				// Verify no operations were performed when user canceled
-				expect(mockCline.overwriteClineMessages).not.toHaveBeenCalled()
-				expect(mockCline.overwriteApiConversationHistory).not.toHaveBeenCalled()
-				expect(mockCline.handleWebviewAskResponse).not.toHaveBeenCalled()
+				expect(mockMeowCode.overwriteMeowCodeMessages).not.toHaveBeenCalled()
+				expect(mockMeowCode.overwriteApiConversationHistory).not.toHaveBeenCalled()
+				expect(mockMeowCode.handleWebviewAskResponse).not.toHaveBeenCalled()
 				expect(vscode.window.showErrorMessage).not.toHaveBeenCalled()
 			})
 		})
@@ -3428,18 +3428,18 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 			})
 
 			test("handles messages with identical timestamps", async () => {
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Message 1" },
 					{ ts: 1000, type: "say", say: "text", text: "Message 2 (same timestamp)" },
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Message 3 (same timestamp)" },
 					{ ts: 2000, type: "say", say: "text", text: "Message 4" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [{ ts: 1000 }, { ts: 1000 }, { ts: 1000 }, { ts: 2000 }] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [{ ts: 1000 }, { ts: 1000 }, { ts: 1000 }, { ts: 2000 }] as any[]
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3459,13 +3459,13 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				await messageHandler({ type: "deleteMessageConfirm", messageTs: 1000 })
 
 				// Should handle identical timestamps gracefully
-				expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
+				expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
 			})
 
 			test("handles messages with future timestamps", async () => {
 				const futureTimestamp = Date.now() + 100000 // Future timestamp
-				const mockCline = new Task(defaultTaskOptions)
-				mockCline.clineMessages = [
+				const mockMeowCode = new Task(defaultTaskOptions)
+				mockMeowCode.meowCodeMessages = [
 					{ ts: 1000, type: "say", say: "user_feedback", text: "Past message" },
 					{
 						ts: futureTimestamp,
@@ -3475,17 +3475,17 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 						value: futureTimestamp + 1000,
 					},
 					{ ts: futureTimestamp + 1000, type: "say", say: "text", text: "AI response" },
-				] as ClineMessage[]
-				mockCline.apiConversationHistory = [
+				] as MeowCodeMessage[]
+				mockMeowCode.apiConversationHistory = [
 					{ ts: 1000 },
 					{ ts: futureTimestamp },
 					{ ts: futureTimestamp + 1000 },
 				] as any[]
-				mockCline.overwriteClineMessages = vi.fn()
-				mockCline.overwriteApiConversationHistory = vi.fn()
-				mockCline.submitUserMessage = vi.fn()
+				mockMeowCode.overwriteMeowCodeMessages = vi.fn()
+				mockMeowCode.overwriteApiConversationHistory = vi.fn()
+				mockMeowCode.submitUserMessage = vi.fn()
 
-				await provider.addClineToStack(mockCline)
+				await provider.addMeowCodeToStack(mockMeowCode)
 				;(provider as any).getTaskWithId = vi.fn().mockResolvedValue({
 					historyItem: { id: "test-task-id" },
 				})
@@ -3515,8 +3515,8 @@ describe("ClineProvider - Comprehensive Edit/Delete Edge Cases", () => {
 				})
 
 				// Should handle future timestamps correctly
-				expect(mockCline.overwriteClineMessages).toHaveBeenCalled()
-				expect(mockCline.submitUserMessage).toHaveBeenCalled()
+				expect(mockMeowCode.overwriteMeowCodeMessages).toHaveBeenCalled()
+				expect(mockMeowCode.submitUserMessage).toHaveBeenCalled()
 			})
 		})
 	})

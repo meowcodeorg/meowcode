@@ -1,7 +1,7 @@
 // npx vitest run src/core/webview/__tests__/skillsMessageHandler.spec.ts
 
 import type { SkillMetadata, WebviewMessage } from "@meow-code/types"
-import type { ClineProvider } from "../ClineProvider"
+import type { MeowCodeProvider } from "../MeowCodeProvider"
 
 // Mock vscode first
 vi.mock("vscode", () => {
@@ -53,7 +53,7 @@ describe("skillsMessageHandler", () => {
 	const mockGetSkill = vi.fn()
 	const mockFindSkillByNameAndSource = vi.fn()
 
-	const createMockProvider = (hasSkillsManager: boolean = true): ClineProvider => {
+	const createMockProvider = (hasSkillsManager: boolean = true): MeowCodeProvider => {
 		const skillsManager = hasSkillsManager
 			? {
 					getSkillsMetadata: mockGetSkillsMetadata,
@@ -69,7 +69,7 @@ describe("skillsMessageHandler", () => {
 			log: mockLog,
 			postMessageToWebview: mockPostMessageToWebview,
 			getSkillsManager: () => skillsManager,
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 	}
 
 	const mockSkills: SkillMetadata[] = [

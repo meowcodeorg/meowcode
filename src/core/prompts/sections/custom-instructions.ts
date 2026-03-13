@@ -225,8 +225,8 @@ export async function loadRuleFiles(cwd: string, enableSubfolderRules: boolean =
 		return "\n# Rules from .roo directories:\n\n" + rules.join("\n\n")
 	}
 
-	// Fall back to existing behavior for legacy .roorules/.clinerules files
-	const ruleFiles = [".roorules", ".clinerules"]
+	// Fall back to existing behavior for legacy .roorules/.meowCoderules files
+	const ruleFiles = [".roorules", ".meowCoderules"]
 
 	for (const file of ruleFiles) {
 		const content = await safeReadFile(path.join(cwd, file))
@@ -429,10 +429,10 @@ export async function addCustomInstructions(
 			if (modeRuleContent) {
 				usedRuleFile = rooModeRuleFile
 			} else {
-				const clineModeRuleFile = `.clinerules-${mode}`
-				modeRuleContent = await safeReadFile(path.join(cwd, clineModeRuleFile))
+				const meowCodeModeRuleFile = `.meowCoderules-${mode}`
+				modeRuleContent = await safeReadFile(path.join(cwd, meowCodeModeRuleFile))
 				if (modeRuleContent) {
-					usedRuleFile = clineModeRuleFile
+					usedRuleFile = meowCodeModeRuleFile
 				}
 			}
 		}

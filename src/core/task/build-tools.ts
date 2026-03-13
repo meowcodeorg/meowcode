@@ -5,7 +5,7 @@ import type OpenAI from "openai"
 import type { ProviderSettings, ModeConfig, ModelInfo } from "@meow-code/types"
 import { customToolRegistry, formatNative } from "@meow-code/core"
 
-import type { ClineProvider } from "../webview/ClineProvider"
+import type { MeowCodeProvider } from "../webview/MeowCodeProvider"
 import { getRooDirectoriesForCwd } from "../../services/roo-config/index.js"
 
 import { getNativeTools, getMcpServerTools } from "../prompts/tools/native-tools"
@@ -16,7 +16,7 @@ import {
 } from "../prompts/tools/filter-tools-for-mode"
 
 interface BuildToolsOptions {
-	provider: ClineProvider
+	provider: MeowCodeProvider
 	cwd: string
 	mode: string | undefined
 	customModes: ModeConfig[] | undefined

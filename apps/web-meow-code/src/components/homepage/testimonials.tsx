@@ -54,7 +54,7 @@ export const testimonials: Testimonial[] = [
 		name: "Wiliam Azzam",
 		role: "Reviewer",
 		origin: "VS Code Marketplace",
-		quote: "I've tried Cursor, Windsurf, Cline, Trae and others, and although using MeowCode with OpenRouter is more expensive, it is also far more effective. Its agents and initial setup, and learning how to use Code/Architect/Orchestrator, help a great deal in developing quality projects.",
+		quote: "I've tried Cursor, Windsurf, MeowCode, Trae and others, and although using MeowCode with OpenRouter is more expensive, it is also far more effective. Its agents and initial setup, and learning how to use Code/Architect/Orchestrator, help a great deal in developing quality projects.",
 		stars: 5,
 	},
 	{

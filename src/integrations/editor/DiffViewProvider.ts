@@ -5,7 +5,7 @@ import * as diff from "diff"
 import stripBom from "strip-bom"
 import delay from "delay"
 
-import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
+import { type MeowCodeSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
 
 import { createDirectoriesForFile } from "../../utils/fs"
 import { arePathsEqual, getReadablePath } from "../../utils/path"
@@ -15,10 +15,10 @@ import { Task } from "../../core/task/Task"
 
 import { DecorationController } from "./DecorationController"
 
-export const DIFF_VIEW_URI_SCHEME = "cline-diff"
+export const DIFF_VIEW_URI_SCHEME = "meowCode-diff"
 export const DIFF_VIEW_LABEL_CHANGES = "Original ↔ Meow's Changes"
 
-// TODO: https://github.com/cline/cline/pull/3354
+// TODO: https://github.com/meowCode/meowCode/pull/3354
 export class DiffViewProvider {
 	// Properties to store the results of saveChanges
 	newProblemsMessage?: string
@@ -63,7 +63,7 @@ export class DiffViewProvider {
 		}
 
 		// Get diagnostics before editing the file, we'll compare to diagnostics
-		// after editing to see if cline needs to fix anything.
+		// after editing to see if meowCode needs to fix anything.
 		this.preDiagnostics = vscode.languages.getDiagnostics()
 
 		if (fileExists) {
@@ -318,7 +318,7 @@ export class DiffViewProvider {
 		// Only send user_feedback_diff if userEdits exists
 		if (this.userEdits) {
 			// Create say object for UI feedback
-			const say: ClineSayTool = {
+			const say: MeowCodeSayTool = {
 				tool: isNewFile ? "newFileCreated" : "editedExistingFile",
 				path: getReadablePath(cwd, this.relPath),
 				diff: this.userEdits,

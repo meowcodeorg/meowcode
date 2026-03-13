@@ -162,19 +162,19 @@ export const mergeExtensionState = (prevState: ExtensionState, newState: Partial
 	const experiments = { ...prevExperiments, ...(newExperiments ?? {}) }
 	const rest = { ...prevRest, ...newRest }
 
-	// Protect clineMessages from stale state pushes using sequence numbering.
+	// Protect meowCodeMessages from stale state pushes using sequence numbering.
 	// Multiple async event sources (cloud auth, settings, task streaming) can trigger
-	// concurrent state pushes. If a stale push arrives after a newer one, its clineMessages
+	// concurrent state pushes. If a stale push arrives after a newer one, its meowCodeMessages
 	// would overwrite the newer messages. The sequence number prevents this by only applying
-	// clineMessages when the incoming seq is strictly greater than the last applied seq.
+	// meowCodeMessages when the incoming seq is strictly greater than the last applied seq.
 	if (
-		newState.clineMessagesSeq !== undefined &&
-		prevState.clineMessagesSeq !== undefined &&
-		newState.clineMessagesSeq <= prevState.clineMessagesSeq &&
-		newState.clineMessages !== undefined
+		newState.meowCodeMessagesSeq !== undefined &&
+		prevState.meowCodeMessagesSeq !== undefined &&
+		newState.meowCodeMessagesSeq <= prevState.meowCodeMessagesSeq &&
+		newState.meowCodeMessages !== undefined
 	) {
-		rest.clineMessages = prevState.clineMessages
-		rest.clineMessagesSeq = prevState.clineMessagesSeq
+		rest.meowCodeMessages = prevState.meowCodeMessages
+		rest.meowCodeMessagesSeq = prevState.meowCodeMessagesSeq
 	}
 
 	// Note that we completely replace the previous apiConfiguration and customSupportPrompts objects
@@ -192,7 +192,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 	const [state, setState] = useState<ExtensionState>({
 		apiConfiguration: {},
 		version: "",
-		clineMessages: [],
+		meowCodeMessages: [],
 		taskHistory: [],
 		shouldShowAnnouncement: false,
 		allowedCommands: [],
@@ -370,22 +370,22 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					break
 				}
 				case "messageUpdated": {
-					const clineMessage = message.clineMessage!
+					const meowCodeMessage = message.meowCodeMessage!
 					setState((prevState) => {
 						// worth noting it will never be possible for a more up-to-date message to be sent here or in normal messages post since the presentAssistantContent function uses lock
-						const lastIndex = findLastIndex(prevState.clineMessages, (msg) => msg.ts === clineMessage.ts)
+						const lastIndex = findLastIndex(prevState.meowCodeMessages, (msg) => msg.ts === meowCodeMessage.ts)
 						if (lastIndex !== -1) {
-							const newClineMessages = [...prevState.clineMessages]
-							newClineMessages[lastIndex] = clineMessage
-							return { ...prevState, clineMessages: newClineMessages }
+							const newMeowCodeMessages = [...prevState.meowCodeMessages]
+							newMeowCodeMessages[lastIndex] = meowCodeMessage
+							return { ...prevState, meowCodeMessages: newMeowCodeMessages }
 						}
 						// Log a warning if messageUpdated arrives for a timestamp not in the
-						// frontend's clineMessages. With the seq guard and cloud event isolation
+						// frontend's meowCodeMessages. With the seq guard and cloud event isolation
 						// (layers 1+2), this should not happen under normal conditions. If it
 						// does, it signals a state synchronization issue worth investigating.
 						console.warn(
-							`[messageUpdated] Received update for unknown message ts=${clineMessage.ts}, dropping. ` +
-								`Frontend has ${prevState.clineMessages.length} messages.`,
+							`[messageUpdated] Received update for unknown message ts=${meowCodeMessage.ts}, dropping. ` +
+								`Frontend has ${prevState.meowCodeMessages.length} messages.`,
 						)
 						return prevState
 					})

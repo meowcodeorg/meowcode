@@ -182,7 +182,7 @@ export class AttemptCompletionTool extends BaseTool<"attempt_completion"> {
 		const result: string | undefined = block.params.result
 		const command: string | undefined = block.params.command
 
-		const lastMessage = task.clineMessages.at(-1)
+		const lastMessage = task.meowCodeMessages.at(-1)
 
 		if (command) {
 			if (lastMessage && lastMessage.ask === "command") {

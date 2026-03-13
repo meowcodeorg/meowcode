@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import * as vscode from "vscode"
 
-import { ClineProvider } from "../ClineProvider"
+import { MeowCodeProvider } from "../MeowCodeProvider"
 import { Task } from "../../task/Task"
 import { ContextProxy } from "../../config/ContextProxy"
 import type { ProviderSettings, HistoryItem } from "@meow-code/types"
@@ -85,8 +85,8 @@ vi.mock("../../../shared/embeddingModels", () => ({
 	EMBEDDING_MODEL_PROFILES: [],
 }))
 
-describe("ClineProvider flicker-free cancel", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider flicker-free cancel", () => {
+	let provider: MeowCodeProvider
 	let mockContext: any
 	let mockOutputChannel: any
 	let mockTask1: any
@@ -138,7 +138,7 @@ describe("ClineProvider flicker-free cancel", () => {
 		}
 
 		// Create provider instance
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", mockContextProxy as any)
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", mockContextProxy as any)
 
 		// Mock provider methods
 		provider.getState = vi.fn().mockResolvedValue({
@@ -193,15 +193,15 @@ describe("ClineProvider flicker-free cancel", () => {
 
 	it("should not remove current task from stack when rehydrating same taskId", async () => {
 		// Setup: Add a task to the stack first
-		;(provider as any).clineStack = [mockTask1]
+		;(provider as any).meowCodeStack = [mockTask1]
 
 		// Mock event listeners for cleanup
 		;(provider as any).taskEventListeners = new WeakMap()
 		const mockCleanupFunctions = [vi.fn(), vi.fn()]
 		;(provider as any).taskEventListeners.set(mockTask1, mockCleanupFunctions)
 
-		// Spy on removeClineFromStack to verify it's NOT called
-		const removeClineFromStackSpy = vi.spyOn(provider, "removeClineFromStack")
+		// Spy on removeMeowCodeFromStack to verify it's NOT called
+		const removeMeowCodeFromStackSpy = vi.spyOn(provider, "removeMeowCodeFromStack")
 
 		// Create history item with same taskId as current task
 		const historyItem: HistoryItem = {
@@ -218,12 +218,12 @@ describe("ClineProvider flicker-free cancel", () => {
 		// Act: Create task with history item (should rehydrate in-place)
 		await provider.createTaskWithHistoryItem(historyItem)
 
-		// Assert: removeClineFromStack should NOT be called
-		expect(removeClineFromStackSpy).not.toHaveBeenCalled()
+		// Assert: removeMeowCodeFromStack should NOT be called
+		expect(removeMeowCodeFromStackSpy).not.toHaveBeenCalled()
 
 		// Verify the task was replaced in-place
-		expect((provider as any).clineStack).toHaveLength(1)
-		expect((provider as any).clineStack[0]).toBe(mockTask2)
+		expect((provider as any).meowCodeStack).toHaveLength(1)
+		expect((provider as any).meowCodeStack[0]).toBe(mockTask2)
 
 		// Verify old event listeners were cleaned up
 		expect(mockCleanupFunctions[0]).toHaveBeenCalled()
@@ -235,10 +235,10 @@ describe("ClineProvider flicker-free cancel", () => {
 
 	it("should remove task from stack when creating different task", async () => {
 		// Setup: Add a task to the stack first
-		;(provider as any).clineStack = [mockTask1]
+		;(provider as any).meowCodeStack = [mockTask1]
 
-		// Spy on removeClineFromStack to verify it IS called
-		const removeClineFromStackSpy = vi.spyOn(provider, "removeClineFromStack").mockResolvedValue(undefined)
+		// Spy on removeMeowCodeFromStack to verify it IS called
+		const removeMeowCodeFromStackSpy = vi.spyOn(provider, "removeMeowCodeFromStack").mockResolvedValue(undefined)
 
 		// Create history item with different taskId
 		const historyItem: HistoryItem = {
@@ -255,16 +255,16 @@ describe("ClineProvider flicker-free cancel", () => {
 		// Act: Create task with different history item
 		await provider.createTaskWithHistoryItem(historyItem)
 
-		// Assert: removeClineFromStack should be called
-		expect(removeClineFromStackSpy).toHaveBeenCalled()
+		// Assert: removeMeowCodeFromStack should be called
+		expect(removeMeowCodeFromStackSpy).toHaveBeenCalled()
 	})
 
 	it("should handle empty stack gracefully during rehydration attempt", async () => {
 		// Setup: Empty stack
-		;(provider as any).clineStack = []
+		;(provider as any).meowCodeStack = []
 
-		// Spy on removeClineFromStack
-		const removeClineFromStackSpy = vi.spyOn(provider, "removeClineFromStack").mockResolvedValue(undefined)
+		// Spy on removeMeowCodeFromStack
+		const removeMeowCodeFromStackSpy = vi.spyOn(provider, "removeMeowCodeFromStack").mockResolvedValue(undefined)
 
 		// Create history item
 		const historyItem: HistoryItem = {
@@ -278,11 +278,11 @@ describe("ClineProvider flicker-free cancel", () => {
 			workspace: "/test/workspace",
 		}
 
-		// Act: Should not error and should call removeClineFromStack
+		// Act: Should not error and should call removeMeowCodeFromStack
 		await provider.createTaskWithHistoryItem(historyItem)
 
-		// Assert: removeClineFromStack should be called (no current task to rehydrate)
-		expect(removeClineFromStackSpy).toHaveBeenCalled()
+		// Assert: removeMeowCodeFromStack should be called (no current task to rehydrate)
+		expect(removeMeowCodeFromStackSpy).toHaveBeenCalled()
 	})
 
 	it("should maintain task stack integrity during flicker-free replacement", async () => {
@@ -293,7 +293,7 @@ describe("ClineProvider flicker-free cancel", () => {
 			emit: vi.fn(),
 		}
 
-		;(provider as any).clineStack = [mockParentTask, mockTask1]
+		;(provider as any).meowCodeStack = [mockParentTask, mockTask1]
 		;(provider as any).taskEventListeners = new WeakMap()
 		;(provider as any).taskEventListeners.set(mockTask1, [vi.fn()])
 
@@ -312,8 +312,8 @@ describe("ClineProvider flicker-free cancel", () => {
 		await provider.createTaskWithHistoryItem(historyItem)
 
 		// Assert: Stack should maintain parent task and replace current task
-		expect((provider as any).clineStack).toHaveLength(2)
-		expect((provider as any).clineStack[0]).toBe(mockParentTask)
-		expect((provider as any).clineStack[1]).toBe(mockTask2)
+		expect((provider as any).meowCodeStack).toHaveLength(2)
+		expect((provider as any).meowCodeStack[0]).toBe(mockParentTask)
+		expect((provider as any).meowCodeStack[1]).toBe(mockTask2)
 	})
 })

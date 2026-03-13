@@ -23,14 +23,14 @@ import {
 import { IpcServer } from "@meow-code/ipc"
 
 import { Package } from "../shared/package"
-import { ClineProvider } from "../core/webview/ClineProvider"
-import { openClineInNewTab } from "../activate/registerCommands"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
+import { openMeowCodeInNewTab } from "../activate/registerCommands"
 import { getCommands } from "../services/command/commands"
 import { getModels } from "../api/providers/fetchers/modelCache"
 
 export class API extends EventEmitter<MeowCodeEvents> implements MeowCodeAPI {
 	private readonly outputChannel: vscode.OutputChannel
-	private readonly sidebarProvider: ClineProvider
+	private readonly sidebarProvider: MeowCodeProvider
 	private readonly context: vscode.ExtensionContext
 	private readonly ipc?: IpcServer
 	private readonly log: (...args: unknown[]) => void
@@ -38,7 +38,7 @@ export class API extends EventEmitter<MeowCodeEvents> implements MeowCodeAPI {
 
 	constructor(
 		outputChannel: vscode.OutputChannel,
-		provider: ClineProvider,
+		provider: MeowCodeProvider,
 		socketPath?: string,
 		enableLogging = false,
 	) {
@@ -182,13 +182,13 @@ export class API extends EventEmitter<MeowCodeEvents> implements MeowCodeAPI {
 		images?: string[]
 		newTab?: boolean
 	}) {
-		let provider: ClineProvider
+		let provider: MeowCodeProvider
 
 		if (newTab) {
 			await vscode.commands.executeCommand("workbench.action.files.revert")
 			await vscode.commands.executeCommand("workbench.action.closeAllEditors")
 
-			provider = await openClineInNewTab({ context: this.context, outputChannel: this.outputChannel })
+			provider = await openMeowCodeInNewTab({ context: this.context, outputChannel: this.outputChannel })
 			this.registerListeners(provider)
 		} else {
 			await vscode.commands.executeCommand(`${Package.name}.SidebarProvider.focus`)
@@ -196,7 +196,7 @@ export class API extends EventEmitter<MeowCodeEvents> implements MeowCodeAPI {
 			provider = this.sidebarProvider
 		}
 
-		await provider.removeClineFromStack()
+		await provider.removeMeowCodeFromStack()
 		await provider.postStateToWebview()
 		await provider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 		await provider.postMessageToWebview({ type: "invoke", invoke: "newChat", text, images })
@@ -245,7 +245,7 @@ export class API extends EventEmitter<MeowCodeEvents> implements MeowCodeAPI {
 
 	public async clearCurrentTask(_lastMessage?: string) {
 		// Legacy finishSubTask removed; clear current by closing active task instance.
-		await this.sidebarProvider.removeClineFromStack()
+		await this.sidebarProvider.removeMeowCodeFromStack()
 		await this.sidebarProvider.postStateToWebview()
 	}
 
@@ -309,7 +309,7 @@ export class API extends EventEmitter<MeowCodeEvents> implements MeowCodeAPI {
 		}
 	}
 
-	private registerListeners(provider: ClineProvider) {
+	private registerListeners(provider: MeowCodeProvider) {
 		provider.on(MeowCodeEventName.TaskCreated, (task) => {
 			// Task Lifecycle
 

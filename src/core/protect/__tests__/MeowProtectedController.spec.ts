@@ -33,9 +33,9 @@ describe("MeowProtectedController", () => {
 			expect(controller.isWriteProtected(".roorules.md")).toBe(true)
 		})
 
-		it("should protect .clinerules* files", () => {
-			expect(controller.isWriteProtected(".clinerules")).toBe(true)
-			expect(controller.isWriteProtected(".clinerules.md")).toBe(true)
+		it("should protect .meowCoderules* files", () => {
+			expect(controller.isWriteProtected(".meowCoderules")).toBe(true)
+			expect(controller.isWriteProtected(".meowCoderules.md")).toBe(true)
 		})
 
 		it("should protect files in .vscode directory", () => {
@@ -158,7 +158,7 @@ describe("MeowProtectedController", () => {
 				".rooignore",
 				".roomodes",
 				".roorules*",
-				".clinerules*",
+				".meowCoderules*",
 				".roo/**",
 				".vscode/**",
 				"*.code-workspace",

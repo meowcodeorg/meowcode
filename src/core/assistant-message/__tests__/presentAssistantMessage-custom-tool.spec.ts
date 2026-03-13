@@ -56,7 +56,7 @@ describe("presentAssistantMessage - Custom Tool Recording", () => {
 			didRejectTool: false,
 			didAlreadyUseTool: false,
 			consecutiveMistakeCount: 0,
-			clineMessages: [],
+			meowCodeMessages: [],
 			api: {
 				getModel: () => ({ id: "test-model", info: {} }),
 			},

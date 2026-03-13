@@ -1,7 +1,7 @@
 import NodeCache from "node-cache"
 import getFolderSize from "get-folder-size"
 
-import type { ClineMessage, HistoryItem } from "@meow-code/types"
+import type { MeowCodeMessage, HistoryItem } from "@meow-code/types"
 
 import { combineApiRequests } from "../../shared/combineApiRequests"
 import { combineCommandSequences } from "../../shared/combineCommandSequences"
@@ -17,7 +17,7 @@ export type TaskMetadataOptions = {
 	rootTaskId?: string
 	parentTaskId?: string
 	taskNumber: number
-	messages: ClineMessage[]
+	messages: MeowCodeMessage[]
 	globalStoragePath: string
 	workspace: string
 	mode?: string
@@ -48,7 +48,7 @@ export async function taskMetadata({
 	let timestamp: number
 	let tokenUsage: ReturnType<typeof getApiMetrics>
 	let taskDirSize: number
-	let taskMessage: ClineMessage | undefined
+	let taskMessage: MeowCodeMessage | undefined
 
 	if (!hasMessages) {
 		// Handle no messages case

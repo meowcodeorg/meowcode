@@ -2,14 +2,14 @@
  * Agent Loop State Detection
  *
  * This module provides the core logic for detecting the current state of the
- * MeowCode agent loop. The state is determined by analyzing the clineMessages
+ * MeowCode agent loop. The state is determined by analyzing the meowCodeMessages
  * array, specifically the last message's type and properties.
  *
  * Key insight: The agent loop stops whenever a message with `type: "ask"` arrives,
  * and the specific `ask` value determines what kind of response the agent is waiting for.
  */
 
-import { ClineMessage, ClineAsk, isIdleAsk, isResumableAsk, isInteractiveAsk, isNonBlockingAsk } from "@meow-code/types"
+import { MeowCodeMessage, MeowCodeAsk, isIdleAsk, isResumableAsk, isInteractiveAsk, isNonBlockingAsk } from "@meow-code/types"
 
 // =============================================================================
 // Agent Loop State Enum
@@ -143,7 +143,7 @@ export interface AgentStateInfo {
 	isStreaming: boolean
 
 	/** The specific ask type if waiting on an ask, undefined otherwise */
-	currentAsk?: ClineAsk
+	currentAsk?: MeowCodeAsk
 
 	/** What action the user should/can take */
 	requiredAction: RequiredAction
@@ -152,7 +152,7 @@ export interface AgentStateInfo {
 	lastMessageTs?: number
 
 	/** The full last message for advanced usage */
-	lastMessage?: ClineMessage
+	lastMessage?: MeowCodeMessage
 
 	/** Human-readable description of the current state */
 	description: string
@@ -183,7 +183,7 @@ export interface ApiReqStartedText {
  *
  * Once the request completes, the cost field will be populated.
  */
-function isApiRequestInProgress(messages: ClineMessage[]): boolean {
+function isApiRequestInProgress(messages: MeowCodeMessage[]): boolean {
 	// Find the last api_req_started message.
 	// Using reverse iteration for efficiency (most recent first).
 	for (let i = messages.length - 1; i >= 0; i--) {
@@ -215,7 +215,7 @@ function isApiRequestInProgress(messages: ClineMessage[]): boolean {
 /**
  * Determine the required action based on the current ask type.
  */
-function getRequiredAction(ask: ClineAsk): RequiredAction {
+function getRequiredAction(ask: MeowCodeAsk): RequiredAction {
 	switch (ask) {
 		case "followup":
 			return "answer"
@@ -244,7 +244,7 @@ function getRequiredAction(ask: ClineAsk): RequiredAction {
 /**
  * Get a human-readable description for the current state.
  */
-function getStateDescription(state: AgentLoopState, ask?: ClineAsk): string {
+function getStateDescription(state: AgentLoopState, ask?: MeowCodeAsk): string {
 	switch (state) {
 		case AgentLoopState.NO_TASK:
 			return "No active task. Ready to start a new task."
@@ -294,15 +294,15 @@ function getStateDescription(state: AgentLoopState, ask?: ClineAsk): string {
 }
 
 /**
- * Detect the current state of the agent loop from the clineMessages array.
+ * Detect the current state of the agent loop from the meowCodeMessages array.
  *
  * This is the main state detection function. It analyzes the messages array
  * and returns detailed information about the current agent state.
  *
- * @param messages - The clineMessages array from extension state
+ * @param messages - The meowCodeMessages array from extension state
  * @returns Detailed state information
  */
-export function detectAgentState(messages: ClineMessage[]): AgentStateInfo {
+export function detectAgentState(messages: MeowCodeMessage[]): AgentStateInfo {
 	// No messages means no task
 	if (!messages || messages.length === 0) {
 		return {
@@ -443,14 +443,14 @@ export function detectAgentState(messages: ClineMessage[]): AgentStateInfo {
  * This is a convenience function for simple use cases where you just need
  * to know if user action is required.
  */
-export function isAgentWaitingForInput(messages: ClineMessage[]): boolean {
+export function isAgentWaitingForInput(messages: MeowCodeMessage[]): boolean {
 	return detectAgentState(messages).isWaitingForInput
 }
 
 /**
  * Quick check: Is the agent actively running (not waiting)?
  */
-export function isAgentRunning(messages: ClineMessage[]): boolean {
+export function isAgentRunning(messages: MeowCodeMessage[]): boolean {
 	const state = detectAgentState(messages)
 	return state.isRunning && !state.isWaitingForInput
 }
@@ -458,6 +458,6 @@ export function isAgentRunning(messages: ClineMessage[]): boolean {
 /**
  * Quick check: Is content currently streaming?
  */
-export function isContentStreaming(messages: ClineMessage[]): boolean {
+export function isContentStreaming(messages: MeowCodeMessage[]): boolean {
 	return detectAgentState(messages).isStreaming
 }

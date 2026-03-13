@@ -39,7 +39,7 @@ vi.mock("@vscode/webview-ui-toolkit/react", () => ({
 const mockExtensionState: {
 	apiConfiguration: ProviderSettings
 	currentTaskItem: { id: string } | null
-	clineMessages: any[]
+	meowCodeMessages: any[]
 } = {
 	apiConfiguration: {
 		apiProvider: "anthropic",
@@ -47,7 +47,7 @@ const mockExtensionState: {
 		apiModelId: "claude-3-opus-20240229",
 	} as ProviderSettings,
 	currentTaskItem: { id: "test-task-id" },
-	clineMessages: [],
+	meowCodeMessages: [],
 }
 
 // Mock the ExtensionStateContext

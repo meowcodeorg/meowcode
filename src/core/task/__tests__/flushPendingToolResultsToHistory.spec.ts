@@ -8,7 +8,7 @@ import type { GlobalState, ProviderSettings } from "@meow-code/types"
 import { TelemetryService } from "@meow-code/telemetry"
 
 import { Task } from "../Task"
-import { ClineProvider } from "../../webview/ClineProvider"
+import { MeowCodeProvider } from "../../webview/MeowCodeProvider"
 import { ContextProxy } from "../../config/ContextProxy"
 
 // Mock delay before any imports that might use it
@@ -203,7 +203,7 @@ describe("flushPendingToolResultsToHistory", () => {
 			dispose: vi.fn(),
 		}
 
-		mockProvider = new ClineProvider(
+		mockProvider = new MeowCodeProvider(
 			mockExtensionContext,
 			mockOutputChannel,
 			"sidebar",

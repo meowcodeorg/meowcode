@@ -367,7 +367,7 @@ export class MarketplaceViewStateManager {
 			}
 
 			// Handle state updates for marketplace items
-			// The state.marketplaceItems come from ClineProvider, see the file src/core/webview/ClineProvider.ts
+			// The state.marketplaceItems come from MeowCodeProvider, see the file src/core/webview/MeowCodeProvider.ts
 			const marketplaceItems = message.state.marketplaceItems
 			const marketplaceInstalledMetadata = message.state.marketplaceInstalledMetadata
 

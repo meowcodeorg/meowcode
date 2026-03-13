@@ -1,6 +1,6 @@
 import * as assert from "assert"
 
-import { MeowCodeEventName, type ClineMessage } from "@meow-code/types"
+import { MeowCodeEventName, type MeowCodeMessage } from "@meow-code/types"
 
 import { sleep, waitFor, waitUntilCompleted } from "./utils"
 
@@ -8,7 +8,7 @@ suite.skip("MeowCode Subtasks", () => {
 	test("Should handle subtask cancellation and resumption correctly", async () => {
 		const api = globalThis.api
 
-		const messages: Record<string, ClineMessage[]> = {}
+		const messages: Record<string, MeowCodeMessage[]> = {}
 
 		api.on(MeowCodeEventName.Message, ({ taskId, message }) => {
 			if (message.type === "say" && message.partial === false) {

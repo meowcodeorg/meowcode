@@ -91,7 +91,7 @@ import { CustomModesManager } from "../config/CustomModesManager"
 import { Task } from "../task/Task"
 
 import { webviewMessageHandler } from "./webviewMessageHandler"
-import type { ClineMessage, TodoItem } from "@meow-code/types"
+import type { MeowCodeMessage, TodoItem } from "@meow-code/types"
 import { readApiMessages, saveApiMessages, saveTaskMessages, TaskHistoryStore } from "../task-persistence"
 import { readTaskMessages } from "../task-persistence/taskMessages"
 import { getNonce } from "./getNonce"
@@ -104,8 +104,8 @@ import { validateAndFixToolResultIds } from "../task/validateToolResultIds"
  * https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
  */
 
-export type ClineProviderEvents = {
-	clineCreated: [cline: Task]
+export type MeowCodeProviderEvents = {
+	meowCodeCreated: [meowCode: Task]
 }
 
 interface PendingEditOperation {
@@ -118,7 +118,7 @@ interface PendingEditOperation {
 	createdAt: number
 }
 
-export class ClineProvider
+export class MeowCodeProvider
 	extends EventEmitter<TaskProviderEvents>
 	implements vscode.WebviewViewProvider, TelemetryPropertiesProvider, TaskProviderLike
 {
@@ -127,11 +127,11 @@ export class ClineProvider
 	// break existing instances of the extension.
 	public static readonly sideBarId = `${Package.name}.SidebarProvider`
 	public static readonly tabPanelId = `${Package.name}.TabPanelProvider`
-	private static activeInstances: Set<ClineProvider> = new Set()
+	private static activeInstances: Set<MeowCodeProvider> = new Set()
 	private disposables: vscode.Disposable[] = []
 	private webviewDisposables: vscode.Disposable[] = []
 	private view?: vscode.WebviewView | vscode.WebviewPanel
-	private clineStack: Task[] = []
+	private meowCodeStack: Task[] = []
 	private codeIndexStatusSubscription?: vscode.Disposable
 	private codeIndexManager?: CodeIndexManager
 	private _workspaceTracker?: WorkspaceTracker // workSpaceTracker read-only for access outside this class
@@ -152,10 +152,10 @@ export class ClineProvider
 	private static readonly PENDING_OPERATION_TIMEOUT_MS = 30000 // 30 seconds
 
 	/**
-	 * Monotonically increasing sequence number for clineMessages state pushes.
+	 * Monotonically increasing sequence number for meowCodeMessages state pushes.
 	 * Used by the frontend to reject stale state that arrives out-of-order.
 	 */
-	private clineMessagesSeq = 0
+	private meowCodeMessagesSeq = 0
 
 	public isViewLaunched = false
 	public settingsImportedAt?: number
@@ -172,7 +172,7 @@ export class ClineProvider
 		super()
 		this.currentWorkspacePath = getWorkspacePath()
 
-		ClineProvider.activeInstances.add(this)
+		MeowCodeProvider.activeInstances.add(this)
 
 		this.updateGlobalState("codebaseIndexModels", EMBEDDING_MODEL_PROFILES)
 
@@ -200,7 +200,7 @@ export class ClineProvider
 		this.providerSettingsManager = new ProviderSettingsManager(this.context)
 
 		this.customModesManager = new CustomModesManager(this.context, async () => {
-			await this.postStateToWebviewWithoutClineMessages()
+			await this.postStateToWebviewWithoutMeowCodeMessages()
 		})
 
 		// Initialize MCP Hub through the singleton manager
@@ -358,14 +358,14 @@ export class ClineProvider
 		return super.off(event, listener as any)
 	}
 
-	// Adds a new Task instance to clineStack, marking the start of a new task.
+	// Adds a new Task instance to meowCodeStack, marking the start of a new task.
 	// The instance is pushed to the top of the stack (LIFO order).
 	// When the task is completed, the top instance is removed, reactivating the
 	// previous task.
-	async addClineToStack(task: Task) {
-		// Add this cline instance into the stack that represents the order of
+	async addMeowCodeToStack(task: Task) {
+		// Add this meowCode instance into the stack that represents the order of
 		// all the called tasks.
-		this.clineStack.push(task)
+		this.meowCodeStack.push(task)
 		task.emit(MeowCodeEventName.TaskFocused)
 
 		// Perform special setup provider specific tasks.
@@ -379,15 +379,15 @@ export class ClineProvider
 		}
 	}
 
-	async performPreparationTasks(cline: Task) {
+	async performPreparationTasks(meowCode: Task) {
 		// LMStudio: We need to force model loading in order to read its context
 		// size; we do it now since we're starting a task with that model selected.
-		if (cline.apiConfiguration && cline.apiConfiguration.apiProvider === "lmstudio") {
+		if (meowCode.apiConfiguration && meowCode.apiConfiguration.apiProvider === "lmstudio") {
 			try {
-				if (!hasLoadedFullDetails(cline.apiConfiguration.lmStudioModelId!)) {
+				if (!hasLoadedFullDetails(meowCode.apiConfiguration.lmStudioModelId!)) {
 					await forceFullModelDetailsLoad(
-						cline.apiConfiguration.lmStudioBaseUrl ?? "http://localhost:1234",
-						cline.apiConfiguration.lmStudioModelId!,
+						meowCode.apiConfiguration.lmStudioBaseUrl ?? "http://localhost:1234",
+						meowCode.apiConfiguration.lmStudioModelId!,
 					)
 				}
 			} catch (error) {
@@ -397,15 +397,15 @@ export class ClineProvider
 		}
 	}
 
-	// Removes and destroys the top Cline instance (the current finished task),
+	// Removes and destroys the top MeowCode instance (the current finished task),
 	// activating the previous one (resuming the parent task).
-	async removeClineFromStack(options?: { skipDelegationRepair?: boolean }) {
-		if (this.clineStack.length === 0) {
+	async removeMeowCodeFromStack(options?: { skipDelegationRepair?: boolean }) {
+		if (this.meowCodeStack.length === 0) {
 			return
 		}
 
-		// Pop the top Cline instance from the stack.
-		let task = this.clineStack.pop()
+		// Pop the top MeowCode instance from the stack.
+		let task = this.meowCodeStack.pop()
 
 		if (task) {
 			// Capture delegation metadata before abort/dispose, since abortTask(true)
@@ -421,7 +421,7 @@ export class ClineProvider
 				await task.abortTask(true)
 			} catch (e) {
 				this.log(
-					`[ClineProvider#removeClineFromStack] abortTask() failed ${task.taskId}.${task.instanceId}: ${e.message}`,
+					`[MeowCodeProvider#removeMeowCodeFromStack] abortTask() failed ${task.taskId}.${task.instanceId}: ${e.message}`,
 				)
 			}
 
@@ -455,13 +455,13 @@ export class ClineProvider
 							awaitingChildId: undefined,
 						})
 						this.log(
-							`[ClineProvider#removeClineFromStack] Repaired parent ${parentTaskId} metadata: delegated → active (child ${childTaskId} removed)`,
+							`[MeowCodeProvider#removeMeowCodeFromStack] Repaired parent ${parentTaskId} metadata: delegated → active (child ${childTaskId} removed)`,
 						)
 					}
 				} catch (err) {
 					// Non-fatal: log but do not block the pop operation.
 					this.log(
-						`[ClineProvider#removeClineFromStack] Failed to repair parent metadata for ${parentTaskId} (non-fatal): ${
+						`[MeowCodeProvider#removeMeowCodeFromStack] Failed to repair parent metadata for ${parentTaskId} (non-fatal): ${
 							err instanceof Error ? err.message : String(err)
 						}`,
 					)
@@ -471,11 +471,11 @@ export class ClineProvider
 	}
 
 	getTaskStackSize(): number {
-		return this.clineStack.length
+		return this.meowCodeStack.length
 	}
 
 	public getCurrentTaskStack(): string[] {
-		return this.clineStack.map((cline) => cline.taskId)
+		return this.meowCodeStack.map((meowCode) => meowCode.taskId)
 	}
 
 	// Pending Edit Operations Management
@@ -500,7 +500,7 @@ export class ClineProvider
 		const timeoutId = setTimeout(() => {
 			this.clearPendingEditOperation(operationId)
 			this.log(`[setPendingEditOperation] Automatically cleared stale pending operation: ${operationId}`)
-		}, ClineProvider.PENDING_OPERATION_TIMEOUT_MS)
+		}, MeowCodeProvider.PENDING_OPERATION_TIMEOUT_MS)
 
 		// Store the operation
 		this.pendingOperations.set(operationId, {
@@ -564,11 +564,11 @@ export class ClineProvider
 		}
 
 		this._disposed = true
-		this.log("Disposing ClineProvider...")
+		this.log("Disposing MeowCodeProvider...")
 
 		// Clear all tasks from the stack.
-		while (this.clineStack.length > 0) {
-			await this.removeClineFromStack()
+		while (this.meowCodeStack.length > 0) {
+			await this.removeMeowCodeFromStack()
 		}
 
 		this.log("Cleared all tasks")
@@ -603,7 +603,7 @@ export class ClineProvider
 		this.taskHistoryStore.dispose()
 		this.flushGlobalStateWriteThrough()
 		this.log("Disposed all disposables")
-		ClineProvider.activeInstances.delete(this)
+		MeowCodeProvider.activeInstances.delete(this)
 
 		// Clean up any event listeners attached to this provider
 		this.removeAllListeners()
@@ -611,19 +611,19 @@ export class ClineProvider
 		McpServerManager.unregisterProvider(this)
 	}
 
-	public static getVisibleInstance(): ClineProvider | undefined {
+	public static getVisibleInstance(): MeowCodeProvider | undefined {
 		return findLast(Array.from(this.activeInstances), (instance) => instance.view?.visible === true)
 	}
 
-	public static async getInstance(): Promise<ClineProvider | undefined> {
-		let visibleProvider = ClineProvider.getVisibleInstance()
+	public static async getInstance(): Promise<MeowCodeProvider | undefined> {
+		let visibleProvider = MeowCodeProvider.getVisibleInstance()
 
 		// If no visible provider, try to show the sidebar view
 		if (!visibleProvider) {
 			await vscode.commands.executeCommand(`${Package.name}.SidebarProvider.focus`)
 			// Wait briefly for the view to become visible
 			await delay(100)
-			visibleProvider = ClineProvider.getVisibleInstance()
+			visibleProvider = MeowCodeProvider.getVisibleInstance()
 		}
 
 		// If still no visible provider, return
@@ -635,13 +635,13 @@ export class ClineProvider
 	}
 
 	public static async isActiveTask(): Promise<boolean> {
-		const visibleProvider = await ClineProvider.getInstance()
+		const visibleProvider = await MeowCodeProvider.getInstance()
 
 		if (!visibleProvider) {
 			return false
 		}
 
-		// Check if there is a cline instance in the stack (if this provider has an active task)
+		// Check if there is a meowCode instance in the stack (if this provider has an active task)
 		if (visibleProvider.getCurrentTask()) {
 			return true
 		}
@@ -657,7 +657,7 @@ export class ClineProvider
 		// Capture telemetry for code action usage
 		TelemetryService.instance.captureCodeActionUsed(promptType)
 
-		const visibleProvider = await ClineProvider.getInstance()
+		const visibleProvider = await MeowCodeProvider.getInstance()
 
 		if (!visibleProvider) {
 			return
@@ -688,7 +688,7 @@ export class ClineProvider
 	): Promise<void> {
 		TelemetryService.instance.captureCodeActionUsed(promptType)
 
-		const visibleProvider = await ClineProvider.getInstance()
+		const visibleProvider = await MeowCodeProvider.getInstance()
 
 		if (!visibleProvider) {
 			return
@@ -818,7 +818,7 @@ export class ClineProvider
 		webviewView.onDidDispose(
 			async () => {
 				if (inTabMode) {
-					this.log("Disposing ClineProvider instance for tab view")
+					this.log("Disposing MeowCodeProvider instance for tab view")
 					await this.dispose()
 				} else {
 					this.log("Clearing webview resources for sidebar view")
@@ -844,7 +844,7 @@ export class ClineProvider
 		// But don't clear if there's already an active task (e.g., resumed via IPC/bridge).
 		const currentTask = this.getCurrentTask()
 		if (!currentTask || currentTask.abandoned || currentTask.abort) {
-			await this.removeClineFromStack()
+			await this.removeMeowCodeFromStack()
 		}
 	}
 
@@ -863,7 +863,7 @@ export class ClineProvider
 		const isRehydratingCurrentTask = currentTask && currentTask.taskId === historyItem.id
 
 		if (!isRehydratingCurrentTask) {
-			await this.removeClineFromStack()
+			await this.removeMeowCodeFromStack()
 		}
 
 		// If the history item has a saved mode, restore it and its associated API configuration.
@@ -984,10 +984,10 @@ export class ClineProvider
 
 		if (isRehydratingCurrentTask) {
 			// Replace the current task in-place to avoid UI flicker
-			const stackIndex = this.clineStack.length - 1
+			const stackIndex = this.meowCodeStack.length - 1
 
 			// Properly dispose of the old task to ensure garbage collection
-			const oldTask = this.clineStack[stackIndex]
+			const oldTask = this.meowCodeStack[stackIndex]
 
 			// Abort the old task to stop running processes and mark as abandoned
 			try {
@@ -1006,7 +1006,7 @@ export class ClineProvider
 			}
 
 			// Replace the task in the stack
-			this.clineStack[stackIndex] = task
+			this.meowCodeStack[stackIndex] = task
 			task.emit(MeowCodeEventName.TaskFocused)
 
 			// Perform preparation tasks and set up event listeners
@@ -1016,7 +1016,7 @@ export class ClineProvider
 				`[createTaskWithHistoryItem] rehydrated task ${task.taskId}.${task.instanceId} in-place (flicker-free)`,
 			)
 		} else {
-			await this.addClineToStack(task)
+			await this.addMeowCodeToStack(task)
 
 			this.log(
 				`[createTaskWithHistoryItem] ${task.parentTask ? "child" : "parent"} task ${task.taskId}.${task.instanceId} instantiated`,
@@ -1036,7 +1036,7 @@ export class ClineProvider
 				try {
 					// Find the message index in the restored state
 					const { messageIndex, apiConversationHistoryIndex } = (() => {
-						const messageIndex = task.clineMessages.findIndex((msg) => msg.ts === pendingEdit.messageTs)
+						const messageIndex = task.meowCodeMessages.findIndex((msg) => msg.ts === pendingEdit.messageTs)
 						const apiConversationHistoryIndex = task.apiConversationHistory.findIndex(
 							(msg) => msg.ts === pendingEdit.messageTs,
 						)
@@ -1045,7 +1045,7 @@ export class ClineProvider
 
 					if (messageIndex !== -1) {
 						// Remove the target message and all subsequent messages
-						await task.overwriteClineMessages(task.clineMessages.slice(0, messageIndex))
+						await task.overwriteMeowCodeMessages(task.meowCodeMessages.slice(0, messageIndex))
 
 						if (apiConversationHistoryIndex !== -1) {
 							await task.overwriteApiConversationHistory(
@@ -1091,14 +1091,14 @@ export class ClineProvider
 
 			if (fs.existsSync(portFilePath)) {
 				localPort = fs.readFileSync(portFilePath, "utf8").trim()
-				console.log(`[ClineProvider:Vite] Using Vite server port from ${portFilePath}: ${localPort}`)
+				console.log(`[MeowCodeProvider:Vite] Using Vite server port from ${portFilePath}: ${localPort}`)
 			} else {
 				console.log(
-					`[ClineProvider:Vite] Port file not found at ${portFilePath}, using default port: ${localPort}`,
+					`[MeowCodeProvider:Vite] Port file not found at ${portFilePath}, using default port: ${localPort}`,
 				)
 			}
 		} catch (err) {
-			console.error("[ClineProvider:Vite] Failed to read Vite port file:", err)
+			console.error("[MeowCodeProvider:Vite] Failed to read Vite port file:", err)
 		}
 
 		const localServerUrl = `localhost:${localPort}`
@@ -1578,10 +1578,10 @@ export class ClineProvider
 			// Windows: %APPDATA%\Roo-Code\MCP
 			mcpServersDir = path.join(os.homedir(), "AppData", "Roaming", "Meow-Code", "MCP")
 		} else if (process.platform === "darwin") {
-			// macOS: ~/Documents/Cline/MCP
-			mcpServersDir = path.join(os.homedir(), "Documents", "Cline", "MCP")
+			// macOS: ~/Documents/MeowCode/MCP
+			mcpServersDir = path.join(os.homedir(), "Documents", "MeowCode", "MCP")
 		} else {
-			// Linux: ~/.local/share/Cline/MCP
+			// Linux: ~/.local/share/MeowCode/MCP
 			mcpServersDir = path.join(os.homedir(), ".local", "share", "Meow-Code", "MCP")
 		}
 
@@ -1749,9 +1749,9 @@ export class ClineProvider
 	/* Condenses a task's message history to use fewer tokens. */
 	async condenseTaskContext(taskId: string) {
 		let task: Task | undefined
-		for (let i = this.clineStack.length - 1; i >= 0; i--) {
-			if (this.clineStack[i].taskId === taskId) {
-				task = this.clineStack[i]
+		for (let i = this.meowCodeStack.length - 1; i >= 0; i--) {
+			if (this.meowCodeStack[i].taskId === taskId) {
+				task = this.meowCodeStack[i]
 				break
 			}
 		}
@@ -1796,7 +1796,7 @@ export class ClineProvider
 			for (const taskId of allIdsToDelete) {
 				if (taskId === this.getCurrentTask()?.taskId) {
 					// Close the current task instance; delegation flows will be handled via metadata if applicable.
-					await this.removeClineFromStack()
+					await this.removeMeowCodeFromStack()
 					break
 				}
 			}
@@ -1857,8 +1857,8 @@ export class ClineProvider
 
 	async postStateToWebview() {
 		const state = await this.getStateToPostToWebview()
-		this.clineMessagesSeq++
-		state.clineMessagesSeq = this.clineMessagesSeq
+		this.meowCodeMessagesSeq++
+		state.meowCodeMessagesSeq = this.meowCodeMessagesSeq
 		this.postMessageToWebview({ type: "state", state })
 	}
 
@@ -1872,26 +1872,26 @@ export class ClineProvider
 	 */
 	async postStateToWebviewWithoutTaskHistory(): Promise<void> {
 		const state = await this.getStateToPostToWebview()
-		this.clineMessagesSeq++
-		state.clineMessagesSeq = this.clineMessagesSeq
+		this.meowCodeMessagesSeq++
+		state.meowCodeMessagesSeq = this.meowCodeMessagesSeq
 		const { taskHistory: _omit, ...rest } = state
 		this.postMessageToWebview({ type: "state", state: rest })
 	}
 
 	/**
-	 * Like postStateToWebview but intentionally omits both clineMessages and taskHistory.
+	 * Like postStateToWebview but intentionally omits both meowCodeMessages and taskHistory.
 	 *
 	 * Rationale:
 	 * - Cloud event handlers (auth, settings, user-info) and mode changes trigger state pushes
-	 *   that have nothing to do with chat messages. Including clineMessages in these pushes
-	 *   creates race conditions where a stale snapshot of clineMessages (captured during async
+	 *   that have nothing to do with chat messages. Including meowCodeMessages in these pushes
+	 *   creates race conditions where a stale snapshot of meowCodeMessages (captured during async
 	 *   getStateToPostToWebview) overwrites newer messages the task has streamed in the meantime.
 	 * - This method ensures cloud/mode events only push the state fields they actually affect
 	 *   (cloud auth, org settings, profiles, etc.) without interfering with task message streaming.
 	 */
-	async postStateToWebviewWithoutClineMessages(): Promise<void> {
+	async postStateToWebviewWithoutMeowCodeMessages(): Promise<void> {
 		const state = await this.getStateToPostToWebview()
-		const { clineMessages: _omitMessages, taskHistory: _omitHistory, ...rest } = state
+		const { meowCodeMessages: _omitMessages, taskHistory: _omitHistory, ...rest } = state
 		this.postMessageToWebview({ type: "state", state: rest })
 	}
 
@@ -2103,7 +2103,7 @@ export class ClineProvider
 			uriScheme: vscode.env.uriScheme,
 			currentTaskId: currentTask?.taskId,
 			currentTaskItem: currentTask?.taskId ? this.taskHistoryStore.get(currentTask.taskId) : undefined,
-			clineMessages: currentTask?.clineMessages || [],
+			meowCodeMessages: currentTask?.meowCodeMessages || [],
 			currentTaskTodos: currentTask?.todoList || [],
 			messageQueue: currentTask?.messageQueueService?.messages,
 			taskHistory: this.taskHistoryStore.getAll().filter((item: HistoryItem) => item.ts && item.task),
@@ -2214,7 +2214,7 @@ export class ClineProvider
 	async getState(): Promise<
 		Omit<
 			ExtensionState,
-			"clineMessages" | "renderContext" | "hasOpenedModeSelector" | "version" | "shouldShowAnnouncement"
+			"meowCodeMessages" | "renderContext" | "hasOpenedModeSelector" | "version" | "shouldShowAnnouncement"
 		>
 	> {
 		const stateValues = this.contextProxy.getValues()
@@ -2387,7 +2387,7 @@ export class ClineProvider
 					`[scheduleGlobalStateWriteThrough] Failed: ${err instanceof Error ? err.message : String(err)}`,
 				)
 			}
-		}, ClineProvider.GLOBAL_STATE_WRITE_THROUGH_DEBOUNCE_MS)
+		}, MeowCodeProvider.GLOBAL_STATE_WRITE_THROUGH_DEBOUNCE_MS)
 	}
 
 	/**
@@ -2472,7 +2472,7 @@ export class ClineProvider
 		await this.contextProxy.resetAllState()
 		await this.providerSettingsManager.resetAllConfigs()
 		await this.customModesManager.resetCustomModes()
-		await this.removeClineFromStack()
+		await this.removeMeowCodeFromStack()
 		await this.postStateToWebview()
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 	}
@@ -2495,7 +2495,7 @@ export class ClineProvider
 	}
 
 	get messages() {
-		return this.getCurrentTask()?.clineMessages || []
+		return this.getCurrentTask()?.meowCodeMessages || []
 	}
 
 	public getMcpHub(): McpHub | undefined {
@@ -2566,11 +2566,11 @@ export class ClineProvider
 	 */
 
 	public getCurrentTask(): Task | undefined {
-		if (this.clineStack.length === 0) {
+		if (this.meowCodeStack.length === 0) {
 			return undefined
 		}
 
-		return this.clineStack[this.clineStack.length - 1]
+		return this.meowCodeStack[this.meowCodeStack.length - 1]
 	}
 
 	public getRecentTasks(): string[] {
@@ -2677,7 +2677,7 @@ export class ClineProvider
 		// Single-open-task invariant: always enforce for user-initiated top-level tasks
 		if (!parentTask) {
 			try {
-				await this.removeClineFromStack()
+				await this.removeMeowCodeFromStack()
 			} catch {
 				// Non-fatal
 			}
@@ -2696,18 +2696,18 @@ export class ClineProvider
 			task: text,
 			images,
 			experiments,
-			rootTask: this.clineStack.length > 0 ? this.clineStack[0] : undefined,
+			rootTask: this.meowCodeStack.length > 0 ? this.meowCodeStack[0] : undefined,
 			parentTask,
-			taskNumber: this.clineStack.length + 1,
+			taskNumber: this.meowCodeStack.length + 1,
 			onCreated: this.taskCreationCallback,
 			initialTodos: options.initialTodos,
-			// Ensure this task is present in clineStack before startTask() emits
+			// Ensure this task is present in meowCodeStack before startTask() emits
 			// its initial state update, so state.currentTaskId is available ASAP.
 			startTask: false,
 			...options,
 		})
 
-		await this.addClineToStack(task)
+		await this.addMeowCodeToStack(task)
 		task.start()
 
 		this.log(
@@ -2808,10 +2808,10 @@ export class ClineProvider
 	// Clear the current task without treating it as a subtask.
 	// This is used when the user cancels a task that is not a subtask.
 	public async clearTask(): Promise<void> {
-		if (this.clineStack.length > 0) {
-			const task = this.clineStack[this.clineStack.length - 1]
+		if (this.meowCodeStack.length > 0) {
+			const task = this.meowCodeStack[this.meowCodeStack.length - 1]
 			console.log(`[clearTask] clearing task ${task.taskId}.${task.instanceId}`)
-			await this.removeClineFromStack()
+			await this.removeMeowCodeFromStack()
 		}
 	}
 
@@ -2975,7 +2975,7 @@ export class ClineProvider
 		//
 		//    NOTE: We do NOT pass the assistant message here because the assistant message
 		//    is already added to apiConversationHistory by the normal flow in
-		//    recursivelyMakeClineRequests BEFORE tools start executing. We only need to
+		//    recursivelyMakeMeowCodeRequests BEFORE tools start executing. We only need to
 		//    flush the pending user message with tool_results.
 		try {
 			const flushSuccess = await parent.flushPendingToolResultsToHistory()
@@ -3005,7 +3005,7 @@ export class ClineProvider
 		//    This ensures we never have >1 tasks open at any time during delegation.
 		//    Await abort completion to ensure clean disposal and prevent unhandled rejections.
 		try {
-			await this.removeClineFromStack({ skipDelegationRepair: true })
+			await this.removeMeowCodeFromStack({ skipDelegationRepair: true })
 		} catch (error) {
 			this.log(
 				`[delegateParentAndOpenChild] Error during parent disposal (non-fatal): ${
@@ -3035,7 +3035,7 @@ export class ClineProvider
 		// call attempt_completion before status is persisted separately.
 		//
 		// Pass startTask: false to prevent the child from beginning its task loop
-		// (and writing to globalState via saveClineMessages → updateTaskHistory)
+		// (and writing to globalState via saveMeowCodeMessages → updateTaskHistory)
 		// before we persist the parent's delegation metadata in step 5.
 		// Without this, the child's fire-and-forget startTask() races with step 5,
 		// and the last writer to globalState overwrites the other's changes—
@@ -3093,14 +3093,14 @@ export class ClineProvider
 		// 1) Load parent from history and current persisted messages
 		const { historyItem } = await this.getTaskWithId(parentTaskId)
 
-		let parentClineMessages: ClineMessage[] = []
+		let parentMeowCodeMessages: MeowCodeMessage[] = []
 		try {
-			parentClineMessages = await readTaskMessages({
+			parentMeowCodeMessages = await readTaskMessages({
 				taskId: parentTaskId,
 				globalStoragePath,
 			})
 		} catch {
-			parentClineMessages = []
+			parentMeowCodeMessages = []
 		}
 
 		let parentApiMessages: any[] = []
@@ -3117,17 +3117,17 @@ export class ClineProvider
 		const ts = Date.now()
 
 		// Defensive: ensure arrays
-		if (!Array.isArray(parentClineMessages)) parentClineMessages = []
+		if (!Array.isArray(parentMeowCodeMessages)) parentMeowCodeMessages = []
 		if (!Array.isArray(parentApiMessages)) parentApiMessages = []
 
-		const subtaskUiMessage: ClineMessage = {
+		const subtaskUiMessage: MeowCodeMessage = {
 			type: "say",
 			say: "subtask_result",
 			text: completionResultSummary,
 			ts,
 		}
-		parentClineMessages.push(subtaskUiMessage)
-		await saveTaskMessages({ messages: parentClineMessages, taskId: parentTaskId, globalStoragePath })
+		parentMeowCodeMessages.push(subtaskUiMessage)
+		await saveTaskMessages({ messages: parentMeowCodeMessages, taskId: parentTaskId, globalStoragePath })
 
 		// Find the tool_use_id from the last assistant message's new_task tool_use
 		let toolUseId: string | undefined
@@ -3205,17 +3205,17 @@ export class ClineProvider
 
 		// 3) Close child instance if still open (single-open-task invariant).
 		//    This MUST happen BEFORE updating the child's status to "completed" because
-		//    removeClineFromStack() → abortTask(true) → saveClineMessages() writes
+		//    removeMeowCodeFromStack() → abortTask(true) → saveMeowCodeMessages() writes
 		//    the historyItem with initialStatus (typically "active"), which would
 		//    overwrite a "completed" status set earlier.
 		const current = this.getCurrentTask()
 		if (current?.taskId === childTaskId) {
-			await this.removeClineFromStack()
+			await this.removeMeowCodeFromStack()
 		}
 
 		// 4) Update child metadata to "completed" status.
 		//    This runs after the abort so it overwrites the stale "active" status
-		//    that saveClineMessages() may have written during step 3.
+		//    that saveMeowCodeMessages() may have written during step 3.
 		try {
 			const { historyItem: childHistory } = await this.getTaskWithId(childTaskId)
 			await this.updateTaskHistory({
@@ -3256,7 +3256,7 @@ export class ClineProvider
 		// 8) Inject restored histories into the in-memory instance before resuming
 		if (parentInstance) {
 			try {
-				await parentInstance.overwriteClineMessages(parentClineMessages)
+				await parentInstance.overwriteMeowCodeMessages(parentMeowCodeMessages)
 			} catch {
 				// non-fatal
 			}

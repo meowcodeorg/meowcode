@@ -218,7 +218,7 @@ export type SummarizeResponse = {
 	newContextTokens?: number // The number of tokens in the context for the next API request
 	error?: string // Populated iff the operation fails: error message shown to the user on failure (see Task.ts)
 	errorDetails?: string // Detailed error information including stack trace and API error info
-	condenseId?: string // The unique ID of the created Summary message, for linking to condense_context clineMessage
+	condenseId?: string // The unique ID of the created Summary message, for linking to condense_context meowCodeMessage
 }
 
 export type SummarizeConversationOptions = {
@@ -251,7 +251,7 @@ export type SummarizeConversationOptions = {
  *   message won't have fresh environment details injected.
  * - For MANUAL condensing (isAutomaticTrigger=false): Environment details are NOT included
  *   because fresh environment details will be injected on the very next turn via
- *   getEnvironmentDetails() in recursivelyMakeClineRequests().
+ *   getEnvironmentDetails() in recursivelyMakeMeowCodeRequests().
  */
 export async function summarizeConversation(options: SummarizeConversationOptions): Promise<SummarizeResponse> {
 	const {

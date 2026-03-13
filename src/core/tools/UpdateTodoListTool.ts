@@ -106,56 +106,56 @@ export class UpdateTodoListTool extends BaseTool<"update_todo_list"> {
 	}
 }
 
-export function addTodoToTask(cline: Task, content: string, status: TodoStatus = "pending", id?: string): TodoItem {
+export function addTodoToTask(meowCode: Task, content: string, status: TodoStatus = "pending", id?: string): TodoItem {
 	const todo: TodoItem = {
 		id: id ?? crypto.randomUUID(),
 		content,
 		status,
 	}
-	if (!cline.todoList) cline.todoList = []
-	cline.todoList.push(todo)
+	if (!meowCode.todoList) meowCode.todoList = []
+	meowCode.todoList.push(todo)
 	return todo
 }
 
-export function updateTodoStatusForTask(cline: Task, id: string, nextStatus: TodoStatus): boolean {
-	if (!cline.todoList) return false
-	const idx = cline.todoList.findIndex((t) => t.id === id)
+export function updateTodoStatusForTask(meowCode: Task, id: string, nextStatus: TodoStatus): boolean {
+	if (!meowCode.todoList) return false
+	const idx = meowCode.todoList.findIndex((t) => t.id === id)
 	if (idx === -1) return false
-	const current = cline.todoList[idx]
+	const current = meowCode.todoList[idx]
 	if (
 		(current.status === "pending" && nextStatus === "in_progress") ||
 		(current.status === "in_progress" && nextStatus === "completed") ||
 		current.status === nextStatus
 	) {
-		cline.todoList[idx] = { ...current, status: nextStatus }
+		meowCode.todoList[idx] = { ...current, status: nextStatus }
 		return true
 	}
 	return false
 }
 
-export function removeTodoFromTask(cline: Task, id: string): boolean {
-	if (!cline.todoList) return false
-	const idx = cline.todoList.findIndex((t) => t.id === id)
+export function removeTodoFromTask(meowCode: Task, id: string): boolean {
+	if (!meowCode.todoList) return false
+	const idx = meowCode.todoList.findIndex((t) => t.id === id)
 	if (idx === -1) return false
-	cline.todoList.splice(idx, 1)
+	meowCode.todoList.splice(idx, 1)
 	return true
 }
 
-export function getTodoListForTask(cline: Task): TodoItem[] | undefined {
-	return cline.todoList?.slice()
+export function getTodoListForTask(meowCode: Task): TodoItem[] | undefined {
+	return meowCode.todoList?.slice()
 }
 
-export async function setTodoListForTask(cline?: Task, todos?: TodoItem[]) {
-	if (cline === undefined) return
-	cline.todoList = Array.isArray(todos) ? todos : []
+export async function setTodoListForTask(meowCode?: Task, todos?: TodoItem[]) {
+	if (meowCode === undefined) return
+	meowCode.todoList = Array.isArray(todos) ? todos : []
 }
 
-export function restoreTodoListForTask(cline: Task, todoList?: TodoItem[]) {
+export function restoreTodoListForTask(meowCode: Task, todoList?: TodoItem[]) {
 	if (todoList) {
-		cline.todoList = Array.isArray(todoList) ? todoList : []
+		meowCode.todoList = Array.isArray(todoList) ? todoList : []
 		return
 	}
-	cline.todoList = getLatestTodo(cline.clineMessages)
+	meowCode.todoList = getLatestTodo(meowCode.meowCodeMessages)
 }
 
 function todoListToMarkdown(todos: TodoItem[]): string {

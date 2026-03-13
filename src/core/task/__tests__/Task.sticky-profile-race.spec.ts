@@ -4,7 +4,7 @@ import * as vscode from "vscode"
 
 import type { ProviderSettings } from "@meow-code/types"
 import { Task } from "../Task"
-import { ClineProvider } from "../../webview/ClineProvider"
+import { MeowCodeProvider } from "../../webview/MeowCodeProvider"
 
 vi.mock("@meow-code/telemetry", () => ({
 	TelemetryService: {
@@ -123,7 +123,7 @@ describe("Task - sticky provider profile init race", () => {
 			postStateToWebview: vi.fn().mockResolvedValue(undefined),
 			postStateToWebviewWithoutTaskHistory: vi.fn().mockResolvedValue(undefined),
 			updateTaskHistory: vi.fn().mockResolvedValue(undefined),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		const task = new Task({
 			provider: mockProvider,

@@ -16,7 +16,7 @@ export class MeowProtectedController {
 		".rooignore",
 		".roomodes",
 		".roorules*",
-		".clinerules*",
+		".meowCoderules*",
 		".roo/**",
 		".vscode/**",
 		"*.code-workspace",

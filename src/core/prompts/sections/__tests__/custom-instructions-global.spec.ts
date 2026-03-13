@@ -199,7 +199,7 @@ describe("custom-instructions global .roo support", () => {
 			// So we don't need to mock rejections, just empty responses
 			mockReadFile
 				.mockResolvedValueOnce("") // .roorules returns empty (simulating ENOENT caught by safeReadFile)
-				.mockResolvedValueOnce("") // .clinerules returns empty (simulating ENOENT caught by safeReadFile)
+				.mockResolvedValueOnce("") // .meowCoderules returns empty (simulating ENOENT caught by safeReadFile)
 
 			const result = await loadRuleFiles(mockCwd)
 
@@ -243,7 +243,7 @@ describe("custom-instructions global .roo support", () => {
 				.mockResolvedValueOnce("project mode rule content")
 				.mockResolvedValueOnce("") // AGENTS.md file (empty)
 				.mockResolvedValueOnce("") // .roorules legacy file (empty)
-				.mockResolvedValueOnce("") // .clinerules legacy file (empty)
+				.mockResolvedValueOnce("") // .meowCoderules legacy file (empty)
 
 			const result = await addCustomInstructions("", "", mockCwd, mode)
 
@@ -269,7 +269,7 @@ describe("custom-instructions global .roo support", () => {
 				.mockResolvedValueOnce("legacy mode rule content") // .roorules-code
 				.mockResolvedValueOnce("") // AGENTS.md file (empty)
 				.mockResolvedValueOnce("") // generic .roorules (empty)
-				.mockResolvedValueOnce("") // generic .clinerules (empty)
+				.mockResolvedValueOnce("") // generic .meowCoderules (empty)
 
 			const result = await addCustomInstructions("", "", mockCwd, mode)
 

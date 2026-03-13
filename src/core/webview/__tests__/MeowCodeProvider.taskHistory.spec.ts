@@ -1,11 +1,11 @@
-// pnpm --filter meow-code test core/webview/__tests__/ClineProvider.taskHistory.spec.ts
+// pnpm --filter meow-code test core/webview/__tests__/MeowCodeProvider.taskHistory.spec.ts
 
 import * as vscode from "vscode"
 import type { HistoryItem, ExtensionMessage } from "@meow-code/types"
 import { TelemetryService } from "@meow-code/telemetry"
 
 import { ContextProxy } from "../../config/ContextProxy"
-import { ClineProvider } from "../ClineProvider"
+import { MeowCodeProvider } from "../MeowCodeProvider"
 
 // Mock setup
 vi.mock("p-wait-for", () => ({
@@ -170,9 +170,9 @@ vi.mock("../../task/Task", () => ({
 		api: undefined,
 		abortTask: vi.fn(),
 		handleWebviewAskResponse: vi.fn(),
-		clineMessages: [],
+		meowCodeMessages: [],
 		apiConversationHistory: [],
-		overwriteClineMessages: vi.fn(),
+		overwriteMeowCodeMessages: vi.fn(),
 		overwriteApiConversationHistory: vi.fn(),
 		getTaskNumber: vi.fn().mockReturnValue(0),
 		setTaskNumber: vi.fn(),
@@ -236,8 +236,8 @@ afterAll(() => {
 	vi.restoreAllMocks()
 })
 
-describe("ClineProvider Task History Synchronization", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider Task History Synchronization", () => {
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -319,7 +319,7 @@ describe("ClineProvider Task History Synchronization", () => {
 			onDidChangeVisibility: vi.fn().mockImplementation(() => ({ dispose: vi.fn() })),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		// Wait for the async TaskHistoryStore initialization to complete
 		// (fire-and-forget from the constructor; microtasks need to flush)

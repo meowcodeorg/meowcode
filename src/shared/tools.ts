@@ -1,11 +1,11 @@
 import { Anthropic } from "@anthropic-ai/sdk"
 
-import type { ClineAsk, ToolProgressStatus, ToolGroup, ToolName, GenerateImageParams } from "@meow-code/types"
+import type { MeowCodeAsk, ToolProgressStatus, ToolGroup, ToolName, GenerateImageParams } from "@meow-code/types"
 
 export type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>
 
 export type AskApproval = (
-	type: ClineAsk,
+	type: MeowCodeAsk,
 	partialMessage?: string,
 	progressStatus?: ToolProgressStatus,
 	forceApproval?: boolean,

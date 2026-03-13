@@ -2,7 +2,7 @@ import path from "path"
 import delay from "delay"
 import fs from "fs/promises"
 
-import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
+import { type MeowCodeSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
 
 import { Task } from "../task/Task"
 import { formatResponse } from "../prompts/responses"
@@ -88,7 +88,7 @@ export class WriteToFileTool extends BaseTool<"write_to_file"> {
 		const fullPath = relPath ? path.resolve(task.cwd, relPath) : ""
 		const isOutsideWorkspace = isPathOutsideWorkspace(fullPath)
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: fileExists ? "editedExistingFile" : "newFileCreated",
 			path: getReadablePath(task.cwd, relPath),
 			content: newContent,
@@ -125,7 +125,7 @@ export class WriteToFileTool extends BaseTool<"write_to_file"> {
 					...sharedMessageProps,
 					content: unified,
 					diffStats: computeDiffStats(unified) || undefined,
-				} satisfies ClineSayTool)
+				} satisfies MeowCodeSayTool)
 
 				const didApprove = await askApproval("tool", completeMessage, undefined, isWriteProtected)
 
@@ -157,7 +157,7 @@ export class WriteToFileTool extends BaseTool<"write_to_file"> {
 					...sharedMessageProps,
 					content: unified,
 					diffStats: computeDiffStats(unified) || undefined,
-				} satisfies ClineSayTool)
+				} satisfies MeowCodeSayTool)
 
 				const didApprove = await askApproval("tool", completeMessage, undefined, isWriteProtected)
 
@@ -233,7 +233,7 @@ export class WriteToFileTool extends BaseTool<"write_to_file"> {
 		const isWriteProtected = task.rooProtectedController?.isWriteProtected(relPath!) || false
 		const isOutsideWorkspace = isPathOutsideWorkspace(absolutePath)
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: fileExists ? "editedExistingFile" : "newFileCreated",
 			path: getReadablePath(task.cwd, relPath!),
 			content: newContent || "",

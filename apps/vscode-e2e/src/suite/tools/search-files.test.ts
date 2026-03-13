@@ -3,7 +3,7 @@ import * as fs from "fs/promises"
 import * as path from "path"
 import * as vscode from "vscode"
 
-import { MeowCodeEventName, type ClineMessage } from "@meow-code/types"
+import { MeowCodeEventName, type MeowCodeMessage } from "@meow-code/types"
 
 import { waitFor, sleep } from "../utils"
 import { setDefaultSuiteTimeout } from "../test-utils"
@@ -291,13 +291,13 @@ The search should find matches across different file types and provide context f
 
 	test("Should search for function definitions in JavaScript files", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 		let searchResults: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution and capture results
@@ -404,12 +404,12 @@ The search should find matches across different file types and provide context f
 
 	test("Should search for TODO comments across multiple file types", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution
@@ -471,12 +471,12 @@ The search should find matches across different file types and provide context f
 
 	test("Should search with file pattern filter for TypeScript files", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution with file pattern
@@ -537,12 +537,12 @@ The search should find matches across different file types and provide context f
 
 	test("Should search for configuration keys in JSON files", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution with JSON file pattern
@@ -605,12 +605,12 @@ The search should find matches across different file types and provide context f
 
 	test("Should search in nested directories", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution
@@ -670,12 +670,12 @@ The search should find matches across different file types and provide context f
 
 	test("Should handle complex regex patterns", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution with complex regex
@@ -738,13 +738,13 @@ The search should find matches across different file types and provide context f
 
 	test("Should handle search with no matches", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 		let searchResults: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution and capture results
@@ -866,12 +866,12 @@ The search should find matches across different file types and provide context f
 
 	test("Should search for class definitions and methods", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution

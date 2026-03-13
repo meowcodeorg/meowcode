@@ -1,6 +1,6 @@
 import React from "react"
 import { fireEvent, render, screen } from "@/utils/test-utils"
-import type { ClineMessage } from "@meow-code/types"
+import type { MeowCodeMessage } from "@meow-code/types"
 import { TranslationProvider } from "@/i18n/__mocks__/TranslationContext"
 import FileChangesPanel from "../components/chat/FileChangesPanel"
 
@@ -48,7 +48,7 @@ function createFileEditMessage(
 	path: string,
 	diff: string,
 	diffStats?: { added: number; removed: number },
-): ClineMessage {
+): MeowCodeMessage {
 	return {
 		type: "ask",
 		ask: "tool",
@@ -64,10 +64,10 @@ function createFileEditMessage(
 	}
 }
 
-function renderPanel(messages: ClineMessage[] | undefined) {
+function renderPanel(messages: MeowCodeMessage[] | undefined) {
 	return render(
 		<TranslationProvider>
-			<FileChangesPanel clineMessages={messages} />
+			<FileChangesPanel meowCodeMessages={messages} />
 		</TranslationProvider>,
 	)
 }
@@ -77,18 +77,18 @@ describe("FileChangesPanel", () => {
 		vi.clearAllMocks()
 	})
 
-	it("renders nothing when clineMessages is undefined", () => {
+	it("renders nothing when meowCodeMessages is undefined", () => {
 		const { container } = renderPanel(undefined)
 		expect(container.firstChild).toBeNull()
 	})
 
-	it("renders nothing when clineMessages is empty", () => {
+	it("renders nothing when meowCodeMessages is empty", () => {
 		const { container } = renderPanel([])
 		expect(container.firstChild).toBeNull()
 	})
 
 	it("renders nothing when there are no file-edit messages", () => {
-		const messages: ClineMessage[] = [
+		const messages: MeowCodeMessage[] = [
 			{
 				type: "say",
 				say: "text",
@@ -109,7 +109,7 @@ describe("FileChangesPanel", () => {
 	})
 
 	it("renders nothing when file-edit ask tool is not approved (isAnswered false or missing)", () => {
-		const messages: ClineMessage[] = [
+		const messages: MeowCodeMessage[] = [
 			{
 				type: "ask",
 				ask: "tool",

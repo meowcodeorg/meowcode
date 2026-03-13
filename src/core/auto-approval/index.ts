@@ -1,13 +1,13 @@
 import {
-	type ClineAsk,
-	type ClineSayTool,
+	type MeowCodeAsk,
+	type MeowCodeSayTool,
 	type McpServerUse,
 	type FollowUpData,
 	type ExtensionState,
 	isNonBlockingAsk,
 } from "@meow-code/types"
 
-import { ClineAskResponse } from "../../shared/WebviewMessage"
+import { MeowCodeAskResponse } from "../../shared/WebviewMessage"
 
 import { isWriteToolAction, isReadOnlyToolAction } from "./tools"
 import { isMcpToolAlwaysAllowed } from "./mcp"
@@ -41,7 +41,7 @@ export type CheckAutoApprovalResult =
 	| {
 			decision: "timeout"
 			timeout: number
-			fn: () => { askResponse: ClineAskResponse; text?: string; images?: string[] }
+			fn: () => { askResponse: MeowCodeAskResponse; text?: string; images?: string[] }
 	  }
 
 export async function checkAutoApproval({
@@ -51,7 +51,7 @@ export async function checkAutoApproval({
 	isProtected,
 }: {
 	state?: Pick<ExtensionState, AutoApprovalState | AutoApprovalStateOptions>
-	ask: ClineAsk
+	ask: MeowCodeAsk
 	text?: string
 	isProtected?: boolean
 }): Promise<CheckAutoApprovalResult> {
@@ -130,7 +130,7 @@ export async function checkAutoApproval({
 	}
 
 	if (ask === "tool") {
-		let tool: ClineSayTool | undefined
+		let tool: MeowCodeSayTool | undefined
 
 		try {
 			tool = JSON.parse(text || "{}")

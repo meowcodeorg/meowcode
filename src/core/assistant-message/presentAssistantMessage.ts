@@ -1,7 +1,7 @@
 import { serializeError } from "serialize-error"
 import { Anthropic } from "@anthropic-ai/sdk"
 
-import type { ToolName, ClineAsk, ToolProgressStatus } from "@meow-code/types"
+import type { ToolName, MeowCodeAsk, ToolProgressStatus } from "@meow-code/types"
 import { ConsecutiveMistakeError, TelemetryEventName } from "@meow-code/types"
 import { TelemetryService } from "@meow-code/telemetry"
 import { customToolRegistry } from "@meow-code/core"
@@ -58,29 +58,29 @@ import { sanitizeToolUseId } from "../../utils/tool-id"
  * as it becomes available.
  */
 
-export async function presentAssistantMessage(cline: Task) {
-	if (cline.abort) {
-		throw new Error(`[Task#presentAssistantMessage] task ${cline.taskId}.${cline.instanceId} aborted`)
+export async function presentAssistantMessage(meowCode: Task) {
+	if (meowCode.abort) {
+		throw new Error(`[Task#presentAssistantMessage] task ${meowCode.taskId}.${meowCode.instanceId} aborted`)
 	}
 
-	if (cline.presentAssistantMessageLocked) {
-		cline.presentAssistantMessageHasPendingUpdates = true
+	if (meowCode.presentAssistantMessageLocked) {
+		meowCode.presentAssistantMessageHasPendingUpdates = true
 		return
 	}
 
-	cline.presentAssistantMessageLocked = true
-	cline.presentAssistantMessageHasPendingUpdates = false
+	meowCode.presentAssistantMessageLocked = true
+	meowCode.presentAssistantMessageHasPendingUpdates = false
 
-	if (cline.currentStreamingContentIndex >= cline.assistantMessageContent.length) {
+	if (meowCode.currentStreamingContentIndex >= meowCode.assistantMessageContent.length) {
 		// This may happen if the last content block was completed before
 		// streaming could finish. If streaming is finished, and we're out of
 		// bounds then this means we already  presented/executed the last
 		// content block and are ready to continue to next request.
-		if (cline.didCompleteReadingStream) {
-			cline.userMessageContentReady = true
+		if (meowCode.didCompleteReadingStream) {
+			meowCode.userMessageContentReady = true
 		}
 
-		cline.presentAssistantMessageLocked = false
+		meowCode.presentAssistantMessageLocked = false
 		return
 	}
 
@@ -90,14 +90,14 @@ export async function presentAssistantMessage(cline: Task) {
 		// The block is used read-only throughout this function - we never mutate its properties.
 		// We only need to protect against the reference changing during streaming, not nested mutations.
 		// This provides 80-90% reduction in cloning overhead (5-100ms saved per block).
-		block = { ...cline.assistantMessageContent[cline.currentStreamingContentIndex] }
+		block = { ...meowCode.assistantMessageContent[meowCode.currentStreamingContentIndex] }
 	} catch (error) {
 		console.error(`ERROR cloning block:`, error)
 		console.error(
 			`Block content:`,
-			JSON.stringify(cline.assistantMessageContent[cline.currentStreamingContentIndex], null, 2),
+			JSON.stringify(meowCode.assistantMessageContent[meowCode.currentStreamingContentIndex], null, 2),
 		)
-		cline.presentAssistantMessageLocked = false
+		meowCode.presentAssistantMessageLocked = false
 		return
 	}
 
@@ -108,7 +108,7 @@ export async function presentAssistantMessage(cline: Task) {
 			// their original name in API history
 			const mcpBlock = block as McpToolUse
 
-			if (cline.didRejectTool) {
+			if (meowCode.didRejectTool) {
 				// For native protocol, we must send a tool_result for every tool_use to avoid API errors
 				const toolCallId = mcpBlock.id
 				const errorMessage = !mcpBlock.partial
@@ -116,7 +116,7 @@ export async function presentAssistantMessage(cline: Task) {
 					: `MCP tool ${mcpBlock.name} was interrupted and not executed due to user rejecting a previous tool.`
 
 				if (toolCallId) {
-					cline.pushToolResultToUserContent({
+					meowCode.pushToolResultToUserContent({
 						type: "tool_result",
 						tool_use_id: sanitizeToolUseId(toolCallId),
 						content: errorMessage,
@@ -167,14 +167,14 @@ export async function presentAssistantMessage(cline: Task) {
 				}
 
 				if (toolCallId) {
-					cline.pushToolResultToUserContent({
+					meowCode.pushToolResultToUserContent({
 						type: "tool_result",
 						tool_use_id: sanitizeToolUseId(toolCallId),
 						content: resultContent,
 					})
 
 					if (imageBlocks.length > 0) {
-						cline.userMessageContent.push(...imageBlocks)
+						meowCode.userMessageContent.push(...imageBlocks)
 					}
 				}
 
@@ -184,12 +184,12 @@ export async function presentAssistantMessage(cline: Task) {
 			const toolDescription = () => `[mcp_tool: ${mcpBlock.serverName}/${mcpBlock.toolName}]`
 
 			const askApproval = async (
-				type: ClineAsk,
+				type: MeowCodeAsk,
 				partialMessage?: string,
 				progressStatus?: ToolProgressStatus,
 				isProtected?: boolean,
 			) => {
-				const { response, text, images } = await cline.ask(
+				const { response, text, images } = await meowCode.ask(
 					type,
 					partialMessage,
 					false,
@@ -199,12 +199,12 @@ export async function presentAssistantMessage(cline: Task) {
 
 				if (response !== "yesButtonClicked") {
 					if (text) {
-						await cline.say("user_feedback", text, images)
+						await meowCode.say("user_feedback", text, images)
 						pushToolResult(formatResponse.toolResult(formatResponse.toolDeniedWithFeedback(text), images))
 					} else {
 						pushToolResult(formatResponse.toolDenied())
 					}
-					cline.didRejectTool = true
+					meowCode.didRejectTool = true
 					return false
 				}
 
@@ -212,7 +212,7 @@ export async function presentAssistantMessage(cline: Task) {
 				// Don't push it as a separate tool_result here - that would create duplicates.
 				// The tool will call pushToolResult, which will merge the feedback into the actual result.
 				if (text) {
-					await cline.say("user_feedback", text, images)
+					await meowCode.say("user_feedback", text, images)
 					approvalFeedback = { text, images }
 				}
 
@@ -226,7 +226,7 @@ export async function presentAssistantMessage(cline: Task) {
 					return
 				}
 				const errorString = `Error ${action}: ${JSON.stringify(serializeError(error))}`
-				await cline.say(
+				await meowCode.say(
 					"error",
 					`Error ${action}:\n${error.message ?? JSON.stringify(serializeError(error), null, 2)}`,
 				)
@@ -234,14 +234,14 @@ export async function presentAssistantMessage(cline: Task) {
 			}
 
 			if (!mcpBlock.partial) {
-				cline.recordToolUsage("use_mcp_tool") // Record as use_mcp_tool for analytics
-				TelemetryService.instance.captureToolUsage(cline.taskId, "use_mcp_tool")
+				meowCode.recordToolUsage("use_mcp_tool") // Record as use_mcp_tool for analytics
+				TelemetryService.instance.captureToolUsage(meowCode.taskId, "use_mcp_tool")
 			}
 
 			// Resolve sanitized server name back to original server name
 			// The serverName from parsing is sanitized (e.g., "my_server" from "my server")
 			// We need the original name to find the actual MCP connection
-			const mcpHub = cline.providerRef.deref()?.getMcpHub()
+			const mcpHub = meowCode.providerRef.deref()?.getMcpHub()
 			let resolvedServerName = mcpBlock.serverName
 			if (mcpHub) {
 				const originalName = mcpHub.findServerNameBySanitizedName(mcpBlock.serverName)
@@ -269,7 +269,7 @@ export async function presentAssistantMessage(cline: Task) {
 				},
 			}
 
-			await useMcpToolTool.handle(cline, syntheticToolUse, {
+			await useMcpToolTool.handle(meowCode, syntheticToolUse, {
 				askApproval,
 				handleError,
 				pushToolResult,
@@ -277,7 +277,7 @@ export async function presentAssistantMessage(cline: Task) {
 			break
 		}
 		case "text": {
-			if (cline.didRejectTool || cline.didAlreadyUseTool) {
+			if (meowCode.didRejectTool || meowCode.didAlreadyUseTool) {
 				break
 			}
 
@@ -292,7 +292,7 @@ export async function presentAssistantMessage(cline: Task) {
 				content = content.replace(/\s?<\/thinking>/g, "")
 			}
 
-			await cline.say("text", content, undefined, block.partial)
+			await meowCode.say("text", content, undefined, block.partial)
 			break
 		}
 		case "tool_use": {
@@ -305,23 +305,23 @@ export async function presentAssistantMessage(cline: Task) {
 				// Record a tool error for visibility/telemetry. Use the reported tool name if present.
 				try {
 					if (
-						typeof (cline as any).recordToolError === "function" &&
+						typeof (meowCode as any).recordToolError === "function" &&
 						typeof (block as any).name === "string"
 					) {
-						;(cline as any).recordToolError((block as any).name as ToolName, errorMessage)
+						;(meowCode as any).recordToolError((block as any).name as ToolName, errorMessage)
 					}
 				} catch {
 					// Best-effort only
 				}
-				cline.consecutiveMistakeCount++
-				await cline.say("error", errorMessage)
-				cline.userMessageContent.push({ type: "text", text: errorMessage })
-				cline.didAlreadyUseTool = true
+				meowCode.consecutiveMistakeCount++
+				await meowCode.say("error", errorMessage)
+				meowCode.userMessageContent.push({ type: "text", text: errorMessage })
+				meowCode.didAlreadyUseTool = true
 				break
 			}
 
 			// Fetch state early so it's available for toolDescription and validation
-			const state = await cline.providerRef.deref()?.getState()
+			const state = await meowCode.providerRef.deref()?.getState()
 			const { mode, customModes, experiments: stateExperiments, disabledTools } = state ?? {}
 
 			const toolDescription = (): string => {
@@ -388,14 +388,14 @@ export async function presentAssistantMessage(cline: Task) {
 				}
 			}
 
-			if (cline.didRejectTool) {
+			if (meowCode.didRejectTool) {
 				// Ignore any tool content after user has rejected tool once.
 				// For native tool calling, we must send a tool_result for every tool_use to avoid API errors
 				const errorMessage = !block.partial
 					? `Skipping tool ${toolDescription()} due to user rejecting a previous tool.`
 					: `Tool ${toolDescription()} was interrupted and not executed due to user rejecting a previous tool.`
 
-				cline.pushToolResultToUserContent({
+				meowCode.pushToolResultToUserContent({
 					type: "tool_result",
 					tool_use_id: sanitizeToolUseId(toolCallId),
 					content: errorMessage,
@@ -423,16 +423,16 @@ export async function presentAssistantMessage(cline: Task) {
 						`Invalid tool call for '${block.name}': missing nativeArgs. ` +
 						`This usually means the model streamed invalid or incomplete arguments and the call could not be finalized.`
 
-					cline.consecutiveMistakeCount++
+					meowCode.consecutiveMistakeCount++
 					try {
-						cline.recordToolError(block.name as ToolName, errorMessage)
+						meowCode.recordToolError(block.name as ToolName, errorMessage)
 					} catch {
 						// Best-effort only
 					}
 
 					// Push tool_result directly without setting didAlreadyUseTool so streaming can
 					// continue gracefully.
-					cline.pushToolResultToUserContent({
+					meowCode.pushToolResultToUserContent({
 						type: "tool_result",
 						tool_use_id: sanitizeToolUseId(toolCallId),
 						content: formatResponse.toolError(errorMessage),
@@ -478,26 +478,26 @@ export async function presentAssistantMessage(cline: Task) {
 					}
 				}
 
-				cline.pushToolResultToUserContent({
+				meowCode.pushToolResultToUserContent({
 					type: "tool_result",
 					tool_use_id: sanitizeToolUseId(toolCallId),
 					content: resultContent,
 				})
 
 				if (imageBlocks.length > 0) {
-					cline.userMessageContent.push(...imageBlocks)
+					meowCode.userMessageContent.push(...imageBlocks)
 				}
 
 				hasToolResult = true
 			}
 
 			const askApproval = async (
-				type: ClineAsk,
+				type: MeowCodeAsk,
 				partialMessage?: string,
 				progressStatus?: ToolProgressStatus,
 				isProtected?: boolean,
 			) => {
-				const { response, text, images } = await cline.ask(
+				const { response, text, images } = await meowCode.ask(
 					type,
 					partialMessage,
 					false,
@@ -508,12 +508,12 @@ export async function presentAssistantMessage(cline: Task) {
 				if (response !== "yesButtonClicked") {
 					// Handle both messageResponse and noButtonClicked with text.
 					if (text) {
-						await cline.say("user_feedback", text, images)
+						await meowCode.say("user_feedback", text, images)
 						pushToolResult(formatResponse.toolResult(formatResponse.toolDeniedWithFeedback(text), images))
 					} else {
 						pushToolResult(formatResponse.toolDenied())
 					}
-					cline.didRejectTool = true
+					meowCode.didRejectTool = true
 					return false
 				}
 
@@ -521,7 +521,7 @@ export async function presentAssistantMessage(cline: Task) {
 				// Don't push it as a separate tool_result here - that would create duplicates.
 				// The tool will call pushToolResult, which will merge the feedback into the actual result.
 				if (text) {
-					await cline.say("user_feedback", text, images)
+					await meowCode.say("user_feedback", text, images)
 					approvalFeedback = { text, images }
 				}
 
@@ -545,7 +545,7 @@ export async function presentAssistantMessage(cline: Task) {
 				}
 				const errorString = `Error ${action}: ${JSON.stringify(serializeError(error))}`
 
-				await cline.say(
+				await meowCode.say(
 					"error",
 					`Error ${action}:\n${error.message ?? JSON.stringify(serializeError(error), null, 2)}`,
 				)
@@ -557,14 +557,14 @@ export async function presentAssistantMessage(cline: Task) {
 				// Check if this is a custom tool - if so, record as "custom_tool" (like MCP tools)
 				const isCustomTool = stateExperiments?.customTools && customToolRegistry.has(block.name)
 				const recordName = isCustomTool ? "custom_tool" : block.name
-				cline.recordToolUsage(recordName)
-				TelemetryService.instance.captureToolUsage(cline.taskId, recordName)
+				meowCode.recordToolUsage(recordName)
+				TelemetryService.instance.captureToolUsage(meowCode.taskId, recordName)
 
 				// Track legacy format usage for read_file tool (for migration monitoring)
 				if (block.name === "read_file" && block.usedLegacyFormat) {
-					const modelInfo = cline.api.getModel()
+					const modelInfo = meowCode.api.getModel()
 					TelemetryService.instance.captureEvent(TelemetryEventName.READ_FILE_LEGACY_FORMAT_USED, {
-						taskId: cline.taskId,
+						taskId: meowCode.taskId,
 						model: modelInfo?.id,
 					})
 				}
@@ -575,7 +575,7 @@ export async function presentAssistantMessage(cline: Task) {
 			// during streaming, pushing multiple tool_results for the same tool_use_id and
 			// potentially causing the stream to appear frozen.
 			if (!block.partial) {
-				const modelInfo = cline.api.getModel()
+				const modelInfo = meowCode.api.getModel()
 				// Resolve aliases in includedTools before validation
 				// e.g., "edit_file" should resolve to "apply_diff"
 				const rawIncludedTools = modelInfo?.info?.includedTools
@@ -604,7 +604,7 @@ export async function presentAssistantMessage(cline: Task) {
 						includedTools,
 					)
 				} catch (error) {
-					cline.consecutiveMistakeCount++
+					meowCode.consecutiveMistakeCount++
 					// For validation errors (unknown tool, tool not allowed for mode), we need to:
 					// 1. Send a tool_result with the error (required for native tool calling)
 					// 2. NOT set didAlreadyUseTool = true (the tool was never executed, just failed validation)
@@ -612,7 +612,7 @@ export async function presentAssistantMessage(cline: Task) {
 					// which would cause the extension to appear to hang
 					const errorContent = formatResponse.toolError(error.message)
 					// Push tool_result directly without setting didAlreadyUseTool
-					cline.pushToolResultToUserContent({
+					meowCode.pushToolResultToUserContent({
 						type: "tool_result",
 						tool_use_id: sanitizeToolUseId(toolCallId),
 						content: typeof errorContent === "string" ? errorContent : "(validation error)",
@@ -627,19 +627,19 @@ export async function presentAssistantMessage(cline: Task) {
 			if (!block.partial) {
 				// Use the detector to check for repetition, passing the ToolUse
 				// block directly.
-				const repetitionCheck = cline.toolRepetitionDetector.check(block)
+				const repetitionCheck = meowCode.toolRepetitionDetector.check(block)
 
 				// If execution is not allowed, notify user and break.
 				if (!repetitionCheck.allowExecution && repetitionCheck.askUser) {
 					// Handle repetition similar to mistake_limit_reached pattern.
-					const { response, text, images } = await cline.ask(
-						repetitionCheck.askUser.messageKey as ClineAsk,
+					const { response, text, images } = await meowCode.ask(
+						repetitionCheck.askUser.messageKey as MeowCodeAsk,
 						repetitionCheck.askUser.messageDetail.replace("{toolName}", block.name),
 					)
 
 					if (response === "messageResponse") {
 						// Add user feedback to userContent.
-						cline.userMessageContent.push(
+						meowCode.userMessageContent.push(
 							{
 								type: "text" as const,
 								text: `Tool repetition limit reached. User feedback: ${text}`,
@@ -648,20 +648,20 @@ export async function presentAssistantMessage(cline: Task) {
 						)
 
 						// Add user feedback to chat.
-						await cline.say("user_feedback", text, images)
+						await meowCode.say("user_feedback", text, images)
 					}
 
 					// Track tool repetition in telemetry via PostHog exception tracking and event.
-					TelemetryService.instance.captureConsecutiveMistakeError(cline.taskId)
+					TelemetryService.instance.captureConsecutiveMistakeError(meowCode.taskId)
 					TelemetryService.instance.captureException(
 						new ConsecutiveMistakeError(
 							`Tool repetition limit reached for ${block.name}`,
-							cline.taskId,
-							cline.consecutiveMistakeCount,
-							cline.consecutiveMistakeLimit,
+							meowCode.taskId,
+							meowCode.consecutiveMistakeCount,
+							meowCode.consecutiveMistakeLimit,
 							"tool_repetition",
-							cline.apiConfiguration.apiProvider,
-							cline.api.getModel().id,
+							meowCode.apiConfiguration.apiProvider,
+							meowCode.api.getModel().id,
 						),
 					)
 
@@ -677,23 +677,23 @@ export async function presentAssistantMessage(cline: Task) {
 
 			switch (block.name) {
 				case "write_to_file":
-					await checkpointSaveAndMark(cline)
-					await writeToFileTool.handle(cline, block as ToolUse<"write_to_file">, {
+					await checkpointSaveAndMark(meowCode)
+					await writeToFileTool.handle(meowCode, block as ToolUse<"write_to_file">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "update_todo_list":
-					await updateTodoListTool.handle(cline, block as ToolUse<"update_todo_list">, {
+					await updateTodoListTool.handle(meowCode, block as ToolUse<"update_todo_list">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "apply_diff":
-					await checkpointSaveAndMark(cline)
-					await applyDiffToolClass.handle(cline, block as ToolUse<"apply_diff">, {
+					await checkpointSaveAndMark(meowCode)
+					await applyDiffToolClass.handle(meowCode, block as ToolUse<"apply_diff">, {
 						askApproval,
 						handleError,
 						pushToolResult,
@@ -701,32 +701,32 @@ export async function presentAssistantMessage(cline: Task) {
 					break
 				case "edit":
 				case "search_and_replace":
-					await checkpointSaveAndMark(cline)
-					await editTool.handle(cline, block as ToolUse<"edit">, {
+					await checkpointSaveAndMark(meowCode)
+					await editTool.handle(meowCode, block as ToolUse<"edit">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "search_replace":
-					await checkpointSaveAndMark(cline)
-					await searchReplaceTool.handle(cline, block as ToolUse<"search_replace">, {
+					await checkpointSaveAndMark(meowCode)
+					await searchReplaceTool.handle(meowCode, block as ToolUse<"search_replace">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "edit_file":
-					await checkpointSaveAndMark(cline)
-					await editFileTool.handle(cline, block as ToolUse<"edit_file">, {
+					await checkpointSaveAndMark(meowCode)
+					await editFileTool.handle(meowCode, block as ToolUse<"edit_file">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "apply_patch":
-					await checkpointSaveAndMark(cline)
-					await applyPatchTool.handle(cline, block as ToolUse<"apply_patch">, {
+					await checkpointSaveAndMark(meowCode)
+					await applyPatchTool.handle(meowCode, block as ToolUse<"apply_patch">, {
 						askApproval,
 						handleError,
 						pushToolResult,
@@ -734,78 +734,78 @@ export async function presentAssistantMessage(cline: Task) {
 					break
 				case "read_file":
 					// Type assertion is safe here because we're in the "read_file" case
-					await readFileTool.handle(cline, block as ToolUse<"read_file">, {
+					await readFileTool.handle(meowCode, block as ToolUse<"read_file">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "list_files":
-					await listFilesTool.handle(cline, block as ToolUse<"list_files">, {
+					await listFilesTool.handle(meowCode, block as ToolUse<"list_files">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "codebase_search":
-					await codebaseSearchTool.handle(cline, block as ToolUse<"codebase_search">, {
+					await codebaseSearchTool.handle(meowCode, block as ToolUse<"codebase_search">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "search_files":
-					await searchFilesTool.handle(cline, block as ToolUse<"search_files">, {
+					await searchFilesTool.handle(meowCode, block as ToolUse<"search_files">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "execute_command":
-					await executeCommandTool.handle(cline, block as ToolUse<"execute_command">, {
+					await executeCommandTool.handle(meowCode, block as ToolUse<"execute_command">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "read_command_output":
-					await readCommandOutputTool.handle(cline, block as ToolUse<"read_command_output">, {
+					await readCommandOutputTool.handle(meowCode, block as ToolUse<"read_command_output">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "use_mcp_tool":
-					await useMcpToolTool.handle(cline, block as ToolUse<"use_mcp_tool">, {
+					await useMcpToolTool.handle(meowCode, block as ToolUse<"use_mcp_tool">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "access_mcp_resource":
-					await accessMcpResourceTool.handle(cline, block as ToolUse<"access_mcp_resource">, {
+					await accessMcpResourceTool.handle(meowCode, block as ToolUse<"access_mcp_resource">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "ask_followup_question":
-					await askFollowupQuestionTool.handle(cline, block as ToolUse<"ask_followup_question">, {
+					await askFollowupQuestionTool.handle(meowCode, block as ToolUse<"ask_followup_question">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "switch_mode":
-					await switchModeTool.handle(cline, block as ToolUse<"switch_mode">, {
+					await switchModeTool.handle(meowCode, block as ToolUse<"switch_mode">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "new_task":
-					await checkpointSaveAndMark(cline)
-					await newTaskTool.handle(cline, block as ToolUse<"new_task">, {
+					await checkpointSaveAndMark(meowCode)
+					await newTaskTool.handle(meowCode, block as ToolUse<"new_task">, {
 						askApproval,
 						handleError,
 						pushToolResult,
@@ -821,29 +821,29 @@ export async function presentAssistantMessage(cline: Task) {
 						toolDescription,
 					}
 					await attemptCompletionTool.handle(
-						cline,
+						meowCode,
 						block as ToolUse<"attempt_completion">,
 						completionCallbacks,
 					)
 					break
 				}
 				case "run_slash_command":
-					await runSlashCommandTool.handle(cline, block as ToolUse<"run_slash_command">, {
+					await runSlashCommandTool.handle(meowCode, block as ToolUse<"run_slash_command">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "skill":
-					await skillTool.handle(cline, block as ToolUse<"skill">, {
+					await skillTool.handle(meowCode, block as ToolUse<"skill">, {
 						askApproval,
 						handleError,
 						pushToolResult,
 					})
 					break
 				case "generate_image":
-					await checkpointSaveAndMark(cline)
-					await generateImageTool.handle(cline, block as ToolUse<"generate_image">, {
+					await checkpointSaveAndMark(meowCode)
+					await generateImageTool.handle(meowCode, block as ToolUse<"generate_image">, {
 						askApproval,
 						handleError,
 						pushToolResult,
@@ -872,8 +872,8 @@ export async function presentAssistantMessage(cline: Task) {
 								} catch (parseParamsError) {
 									const message = `Custom tool "${block.name}" argument validation failed: ${parseParamsError.message}`
 									console.error(message)
-									cline.consecutiveMistakeCount++
-									await cline.say("error", message)
+									meowCode.consecutiveMistakeCount++
+									await meowCode.say("error", message)
 									pushToolResult(formatResponse.toolError(message))
 									break
 								}
@@ -881,7 +881,7 @@ export async function presentAssistantMessage(cline: Task) {
 
 							const result = await customTool.execute(customToolArgs, {
 								mode: mode ?? defaultModeSlug,
-								task: cline,
+								task: meowCode,
 							})
 
 							console.log(
@@ -889,11 +889,11 @@ export async function presentAssistantMessage(cline: Task) {
 							)
 
 							pushToolResult(result)
-							cline.consecutiveMistakeCount = 0
+							meowCode.consecutiveMistakeCount = 0
 						} catch (executionError: any) {
-							cline.consecutiveMistakeCount++
+							meowCode.consecutiveMistakeCount++
 							// Record custom tool error with static name
-							cline.recordToolError("custom_tool", executionError.message)
+							meowCode.recordToolError("custom_tool", executionError.message)
 							await handleError(`executing custom tool "${block.name}"`, executionError)
 						}
 
@@ -902,12 +902,12 @@ export async function presentAssistantMessage(cline: Task) {
 
 					// Not a custom tool - handle as unknown tool error
 					const errorMessage = `Unknown tool "${block.name}". This tool does not exist. Please use one of the available tools.`
-					cline.consecutiveMistakeCount++
-					cline.recordToolError(block.name as ToolName, errorMessage)
-					await cline.say("error", t("tools:unknownToolError", { toolName: block.name }))
+					meowCode.consecutiveMistakeCount++
+					meowCode.recordToolError(block.name as ToolName, errorMessage)
+					await meowCode.say("error", t("tools:unknownToolError", { toolName: block.name }))
 					// Push tool_result directly WITHOUT setting didAlreadyUseTool
 					// This prevents the stream from being interrupted with "Response interrupted by tool use result"
-					cline.pushToolResultToUserContent({
+					meowCode.pushToolResultToUserContent({
 						type: "tool_result",
 						tool_use_id: sanitizeToolUseId(toolCallId),
 						content: formatResponse.toolError(errorMessage),
@@ -928,18 +928,18 @@ export async function presentAssistantMessage(cline: Task) {
 	// was breaking when relpath was undefined, and for invalid relpath it never
 	// presented UI.
 	// This needs to be placed here, if not then calling
-	// cline.presentAssistantMessage below would fail (sometimes) since it's
+	// meowCode.presentAssistantMessage below would fail (sometimes) since it's
 	// locked.
-	cline.presentAssistantMessageLocked = false
+	meowCode.presentAssistantMessageLocked = false
 
 	// NOTE: When tool is rejected, iterator stream is interrupted and it waits
 	// for `userMessageContentReady` to be true. Future calls to present will
 	// skip execution since `didRejectTool` and iterate until `contentIndex` is
 	// set to message length and it sets userMessageContentReady to true itself
 	// (instead of preemptively doing it in iterator).
-	if (!block.partial || cline.didRejectTool || cline.didAlreadyUseTool) {
+	if (!block.partial || meowCode.didRejectTool || meowCode.didAlreadyUseTool) {
 		// Block is finished streaming and executing.
-		if (cline.currentStreamingContentIndex === cline.assistantMessageContent.length - 1) {
+		if (meowCode.currentStreamingContentIndex === meowCode.assistantMessageContent.length - 1) {
 			// It's okay that we increment if !didCompleteReadingStream, it'll
 			// just return because out of bounds and as streaming continues it
 			// will call `presentAssitantMessage` if a new block is ready. If
@@ -947,32 +947,32 @@ export async function presentAssistantMessage(cline: Task) {
 			// true when out of bounds. This gracefully allows the stream to
 			// continue on and all potential content blocks be presented.
 			// Last block is complete and it is finished executing
-			cline.userMessageContentReady = true // Will allow `pWaitFor` to continue.
+			meowCode.userMessageContentReady = true // Will allow `pWaitFor` to continue.
 		}
 
 		// Call next block if it exists (if not then read stream will call it
 		// when it's ready).
 		// Need to increment regardless, so when read stream calls this function
 		// again it will be streaming the next block.
-		cline.currentStreamingContentIndex++
+		meowCode.currentStreamingContentIndex++
 
-		if (cline.currentStreamingContentIndex < cline.assistantMessageContent.length) {
+		if (meowCode.currentStreamingContentIndex < meowCode.assistantMessageContent.length) {
 			// There are already more content blocks to stream, so we'll call
 			// this function ourselves.
-			presentAssistantMessage(cline)
+			presentAssistantMessage(meowCode)
 			return
 		} else {
 			// CRITICAL FIX: If we're out of bounds and the stream is complete, set userMessageContentReady
 			// This handles the case where assistantMessageContent is empty or becomes empty after processing
-			if (cline.didCompleteReadingStream) {
-				cline.userMessageContentReady = true
+			if (meowCode.didCompleteReadingStream) {
+				meowCode.userMessageContentReady = true
 			}
 		}
 	}
 
 	// Block is partial, but the read stream may have finished.
-	if (cline.presentAssistantMessageHasPendingUpdates) {
-		presentAssistantMessage(cline)
+	if (meowCode.presentAssistantMessageHasPendingUpdates) {
+		presentAssistantMessage(meowCode)
 	}
 }
 

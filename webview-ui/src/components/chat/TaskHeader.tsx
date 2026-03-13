@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { ChevronUp, ChevronDown, HardDriveDownload, HardDriveUpload, FoldVertical, ArrowLeft } from "lucide-react"
 import prettyBytes from "pretty-bytes"
 
-import type { ClineMessage } from "@meow-code/types"
+import type { MeowCodeMessage } from "@meow-code/types"
 
 import { getModelMaxOutputTokens } from "@roo/api"
 
@@ -23,7 +23,7 @@ import { TodoListDisplay } from "./TodoListDisplay"
 import { LucideIconButton } from "./LucideIconButton"
 
 export interface TaskHeaderProps {
-	task: ClineMessage
+	task: MeowCodeMessage
 	tokensIn: number
 	tokensOut: number
 	cacheWrites?: number

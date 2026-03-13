@@ -93,7 +93,7 @@ export const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			pinnedApiConfigs,
 			togglePinnedApiConfig,
 			taskHistory,
-			clineMessages,
+			meowCodeMessages,
 			commands,
 			enterBehavior,
 			lockApiConfigAcrossModes,
@@ -224,7 +224,7 @@ export const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
 		// Use custom hook for prompt history navigation
 		const { handleHistoryNavigation, resetHistoryNavigation, resetOnInputChange } = usePromptHistory({
-			clineMessages,
+			meowCodeMessages,
 			taskHistory,
 			cwd,
 			inputValue,

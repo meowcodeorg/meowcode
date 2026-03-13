@@ -98,7 +98,7 @@ const mockPostMessage = (state: any) => {
 			type: "state",
 			state: {
 				version: "1.0.0",
-				clineMessages: [],
+				meowCodeMessages: [],
 				taskHistory: [],
 				shouldShowAnnouncement: false,
 				allowedCommands: [],

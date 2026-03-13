@@ -13,7 +13,7 @@ import * as fs from "fs/promises"
 import { isBinaryFile } from "isbinaryfile"
 
 import type { ReadFileParams, ReadFileMode, ReadFileToolParams, FileEntry, LineRange } from "@meow-code/types"
-import { isLegacyReadFileParams, type ClineSayTool } from "@meow-code/types"
+import { isLegacyReadFileParams, type MeowCodeSayTool } from "@meow-code/types"
 
 import { Task } from "../task/Task"
 import { formatResponse } from "../prompts/responses"
@@ -445,7 +445,7 @@ export class ReadFileTool extends BaseTool<"read_file"> {
 				return { path: readablePath, lineSnippet, isOutsideWorkspace, key, content: fullPath }
 			})
 
-			const completeMessage = JSON.stringify({ tool: "readFile", batchFiles } satisfies ClineSayTool)
+			const completeMessage = JSON.stringify({ tool: "readFile", batchFiles } satisfies MeowCodeSayTool)
 			const { response, text, images } = await task.ask("tool", completeMessage, false)
 
 			if (response === "yesButtonClicked") {
@@ -513,7 +513,7 @@ export class ReadFileTool extends BaseTool<"read_file"> {
 				content: fullPath,
 				reason: lineSnippet,
 				startLine,
-			} satisfies ClineSayTool)
+			} satisfies MeowCodeSayTool)
 
 			const { response, text, images } = await task.ask("tool", completeMessage, false)
 
@@ -648,7 +648,7 @@ export class ReadFileTool extends BaseTool<"read_file"> {
 		}
 
 		const fullPath = filePath ? path.resolve(task.cwd, filePath) : ""
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "readFile",
 			path: getReadablePath(task.cwd, filePath),
 			isOutsideWorkspace: filePath ? isPathOutsideWorkspace(fullPath) : false,
@@ -656,7 +656,7 @@ export class ReadFileTool extends BaseTool<"read_file"> {
 		const partialMessage = JSON.stringify({
 			...sharedMessageProps,
 			content: undefined,
-		} satisfies ClineSayTool)
+		} satisfies MeowCodeSayTool)
 		await task.ask("tool", partialMessage, block.partial).catch(() => {})
 	}
 
@@ -711,7 +711,7 @@ export class ReadFileTool extends BaseTool<"read_file"> {
 				isOutsideWorkspace,
 				content: fullPath,
 				reason: lineSnippet || undefined,
-			} satisfies ClineSayTool)
+			} satisfies MeowCodeSayTool)
 
 			const { response, text, images } = await task.ask("tool", completeMessage, false)
 

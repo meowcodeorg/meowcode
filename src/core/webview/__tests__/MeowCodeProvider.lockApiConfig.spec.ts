@@ -1,8 +1,8 @@
-// npx vitest run core/webview/__tests__/ClineProvider.lockApiConfig.spec.ts
+// npx vitest run core/webview/__tests__/MeowCodeProvider.lockApiConfig.spec.ts
 
 import * as vscode from "vscode"
 import { TelemetryService } from "@meow-code/telemetry"
-import { ClineProvider } from "../ClineProvider"
+import { MeowCodeProvider } from "../MeowCodeProvider"
 import { ContextProxy } from "../../config/ContextProxy"
 
 vi.mock("vscode", () => ({
@@ -55,10 +55,10 @@ vi.mock("vscode", () => ({
 vi.mock("../../task/Task", () => ({
 	Task: vi.fn().mockImplementation((options) => ({
 		taskId: options.taskId || "test-task-id",
-		saveClineMessages: vi.fn(),
-		clineMessages: [],
+		saveMeowCodeMessages: vi.fn(),
+		meowCodeMessages: [],
 		apiConversationHistory: [],
-		overwriteClineMessages: vi.fn(),
+		overwriteMeowCodeMessages: vi.fn(),
 		overwriteApiConversationHistory: vi.fn(),
 		abortTask: vi.fn(),
 		handleWebviewAskResponse: vi.fn(),
@@ -215,8 +215,8 @@ vi.mock("@meow-code/telemetry", () => ({
 	},
 }))
 
-describe("ClineProvider - Lock API Config Across Modes", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider - Lock API Config Across Modes", () => {
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -303,7 +303,7 @@ describe("ClineProvider - Lock API Config Across Modes", () => {
 			onDidChangeVisibility: vi.fn().mockImplementation(() => ({ dispose: vi.fn() })),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		// Mock getMcpHub method
 		provider.getMcpHub = vi.fn().mockReturnValue({

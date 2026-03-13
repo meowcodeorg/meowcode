@@ -1,4 +1,4 @@
-// npx vitest core/webview/__tests__/ClineProvider.apiHandlerRebuild.spec.ts
+// npx vitest core/webview/__tests__/MeowCodeProvider.apiHandlerRebuild.spec.ts
 
 import * as vscode from "vscode"
 
@@ -7,7 +7,7 @@ import { getModelId } from "@meow-code/types"
 
 import { ContextProxy } from "../../config/ContextProxy"
 import { Task, TaskOptions } from "../../task/Task"
-import { ClineProvider } from "../ClineProvider"
+import { MeowCodeProvider } from "../MeowCodeProvider"
 
 // Mock setup
 vi.mock("fs/promises", () => ({
@@ -100,9 +100,9 @@ vi.mock("../../task/Task", () => ({
 			api: undefined,
 			abortTask: vi.fn(),
 			handleWebviewAskResponse: vi.fn(),
-			clineMessages: [],
+			meowCodeMessages: [],
 			apiConversationHistory: [],
-			overwriteClineMessages: vi.fn(),
+			overwriteMeowCodeMessages: vi.fn(),
 			overwriteApiConversationHistory: vi.fn(),
 			taskId: options?.historyItem?.id || "test-task-id",
 			emit: vi.fn(),
@@ -132,8 +132,8 @@ vi.mock("@meow-code/cloud", () => ({
 	getMeowCodeApiUrl: vi.fn().mockReturnValue("https://app.TODOURL"),
 }))
 
-describe("ClineProvider - API Handler Rebuild Guard", () => {
-	let provider: ClineProvider
+describe("MeowCodeProvider - API Handler Rebuild Guard", () => {
+	let provider: MeowCodeProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -206,7 +206,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 			onDidChangeVisibility: vi.fn().mockImplementation(() => ({ dispose: vi.fn() })),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
+		provider = new MeowCodeProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		// Mock providerSettingsManager
 		;(provider as any).providerSettingsManager = {
@@ -271,7 +271,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// Save settings with SAME provider and model (simulating Save button click)
 			await provider.upsertProviderProfile(
@@ -316,7 +316,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// Change provider to anthropic
 			await provider.upsertProviderProfile(
@@ -352,7 +352,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// Change model to different model
 			await provider.upsertProviderProfile(
@@ -408,7 +408,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// Mock activateProfile to return same provider/model but different non-model setting
 			;(provider as any).providerSettingsManager.activateProfile = vi.fn().mockResolvedValue({
@@ -450,7 +450,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// Mock activateProfile to return different provider
 			;(provider as any).providerSettingsManager.activateProfile = vi.fn().mockResolvedValue({
@@ -489,7 +489,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// Mock activateProfile to return different model
 			;(provider as any).providerSettingsManager.activateProfile = vi.fn().mockResolvedValue({
@@ -530,7 +530,7 @@ describe("ClineProvider - API Handler Rebuild Guard", () => {
 				}),
 			} as any
 
-			await provider.addClineToStack(mockTask)
+			await provider.addMeowCodeToStack(mockTask)
 
 			// First switch: A -> B (openrouter -> anthropic)
 			;(provider as any).providerSettingsManager.activateProfile = vi.fn().mockResolvedValue({

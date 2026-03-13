@@ -4,7 +4,7 @@ import * as path from "path"
 import * as os from "os"
 import * as vscode from "vscode"
 
-import { MeowCodeEventName, type ClineMessage } from "@meow-code/types"
+import { MeowCodeEventName, type MeowCodeMessage } from "@meow-code/types"
 
 import { waitFor, sleep } from "../utils"
 import { setDefaultSuiteTimeout } from "../test-utils"
@@ -122,7 +122,7 @@ suite.skip("MeowCode read_file Tool", function () {
 
 	test("Should read a simple text file", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskStarted = false
 		let taskCompleted = false
 		let errorOccurred: string | null = null
@@ -130,7 +130,7 @@ suite.skip("MeowCode read_file Tool", function () {
 		let toolResult: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution and extract result
@@ -267,13 +267,13 @@ suite.skip("MeowCode read_file Tool", function () {
 
 	test("Should read a multiline file", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 		let toolResult: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution and extract result
@@ -378,13 +378,13 @@ suite.skip("MeowCode read_file Tool", function () {
 
 	test("Should read file with slice offset/limit", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 		let toolResult: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution and extract result
@@ -490,13 +490,13 @@ suite.skip("MeowCode read_file Tool", function () {
 
 	test("Should handle reading non-existent file", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 		let _errorHandled = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution
@@ -562,12 +562,12 @@ suite.skip("MeowCode read_file Tool", function () {
 
 	test("Should read XML content file", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution
@@ -633,12 +633,12 @@ suite.skip("MeowCode read_file Tool", function () {
 
 	test("Should read multiple files in sequence", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let readFileCount = 0
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Count read_file executions
@@ -706,12 +706,12 @@ Assume both files exist and you can read them directly. Read each file and tell 
 
 	test("Should read large file efficiently", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskCompleted = false
 		let toolExecuted = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for tool execution

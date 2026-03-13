@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { providerNames } from "./provider-settings.js"
-import { clineMessageSchema } from "./message.js"
+import { meowCodeMessageSchema } from "./message.js"
 
 /**
  * TelemetrySetting
@@ -221,7 +221,7 @@ export const meowCodeTelemetryEventSchema = z.discriminatedUnion("type", [
 		properties: z.object({
 			...telemetryPropertiesSchema.shape,
 			taskId: z.string(),
-			message: clineMessageSchema,
+			message: meowCodeMessageSchema,
 		}),
 	}),
 	z.object({

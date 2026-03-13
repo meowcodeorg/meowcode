@@ -1,9 +1,9 @@
-// npx vitest run __tests__/removeClineFromStack-delegation.spec.ts
+// npx vitest run __tests__/removeMeowCodeFromStack-delegation.spec.ts
 
 import { describe, it, expect, vi } from "vitest"
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
 
-describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
+describe("MeowCodeProvider.removeMeowCodeFromStack() delegation awareness", () => {
 	/**
 	 * Helper to build a minimal mock provider with a single task on the stack.
 	 * The task's parentTaskId and taskId are configurable.
@@ -33,7 +33,7 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 				})
 
 		const provider = {
-			clineStack: [childTask] as any[],
+			meowCodeStack: [childTask] as any[],
 			taskEventListeners: new Map(),
 			log: vi.fn(),
 			getTaskWithId,
@@ -62,10 +62,10 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 			},
 		})
 
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider)
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider)
 
 		// Stack should be empty after pop
-		expect(provider.clineStack).toHaveLength(0)
+		expect(provider.meowCodeStack).toHaveLength(0)
 
 		// Parent lookup should have been called
 		expect(getTaskWithId).toHaveBeenCalledWith("parent-1")
@@ -91,10 +91,10 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 			// No parentTaskId — this is a top-level task
 		})
 
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider)
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider)
 
 		// Stack should be empty
-		expect(provider.clineStack).toHaveLength(0)
+		expect(provider.meowCodeStack).toHaveLength(0)
 
 		// No parent lookup or update should happen
 		expect(getTaskWithId).not.toHaveBeenCalled()
@@ -120,7 +120,7 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 			},
 		})
 
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider)
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider)
 
 		// Parent was looked up but should NOT be updated
 		expect(getTaskWithId).toHaveBeenCalledWith("parent-1")
@@ -145,7 +145,7 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 			},
 		})
 
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider)
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider)
 
 		expect(getTaskWithId).toHaveBeenCalledWith("parent-1")
 		expect(updateTaskHistory).not.toHaveBeenCalled()
@@ -159,10 +159,10 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 		})
 
 		// Should NOT throw
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider)
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider)
 
 		// Stack should still be empty (pop was not blocked)
-		expect(provider.clineStack).toHaveLength(0)
+		expect(provider.meowCodeStack).toHaveLength(0)
 
 		// The abort should still have been called
 		expect(childTask.abortTask).toHaveBeenCalledWith(true)
@@ -178,7 +178,7 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 
 	it("handles empty stack gracefully", async () => {
 		const provider = {
-			clineStack: [] as any[],
+			meowCodeStack: [] as any[],
 			taskEventListeners: new Map(),
 			log: vi.fn(),
 			getTaskWithId: vi.fn(),
@@ -186,9 +186,9 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 		}
 
 		// Should not throw
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider)
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider)
 
-		expect(provider.clineStack).toHaveLength(0)
+		expect(provider.meowCodeStack).toHaveLength(0)
 		expect(provider.getTaskWithId).not.toHaveBeenCalled()
 		expect(provider.updateTaskHistory).not.toHaveBeenCalled()
 	})
@@ -213,10 +213,10 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 		})
 
 		// Call with skipDelegationRepair: true (as delegateParentAndOpenChild would)
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider, { skipDelegationRepair: true })
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider, { skipDelegationRepair: true })
 
 		// Stack should be empty after pop
-		expect(provider.clineStack).toHaveLength(0)
+		expect(provider.meowCodeStack).toHaveLength(0)
 
 		// Parent lookup should NOT have been called — repair was skipped entirely
 		expect(getTaskWithId).not.toHaveBeenCalled()
@@ -225,7 +225,7 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 
 	it("does NOT reset grandparent during A→B→C nested delegation transition", async () => {
 		// Scenario: A delegated to B, B is now delegating to C.
-		// delegateParentAndOpenChild() pops B via removeClineFromStack({ skipDelegationRepair: true }).
+		// delegateParentAndOpenChild() pops B via removeMeowCodeFromStack({ skipDelegationRepair: true }).
 		// Grandparent A should remain "delegated" — its metadata must not be repaired.
 		const grandparentHistory = {
 			id: "task-A",
@@ -258,7 +258,7 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 		const updateTaskHistory = vi.fn().mockResolvedValue([])
 
 		const provider = {
-			clineStack: [taskB] as any[],
+			meowCodeStack: [taskB] as any[],
 			taskEventListeners: new Map(),
 			log: vi.fn(),
 			getTaskWithId,
@@ -266,10 +266,10 @@ describe("ClineProvider.removeClineFromStack() delegation awareness", () => {
 		}
 
 		// Simulate what delegateParentAndOpenChild does: pop B with skipDelegationRepair
-		await (ClineProvider.prototype as any).removeClineFromStack.call(provider, { skipDelegationRepair: true })
+		await (MeowCodeProvider.prototype as any).removeMeowCodeFromStack.call(provider, { skipDelegationRepair: true })
 
 		// B was popped
-		expect(provider.clineStack).toHaveLength(0)
+		expect(provider.meowCodeStack).toHaveLength(0)
 
 		// Grandparent A should NOT have been looked up or modified
 		expect(getTaskWithId).not.toHaveBeenCalled()

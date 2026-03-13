@@ -1,10 +1,10 @@
 import { ProviderSettings } from "@meow-code/types"
 
 import { Task } from "../Task"
-import { ClineProvider } from "../../webview/ClineProvider"
+import { MeowCodeProvider } from "../../webview/MeowCodeProvider"
 
 // Mock dependencies
-vi.mock("../../webview/ClineProvider")
+vi.mock("../../webview/MeowCodeProvider")
 vi.mock("../../../integrations/terminal/TerminalRegistry", () => ({
 	TerminalRegistry: {
 		releaseTerminalsForTask: vi.fn(),
@@ -57,7 +57,7 @@ describe("Task dispose method", () => {
 
 		// Create task instance without starting it
 		task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			startTask: false,
 		})

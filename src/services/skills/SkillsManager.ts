@@ -3,7 +3,7 @@ import * as path from "path"
 import * as vscode from "vscode"
 import matter from "gray-matter"
 
-import type { ClineProvider } from "../../core/webview/ClineProvider"
+import type { MeowCodeProvider } from "../../core/webview/MeowCodeProvider"
 import { getGlobalRooDirectory, getGlobalAgentsDirectory, getProjectAgentsDirectoryForCwd } from "../roo-config"
 import { directoryExists, fileExists } from "../roo-config"
 import { SkillMetadata, SkillContent } from "../../shared/skills"
@@ -20,11 +20,11 @@ export type { SkillMetadata, SkillContent }
 
 export class SkillsManager {
 	private skills: Map<string, SkillMetadata> = new Map()
-	private providerRef: WeakRef<ClineProvider>
+	private providerRef: WeakRef<MeowCodeProvider>
 	private disposables: vscode.Disposable[] = []
 	private isDisposed = false
 
-	constructor(provider: ClineProvider) {
+	constructor(provider: MeowCodeProvider) {
 		this.providerRef = new WeakRef(provider)
 	}
 

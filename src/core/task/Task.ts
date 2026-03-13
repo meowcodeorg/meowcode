@@ -26,15 +26,15 @@ import {
 	type ToolName,
 	type ContextCondense,
 	type ContextTruncation,
-	type ClineMessage,
-	type ClineSay,
-	type ClineAsk,
+	type MeowCodeMessage,
+	type MeowCodeSay,
+	type MeowCodeAsk,
 	type ToolProgressStatus,
 	type HistoryItem,
 	type CreateTaskOptions,
 	type ModelInfo,
-	type ClineApiReqCancelReason,
-	type ClineApiReqInfo,
+	type MeowCodeApiReqCancelReason,
+	type MeowCodeApiReqInfo,
 	MeowCodeEventName,
 	TelemetryEventName,
 	TaskStatus,
@@ -67,7 +67,7 @@ import { combineApiRequests } from "../../shared/combineApiRequests"
 import { combineCommandSequences } from "../../shared/combineCommandSequences"
 import { t } from "../../i18n"
 import { getApiMetrics, hasTokenUsageChanged, hasToolUsageChanged } from "../../shared/getApiMetrics"
-import { ClineAskResponse } from "../../shared/WebviewMessage"
+import { MeowCodeAskResponse } from "../../shared/WebviewMessage"
 import { defaultModeSlug, getModeBySlug } from "../../shared/modes"
 import { DiffStrategy, type ToolUse, type ToolParamName, toolParamNames } from "../../shared/tools"
 import { getModelMaxOutputTokens } from "../../shared/api"
@@ -104,7 +104,7 @@ import { MeowProtectedController } from "../protect/MeowProtectedController"
 import { type AssistantMessageContent, presentAssistantMessage } from "../assistant-message"
 import { NativeToolCallParser } from "../assistant-message/NativeToolCallParser"
 import { manageContext, willManageContext } from "../context-management"
-import { ClineProvider } from "../webview/ClineProvider"
+import { MeowCodeProvider } from "../webview/MeowCodeProvider"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
 import {
 	type ApiMessage,
@@ -138,7 +138,7 @@ const FORCED_CONTEXT_REDUCTION_PERCENT = 75 // Keep 75% of context (remove 25%) 
 const MAX_CONTEXT_WINDOW_RETRIES = 3 // Maximum retries for context window errors
 
 export interface TaskOptions extends CreateTaskOptions {
-	provider: ClineProvider
+	provider: MeowCodeProvider
 	apiConfiguration: ProviderSettings
 	enableCheckpoints?: boolean
 	checkpointTimeout?: number
@@ -262,20 +262,20 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	 */
 	private taskApiConfigReady: Promise<void>
 
-	providerRef: WeakRef<ClineProvider>
+	providerRef: WeakRef<MeowCodeProvider>
 	private readonly globalStoragePath: string
 	abort: boolean = false
 	currentRequestAbortController?: AbortController
 	skipPrevResponseIdOnce: boolean = false
 
 	// TaskStatus
-	idleAsk?: ClineMessage
-	resumableAsk?: ClineMessage
-	interactiveAsk?: ClineMessage
+	idleAsk?: MeowCodeMessage
+	resumableAsk?: MeowCodeMessage
+	interactiveAsk?: MeowCodeMessage
 
 	didFinishAbortingStream = false
 	abandoned = false
-	abortReason?: ClineApiReqCancelReason
+	abortReason?: MeowCodeApiReqCancelReason
 	isInitialized = false
 	isPaused: boolean = false
 
@@ -306,10 +306,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	// LLM Messages & Chat Messages
 	apiConversationHistory: ApiMessage[] = []
-	clineMessages: ClineMessage[] = []
+	meowCodeMessages: MeowCodeMessage[] = []
 
 	// Ask
-	private askResponse?: ClineAskResponse
+	private askResponse?: MeowCodeAskResponse
 	private askResponseText?: string
 	private askResponseImages?: string[]
 	public lastMessageTs?: number
@@ -355,7 +355,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	 * appear BEFORE the assistant message with tool_uses, causing API errors.
 	 *
 	 * Reset to `false` at the start of each API request.
-	 * Set to `true` after the assistant message is saved in `recursivelyMakeClineRequests`.
+	 * Set to `true` after the assistant message is saved in `recursivelyMakeMeowCodeRequests`.
 	 */
 	assistantMessageSavedToHistory = false
 
@@ -550,7 +550,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				if (tokenChanged || toolChanged) {
 					this.emit(MeowCodeEventName.TaskTokenUsageUpdated, this.taskId, tokenUsage, toolUsage)
 					this.tokenUsageSnapshot = tokenUsage
-					this.tokenUsageSnapshotAt = this.clineMessages.at(-1)?.ts
+					this.tokenUsageSnapshotAt = this.meowCodeMessages.at(-1)?.ts
 					// Deep copy tool usage for snapshot
 					this.toolUsageSnapshot = JSON.parse(JSON.stringify(toolUsage))
 				}
@@ -591,10 +591,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	 * All errors result in fallback to `defaultModeSlug` to ensure task can proceed.
 	 *
 	 * @private
-	 * @param provider - The ClineProvider instance to fetch state from
+	 * @param provider - The MeowCodeProvider instance to fetch state from
 	 * @returns Promise that resolves when initialization is complete
 	 */
-	private async initializeTaskMode(provider: ClineProvider): Promise<void> {
+	private async initializeTaskMode(provider: MeowCodeProvider): Promise<void> {
 		try {
 			const state = await provider.getState()
 			this._taskMode = state?.mode || defaultModeSlug
@@ -625,10 +625,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	 * All errors result in fallback to "default" to ensure task can proceed.
 	 *
 	 * @private
-	 * @param provider - The ClineProvider instance to fetch state from
+	 * @param provider - The MeowCodeProvider instance to fetch state from
 	 * @returns Promise that resolves when initialization is complete
 	 */
-	private async initializeTaskApiConfigName(provider: ClineProvider): Promise<void> {
+	private async initializeTaskApiConfigName(provider: MeowCodeProvider): Promise<void> {
 		try {
 			const state = await provider.getState()
 
@@ -652,9 +652,9 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	 * Sets up a listener for provider profile changes.
 	 *
 	 * @private
-	 * @param provider - The ClineProvider instance to listen to
+	 * @param provider - The MeowCodeProvider instance to listen to
 	 */
-	private setupProviderProfileChangeListener(provider: ClineProvider): void {
+	private setupProviderProfileChangeListener(provider: MeowCodeProvider): void {
 		// Only set up listener if provider has the on method (may not exist in test mocks)
 		if (typeof provider.on !== "function") {
 			return
@@ -1038,7 +1038,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	 * the parent resumes (missing tool_result for tool_use blocks).
 	 *
 	 * NOTE: The assistant message is typically already in history by the time
-	 * tools execute (added in recursivelyMakeClineRequests after streaming completes).
+	 * tools execute (added in recursivelyMakeMeowCodeRequests after streaming completes).
 	 * So we usually only need to flush the pending user message with tool_results.
 	 */
 	public async flushPendingToolResultsToHistory(): Promise<boolean> {
@@ -1059,7 +1059,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		//
 		// The assistantMessageSavedToHistory flag is:
 		// - Reset to false at the start of each API request
-		// - Set to true after the assistant message is saved in recursivelyMakeClineRequests
+		// - Set to true after the assistant message is saved in recursivelyMakeMeowCodeRequests
 		if (!this.assistantMessageSavedToHistory) {
 			await pWaitFor(() => this.assistantMessageSavedToHistory || this.abort, {
 				interval: 50,
@@ -1143,38 +1143,38 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		return false
 	}
 
-	// Cline Messages
+	// MeowCode Messages
 
-	private async getSavedClineMessages(): Promise<ClineMessage[]> {
+	private async getSavedMeowCodeMessages(): Promise<MeowCodeMessage[]> {
 		return readTaskMessages({ taskId: this.taskId, globalStoragePath: this.globalStoragePath })
 	}
 
-	private async addToClineMessages(message: ClineMessage) {
-		this.clineMessages.push(message)
+	private async addToMeowCodeMessages(message: MeowCodeMessage) {
+		this.meowCodeMessages.push(message)
 		const provider = this.providerRef.deref()
 		// Avoid resending large, mostly-static fields (notably taskHistory) on every chat message update.
 		// taskHistory is maintained in-memory in the webview and updated via taskHistoryItemUpdated.
 		await provider?.postStateToWebviewWithoutTaskHistory()
 		this.emit(MeowCodeEventName.Message, { action: "created", message })
-		await this.saveClineMessages()
+		await this.saveMeowCodeMessages()
 	}
 
-	public async overwriteClineMessages(newMessages: ClineMessage[]) {
-		this.clineMessages = newMessages
+	public async overwriteMeowCodeMessages(newMessages: MeowCodeMessage[]) {
+		this.meowCodeMessages = newMessages
 		restoreTodoListForTask(this)
-		await this.saveClineMessages()
+		await this.saveMeowCodeMessages()
 	}
 
-	private async updateClineMessage(message: ClineMessage) {
+	private async updateMeowCodeMessage(message: MeowCodeMessage) {
 		const provider = this.providerRef.deref()
-		await provider?.postMessageToWebview({ type: "messageUpdated", clineMessage: message })
+		await provider?.postMessageToWebview({ type: "messageUpdated", meowCodeMessage: message })
 		this.emit(MeowCodeEventName.Message, { action: "updated", message })
 	}
 
-	private async saveClineMessages(): Promise<boolean> {
+	private async saveMeowCodeMessages(): Promise<boolean> {
 		try {
 			await saveTaskMessages({
-				messages: structuredClone(this.clineMessages),
+				messages: structuredClone(this.meowCodeMessages),
 				taskId: this.taskId,
 				globalStoragePath: this.globalStoragePath,
 			})
@@ -1188,7 +1188,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				rootTaskId: this.rootTaskId,
 				parentTaskId: this.parentTaskId,
 				taskNumber: this.taskNumber,
-				messages: this.clineMessages,
+				messages: this.meowCodeMessages,
 				globalStoragePath: this.globalStoragePath,
 				workspace: this.cwd,
 				mode: this._taskMode || defaultModeSlug, // Use the task's own mode, not the current provider mode.
@@ -1211,10 +1211,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 	}
 
-	private findMessageByTimestamp(ts: number): ClineMessage | undefined {
-		for (let i = this.clineMessages.length - 1; i >= 0; i--) {
-			if (this.clineMessages[i].ts === ts) {
-				return this.clineMessages[i]
+	private findMessageByTimestamp(ts: number): MeowCodeMessage | undefined {
+		for (let i = this.meowCodeMessages.length - 1; i >= 0; i--) {
+			if (this.meowCodeMessages[i].ts === ts) {
+				return this.meowCodeMessages[i]
 			}
 		}
 
@@ -1225,18 +1225,18 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	// false (completion of partial message), undefined (individual complete
 	// message).
 	async ask(
-		type: ClineAsk,
+		type: MeowCodeAsk,
 		text?: string,
 		partial?: boolean,
 		progressStatus?: ToolProgressStatus,
 		isProtected?: boolean,
-	): Promise<{ response: ClineAskResponse; text?: string; images?: string[] }> {
-		// If this Cline instance was aborted by the provider, then the only
+	): Promise<{ response: MeowCodeAskResponse; text?: string; images?: string[] }> {
+		// If this MeowCode instance was aborted by the provider, then the only
 		// thing keeping us alive is a promise still running in the background,
 		// in which case we don't want to send its result to the webview as it
-		// is attached to a new instance of Cline now. So we can safely ignore
+		// is attached to a new instance of MeowCode now. So we can safely ignore
 		// the result of any active promises, and this class will be
-		// deallocated. (Although we set Cline = undefined in provider, that
+		// deallocated. (Although we set MeowCode = undefined in provider, that
 		// simply removes the reference to this instance, but the instance is
 		// still alive until this promise resolves or rejects.)
 		if (this.abort) {
@@ -1246,7 +1246,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		let askTs: number
 
 		if (partial !== undefined) {
-			const lastMessage = this.clineMessages.at(-1)
+			const lastMessage = this.meowCodeMessages.at(-1)
 
 			const isUpdatingPreviousPartial =
 				lastMessage && lastMessage.partial && lastMessage.type === "ask" && lastMessage.ask === type
@@ -1262,7 +1262,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					// data or one whole message at a time so ignore partial for
 					// saves, and only post parts of partial message instead of
 					// whole array in new listener.
-					this.updateClineMessage(lastMessage)
+					this.updateMeowCodeMessage(lastMessage)
 					// console.log("Task#ask: current ask promise was ignored (#1)")
 					throw new AskIgnoredError("updating existing partial")
 				} else {
@@ -1270,7 +1270,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					// state.
 					askTs = Date.now()
 					this.lastMessageTs = askTs
-					await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, partial, isProtected })
+					await this.addToMeowCodeMessages({ ts: askTs, type: "ask", ask: type, text, partial, isProtected })
 					// console.log("Task#ask: current ask promise was ignored (#2)")
 					throw new AskIgnoredError("new partial")
 				}
@@ -1299,8 +1299,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					lastMessage.partial = false
 					lastMessage.progressStatus = progressStatus
 					lastMessage.isProtected = isProtected
-					await this.saveClineMessages()
-					this.updateClineMessage(lastMessage)
+					await this.saveMeowCodeMessages()
+					this.updateMeowCodeMessage(lastMessage)
 				} else {
 					// This is a new and complete message, so add it like normal.
 					this.askResponse = undefined
@@ -1308,7 +1308,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					this.askResponseImages = undefined
 					askTs = Date.now()
 					this.lastMessageTs = askTs
-					await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, isProtected })
+					await this.addToMeowCodeMessages({ ts: askTs, type: "ask", ask: type, text, isProtected })
 				}
 			}
 		} else {
@@ -1318,7 +1318,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			this.askResponseImages = undefined
 			askTs = Date.now()
 			this.lastMessageTs = askTs
-			await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, isProtected })
+			await this.addToMeowCodeMessages({ ts: askTs, type: "ask", ask: type, text, isProtected })
 		}
 
 		let timeouts: NodeJS.Timeout[] = []
@@ -1461,7 +1461,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		return result
 	}
 
-	handleWebviewAskResponse(askResponse: ClineAskResponse, text?: string, images?: string[]) {
+	handleWebviewAskResponse(askResponse: MeowCodeAskResponse, text?: string, images?: string[]) {
 		// Clear any pending auto-approval timeout when user responds
 		this.cancelAutoApprovalTimeout()
 
@@ -1480,15 +1480,15 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		if (askResponse === "messageResponse" || askResponse === "yesButtonClicked") {
 			// Find the last unanswered follow-up message using findLastIndex
 			const lastFollowUpIndex = findLastIndex(
-				this.clineMessages,
+				this.meowCodeMessages,
 				(msg) => msg.type === "ask" && msg.ask === "followup" && !msg.isAnswered,
 			)
 
 			if (lastFollowUpIndex !== -1) {
 				// Mark this follow-up as answered
-				this.clineMessages[lastFollowUpIndex].isAnswered = true
+				this.meowCodeMessages[lastFollowUpIndex].isAnswered = true
 				// Save the updated messages
-				this.saveClineMessages().catch((error) => {
+				this.saveMeowCodeMessages().catch((error) => {
 					console.error("Failed to save answered follow-up state:", error)
 				})
 			}
@@ -1497,13 +1497,13 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// Mark the last tool-approval ask as answered when user approves (or auto-approval)
 		if (askResponse === "yesButtonClicked") {
 			const lastToolAskIndex = findLastIndex(
-				this.clineMessages,
+				this.meowCodeMessages,
 				(msg) => msg.type === "ask" && msg.ask === "tool" && !msg.isAnswered,
 			)
 			if (lastToolAskIndex !== -1) {
-				this.clineMessages[lastToolAskIndex].isAnswered = true
-				void this.updateClineMessage(this.clineMessages[lastToolAskIndex])
-				this.saveClineMessages().catch((error) => {
+				this.meowCodeMessages[lastToolAskIndex].isAnswered = true
+				void this.updateMeowCodeMessage(this.meowCodeMessages[lastToolAskIndex])
+				this.saveMeowCodeMessages().catch((error) => {
 					console.error("Failed to save answered tool-ask state:", error)
 				})
 			}
@@ -1716,7 +1716,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	}
 
 	async say(
-		type: ClineSay,
+		type: MeowCodeSay,
 		text?: string,
 		images?: string[],
 		partial?: boolean,
@@ -1733,7 +1733,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 
 		if (partial !== undefined) {
-			const lastMessage = this.clineMessages.at(-1)
+			const lastMessage = this.meowCodeMessages.at(-1)
 
 			const isUpdatingPreviousPartial =
 				lastMessage && lastMessage.partial && lastMessage.type === "say" && lastMessage.say === type
@@ -1745,7 +1745,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					lastMessage.images = images
 					lastMessage.partial = partial
 					lastMessage.progressStatus = progressStatus
-					this.updateClineMessage(lastMessage)
+					this.updateMeowCodeMessage(lastMessage)
 				} else {
 					// This is a new partial message, so add it with partial state.
 					const sayTs = Date.now()
@@ -1754,7 +1754,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 						this.lastMessageTs = sayTs
 					}
 
-					await this.addToClineMessages({
+					await this.addToMeowCodeMessages({
 						ts: sayTs,
 						type: "say",
 						say: type,
@@ -1781,10 +1781,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 					// Instead of streaming partialMessage events, we do a save
 					// and post like normal to persist to disk.
-					await this.saveClineMessages()
+					await this.saveMeowCodeMessages()
 
 					// More performant than an entire `postStateToWebview`.
-					this.updateClineMessage(lastMessage)
+					this.updateMeowCodeMessage(lastMessage)
 				} else {
 					// This is a new and complete message, so add it like normal.
 					const sayTs = Date.now()
@@ -1793,7 +1793,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 						this.lastMessageTs = sayTs
 					}
 
-					await this.addToClineMessages({
+					await this.addToMeowCodeMessages({
 						ts: sayTs,
 						type: "say",
 						say: type,
@@ -1816,7 +1816,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				this.lastMessageTs = sayTs
 			}
 
-			await this.addToClineMessages({
+			await this.addToMeowCodeMessages({
 				ts: sayTs,
 				type: "say",
 				say: type,
@@ -1899,13 +1899,13 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	private async startTask(task?: string, images?: string[]): Promise<void> {
 		try {
-			// `conversationHistory` (for API) and `clineMessages` (for webview)
+			// `conversationHistory` (for API) and `meowCodeMessages` (for webview)
 			// need to be in sync.
 			// If the extension process were killed, then on restart the
-			// `clineMessages` might not be empty, so we need to set it to [] when
-			// we create a new Cline client (otherwise webview would show stale
+			// `meowCodeMessages` might not be empty, so we need to set it to [] when
+			// we create a new MeowCode client (otherwise webview would show stale
 			// messages from previous session).
-			this.clineMessages = []
+			this.meowCodeMessages = []
 			this.apiConversationHistory = []
 
 			// The todo list is already set in the constructor if initialTodos were provided
@@ -1963,23 +1963,23 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	private async resumeTaskFromHistory() {
 		try {
-			const modifiedClineMessages = await this.getSavedClineMessages()
+			const modifiedMeowCodeMessages = await this.getSavedMeowCodeMessages()
 
 			// Remove any resume messages that may have been added before.
 			const lastRelevantMessageIndex = findLastIndex(
-				modifiedClineMessages,
+				modifiedMeowCodeMessages,
 				(m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
 			)
 
 			if (lastRelevantMessageIndex !== -1) {
-				modifiedClineMessages.splice(lastRelevantMessageIndex + 1)
+				modifiedMeowCodeMessages.splice(lastRelevantMessageIndex + 1)
 			}
 
 			// Remove any trailing reasoning-only UI messages that were not part of the persisted API conversation
-			while (modifiedClineMessages.length > 0) {
-				const last = modifiedClineMessages[modifiedClineMessages.length - 1]
+			while (modifiedMeowCodeMessages.length > 0) {
+				const last = modifiedMeowCodeMessages[modifiedMeowCodeMessages.length - 1]
 				if (last.type === "say" && last.say === "reasoning") {
-					modifiedClineMessages.pop()
+					modifiedMeowCodeMessages.pop()
 				} else {
 					break
 				}
@@ -1990,23 +1990,23 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			// cancellation reason to present, then we remove it since it indicates
 			// an api request without any partial content streamed.
 			const lastApiReqStartedIndex = findLastIndex(
-				modifiedClineMessages,
+				modifiedMeowCodeMessages,
 				(m) => m.type === "say" && m.say === "api_req_started",
 			)
 
 			if (lastApiReqStartedIndex !== -1) {
-				const lastApiReqStarted = modifiedClineMessages[lastApiReqStartedIndex]
-				const { cost, cancelReason }: ClineApiReqInfo = JSON.parse(lastApiReqStarted.text || "{}")
+				const lastApiReqStarted = modifiedMeowCodeMessages[lastApiReqStartedIndex]
+				const { cost, cancelReason }: MeowCodeApiReqInfo = JSON.parse(lastApiReqStarted.text || "{}")
 
 				if (cost === undefined && cancelReason === undefined) {
-					modifiedClineMessages.splice(lastApiReqStartedIndex, 1)
+					modifiedMeowCodeMessages.splice(lastApiReqStartedIndex, 1)
 				}
 			}
 
-			await this.overwriteClineMessages(modifiedClineMessages)
-			this.clineMessages = await this.getSavedClineMessages()
+			await this.overwriteMeowCodeMessages(modifiedMeowCodeMessages)
+			this.meowCodeMessages = await this.getSavedMeowCodeMessages()
 
-			// Now present the cline messages to the user and ask if they want to
+			// Now present the meowCode messages to the user and ask if they want to
 			// resume (NOTE: we ran into a bug before where the
 			// apiConversationHistory wouldn't be initialized when opening a old
 			// task, and it was because we were waiting for resume).
@@ -2014,13 +2014,13 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			// the task first.
 			this.apiConversationHistory = await this.getSavedApiConversationHistory()
 
-			const lastClineMessage = this.clineMessages
+			const lastMeowCodeMessage = this.meowCodeMessages
 				.slice()
 				.reverse()
 				.find((m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task")) // Could be multiple resume tasks.
 
-			let askType: ClineAsk
-			if (lastClineMessage?.ask === "completion_result") {
+			let askType: MeowCodeAsk
+			if (lastMeowCodeMessage?.ask === "completion_result") {
 				askType = "resume_completed_task"
 			} else {
 				askType = "resume_task"
@@ -2040,7 +2040,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			}
 
 			// Make sure that the api conversation history can be resumed by the API,
-			// even if it goes out of sync with cline messages.
+			// even if it goes out of sync with meowCode messages.
 			let existingApiConversationHistory: ApiMessage[] = await this.getSavedApiConversationHistory()
 
 			// Tool blocks are always preserved; native tool calling only.
@@ -2141,7 +2141,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			let newUserContent: Anthropic.Messages.ContentBlockParam[] = [...modifiedOldUserContent]
 
 			const agoText = ((): string => {
-				const timestamp = lastClineMessage?.ts ?? Date.now()
+				const timestamp = lastMeowCodeMessage?.ts ?? Date.now()
 				const now = Date.now()
 				const diff = now - timestamp
 				const minutes = Math.floor(diff / 60000)
@@ -2245,7 +2245,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// Save the countdown message in the automatic retry or other content.
 		try {
 			// Save the countdown message in the automatic retry or other content.
-			await this.saveClineMessages()
+			await this.saveMeowCodeMessages()
 		} catch (error) {
 			console.error(`Error saving messages during abort for task ${this.taskId}.${this.instanceId}:`, error)
 		}
@@ -2442,10 +2442,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		this.emit(MeowCodeEventName.TaskStarted)
 
 		while (!this.abort) {
-			const didEndLoop = await this.recursivelyMakeClineRequests(nextUserContent, includeFileDetails)
+			const didEndLoop = await this.recursivelyMakeMeowCodeRequests(nextUserContent, includeFileDetails)
 			includeFileDetails = false // We only need file details the first time.
 
-			// The way this agentic loop works is that cline will be given a
+			// The way this agentic loop works is that meowCode will be given a
 			// task that he then calls tools to complete. Unless there's an
 			// attempt_completion call, we keep responding back to him with his
 			// tool's responses until he either attempt_completion or does not
@@ -2453,7 +2453,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			// to consider if he's completed the task and then call
 			// attempt_completion, otherwise proceed with completing the task.
 			// There is a MAX_REQUESTS_PER_TASK limit to prevent infinite
-			// requests, but Cline is prompted to finish the task as efficiently
+			// requests, but MeowCode is prompted to finish the task as efficiently
 			// as he can.
 
 			if (didEndLoop) {
@@ -2466,7 +2466,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 	}
 
-	public async recursivelyMakeClineRequests(
+	public async recursivelyMakeMeowCodeRequests(
 		userContent: Anthropic.Messages.ContentBlockParam[],
 		includeFileDetails: boolean = false,
 	): Promise<boolean> {
@@ -2627,13 +2627,13 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			// webview while waiting to actually start the API request (to load
 			// potential details for example), we need to update the text of that
 			// message.
-			const lastApiReqIndex = findLastIndex(this.clineMessages, (m) => m.say === "api_req_started")
+			const lastApiReqIndex = findLastIndex(this.meowCodeMessages, (m) => m.say === "api_req_started")
 
-			this.clineMessages[lastApiReqIndex].text = JSON.stringify({
+			this.meowCodeMessages[lastApiReqIndex].text = JSON.stringify({
 				apiProtocol,
-			} satisfies ClineApiReqInfo)
+			} satisfies MeowCodeApiReqInfo)
 
-			await this.saveClineMessages()
+			await this.saveMeowCodeMessages()
 			await this.providerRef.deref()?.postStateToWebviewWithoutTaskHistory()
 
 			try {
@@ -2650,12 +2650,12 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				// anyways, so it remains solely for legacy purposes to keep track
 				// of prices in tasks from history (it's worth removing a few months
 				// from now).
-				const updateApiReqMsg = (cancelReason?: ClineApiReqCancelReason, streamingFailedMessage?: string) => {
-					if (lastApiReqIndex < 0 || !this.clineMessages[lastApiReqIndex]) {
+				const updateApiReqMsg = (cancelReason?: MeowCodeApiReqCancelReason, streamingFailedMessage?: string) => {
+					if (lastApiReqIndex < 0 || !this.meowCodeMessages[lastApiReqIndex]) {
 						return
 					}
 
-					const existingData = JSON.parse(this.clineMessages[lastApiReqIndex].text || "{}")
+					const existingData = JSON.parse(this.meowCodeMessages[lastApiReqIndex].text || "{}")
 
 					// Calculate total tokens and cost using provider-aware function
 					const modelId = getModelId(this.apiConfiguration)
@@ -2682,7 +2682,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 									cacheReadTokens,
 								)
 
-					this.clineMessages[lastApiReqIndex].text = JSON.stringify({
+					this.meowCodeMessages[lastApiReqIndex].text = JSON.stringify({
 						...existingData,
 						tokensIn: costResult.totalInputTokens,
 						tokensOut: costResult.totalOutputTokens,
@@ -2691,16 +2691,16 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 						cost: totalCost ?? costResult.totalCost,
 						cancelReason,
 						streamingFailedMessage,
-					} satisfies ClineApiReqInfo)
+					} satisfies MeowCodeApiReqInfo)
 				}
 
-				const abortStream = async (cancelReason: ClineApiReqCancelReason, streamingFailedMessage?: string) => {
+				const abortStream = async (cancelReason: MeowCodeApiReqCancelReason, streamingFailedMessage?: string) => {
 					if (this.diffViewProvider.isEditing) {
 						await this.diffViewProvider.revertChanges() // closes diff view
 					}
 
 					// if last message is a partial we need to update and save it
-					const lastMessage = this.clineMessages.at(-1)
+					const lastMessage = this.meowCodeMessages.at(-1)
 
 					if (lastMessage && lastMessage.partial) {
 						// lastMessage.ts = Date.now() DO NOT update ts since it is used as a key for virtuoso list
@@ -2711,7 +2711,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					// Update `api_req_started` to have cancelled and cost, so that
 					// we can display the cost of the partial stream and the cancellation reason
 					updateApiReqMsg(cancelReason, streamingFailedMessage)
-					await this.saveClineMessages()
+					await this.saveMeowCodeMessages()
 
 					// Signals to provider that it can retrieve the saved messages
 					// from disk, as abortTask can not be awaited on in nature.
@@ -3005,7 +3005,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 								// Only need to gracefully abort if this instance
 								// isn't abandoned (sometimes OpenRouter stream
 								// hangs, in which case this would affect future
-								// instances of Cline).
+								// instances of MeowCode).
 								await abortStream("user_cancelled")
 							}
 
@@ -3077,12 +3077,12 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 								// Update the API request message with the latest usage data
 								updateApiReqMsg()
-								await this.saveClineMessages()
+								await this.saveMeowCodeMessages()
 
 								// Update the specific message in the webview
-								const apiReqMessage = this.clineMessages[messageIndex]
+								const apiReqMessage = this.meowCodeMessages[messageIndex]
 								if (apiReqMessage) {
-									await this.updateClineMessage(apiReqMessage)
+									await this.updateMeowCodeMessage(apiReqMessage)
 								}
 
 								// Capture telemetry with provider-aware cost calculation
@@ -3206,11 +3206,11 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					})
 				} catch (error) {
 					// Abandoned happens when extension is no longer waiting for the
-					// Cline instance to finish aborting (error is thrown here when
+					// MeowCode instance to finish aborting (error is thrown here when
 					// any function in the for loop throws due to this.abort).
 					if (!this.abandoned) {
 						// Determine cancellation reason
-						const cancelReason: ClineApiReqCancelReason = this.abort ? "user_cancelled" : "streaming_failed"
+						const cancelReason: MeowCodeApiReqCancelReason = this.abort ? "user_cancelled" : "streaming_failed"
 
 						const rawErrorMessage = error.message ?? JSON.stringify(serializeError(error), null, 2)
 						const streamingFailedMessage = this.abort
@@ -3353,17 +3353,17 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				// (other messages like text blocks or tool uses may have been added after it during streaming)
 				if (reasoningMessage) {
 					const lastReasoningIndex = findLastIndex(
-						this.clineMessages,
+						this.meowCodeMessages,
 						(m) => m.type === "say" && m.say === "reasoning",
 					)
 
-					if (lastReasoningIndex !== -1 && this.clineMessages[lastReasoningIndex].partial) {
-						this.clineMessages[lastReasoningIndex].partial = false
-						await this.updateClineMessage(this.clineMessages[lastReasoningIndex])
+					if (lastReasoningIndex !== -1 && this.meowCodeMessages[lastReasoningIndex].partial) {
+						this.meowCodeMessages[lastReasoningIndex].partial = false
+						await this.updateMeowCodeMessage(this.meowCodeMessages[lastReasoningIndex])
 					}
 				}
 
-				await this.saveClineMessages()
+				await this.saveMeowCodeMessages()
 				await this.providerRef.deref()?.postStateToWebviewWithoutTaskHistory()
 
 				// No legacy text-stream tool parser state to reset.
@@ -3973,7 +3973,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// Update last request time right before making the request so that subsequent
 		// requests — even from new subtasks — will honour the provider's rate-limit.
 		//
-		// NOTE: When recursivelyMakeClineRequests handles rate limiting, it sets the
+		// NOTE: When recursivelyMakeMeowCodeRequests handles rate limiting, it sets the
 		// timestamp earlier to include the environment details build. We still set it
 		// here for direct callers (tests) and for the case where we didn't rate-limit
 		// in the caller.
@@ -4165,7 +4165,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// Check auto-approval limits
 		const approvalResult = await this.autoApprovalHandler.checkAutoApprovalLimits(
 			state,
-			this.combineMessages(this.clineMessages.slice(1)),
+			this.combineMessages(this.meowCodeMessages.slice(1)),
 			async (type, data) => this.ask(type, data),
 		)
 
@@ -4569,12 +4569,12 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	// Metrics
 
-	public combineMessages(messages: ClineMessage[]) {
+	public combineMessages(messages: MeowCodeMessage[]) {
 		return combineApiRequests(combineCommandSequences(messages))
 	}
 
 	public getTokenUsage(): TokenUsage {
-		return getApiMetrics(this.combineMessages(this.clineMessages.slice(1)))
+		return getApiMetrics(this.combineMessages(this.meowCodeMessages.slice(1)))
 	}
 
 	public recordToolUsage(toolName: ToolName) {
@@ -4615,7 +4615,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		return TaskStatus.Running
 	}
 
-	public get taskAsk(): ClineMessage | undefined {
+	public get taskAsk(): MeowCodeMessage | undefined {
 		return this.idleAsk || this.resumableAsk || this.interactiveAsk
 	}
 
@@ -4629,7 +4629,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 
 		this.tokenUsageSnapshot = this.getTokenUsage()
-		this.tokenUsageSnapshotAt = this.clineMessages.at(-1)?.ts
+		this.tokenUsageSnapshotAt = this.meowCodeMessages.at(-1)?.ts
 
 		return this.tokenUsageSnapshot
 	}

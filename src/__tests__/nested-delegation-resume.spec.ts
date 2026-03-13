@@ -50,7 +50,7 @@ vi.mock("../core/task-persistence", () => ({
 }))
 
 import { attemptCompletionTool } from "../core/tools/AttemptCompletionTool"
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
 import type { Task } from "../core/task/Task"
 import { readTaskMessages } from "../core/task-persistence/taskMessages"
 import { readApiMessages, saveApiMessages, saveTaskMessages } from "../core/task-persistence"
@@ -111,7 +111,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 		}
 
 		const emitSpy = vi.fn()
-		const removeClineFromStack = vi.fn().mockImplementation(async () => {
+		const removeMeowCodeFromStack = vi.fn().mockImplementation(async () => {
 			// Simulate closing current child
 			currentActiveId = undefined
 		})
@@ -126,7 +126,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 				return {
 					taskId: historyItem.id,
 					resumeAfterDelegation: vi.fn().mockResolvedValue(undefined),
-					overwriteClineMessages: vi.fn().mockResolvedValue(undefined),
+					overwriteMeowCodeMessages: vi.fn().mockResolvedValue(undefined),
 					overwriteApiConversationHistory: vi.fn().mockResolvedValue(undefined),
 				}
 			})
@@ -153,21 +153,21 @@ describe("Nested delegation resume (A → B → C)", () => {
 			getTaskWithId,
 			emit: emitSpy,
 			getCurrentTask: vi.fn(() => (currentActiveId ? ({ taskId: currentActiveId } as any) : undefined)),
-			removeClineFromStack,
+			removeMeowCodeFromStack,
 			createTaskWithHistoryItem,
 			updateTaskHistory,
 			// Wire through provider method so attemptCompletionTool can call it
 			reopenParentFromDelegation: vi.fn(async (params: any) => {
-				return await (ClineProvider.prototype as any).reopenParentFromDelegation.call(provider, params)
+				return await (MeowCodeProvider.prototype as any).reopenParentFromDelegation.call(provider, params)
 			}),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		// Empty histories for simplicity
 		vi.mocked(readTaskMessages).mockResolvedValue([])
 		vi.mocked(readApiMessages).mockResolvedValue([])
 
 		// Step 1: C completes -> should reopen B automatically
-		const clineC = {
+		const meowCodeC = {
 			taskId: "C",
 			parentTask: undefined, // parent ref may or may not exist; metadata path should still work
 			parentTaskId: "B",
@@ -177,7 +177,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 			emit: vi.fn(),
 			getTokenUsage: vi.fn(() => ({})),
 			toolUsage: {},
-			clineMessages: [],
+			meowCodeMessages: [],
 			userMessageContent: [],
 			consecutiveMistakeCount: 0,
 			emitFinalTokenUsageUpdate: vi.fn(),
@@ -197,7 +197,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 			throw err
 		})
 
-		await attemptCompletionTool.handle(clineC, blockC, {
+		await attemptCompletionTool.handle(meowCodeC, blockC, {
 			askApproval: vi.fn(),
 			handleError,
 			pushToolResult: vi.fn(),
@@ -214,7 +214,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 		expect(eventNamesAfterC).toContain(MeowCodeEventName.TaskDelegationResumed)
 
 		// Step 2: B completes -> should reopen A automatically (parent reference missing, must use parentTaskId path)
-		const clineB = {
+		const meowCodeB = {
 			taskId: "B",
 			parentTask: undefined, // simulate missing live parent reference
 			parentTaskId: "A", // persisted parent id
@@ -224,7 +224,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 			emit: vi.fn(),
 			getTokenUsage: vi.fn(() => ({})),
 			toolUsage: {},
-			clineMessages: [],
+			meowCodeMessages: [],
 			userMessageContent: [],
 			consecutiveMistakeCount: 0,
 			emitFinalTokenUsageUpdate: vi.fn(),
@@ -238,7 +238,7 @@ describe("Nested delegation resume (A → B → C)", () => {
 			partial: false,
 		} as any
 
-		await attemptCompletionTool.handle(clineB, blockB, {
+		await attemptCompletionTool.handle(meowCodeB, blockB, {
 			askApproval: vi.fn(),
 			handleError,
 			pushToolResult: vi.fn(),
