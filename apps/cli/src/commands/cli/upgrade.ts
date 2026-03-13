@@ -111,7 +111,7 @@ export async function getLatestCliVersion(fetchImpl: typeof fetch = fetch): Prom
 
 export function runUpgradeInstaller(version?: string, spawnImpl: typeof spawn = spawn): Promise<void> {
 	return new Promise((resolve, reject) => {
-		const env = version ? { ...process.env, ROO_VERSION: version } : process.env
+		const env = version ? { ...process.env, MEOW_VERSION: version } : process.env
 		const child = spawnImpl("sh", ["-c", INSTALL_SCRIPT_COMMAND], { stdio: "inherit", env })
 
 		child.once("error", (error) => {

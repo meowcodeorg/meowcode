@@ -8,7 +8,7 @@ const envVarMap: Record<SupportedProvider, string> = {
 	gemini: "GOOGLE_API_KEY",
 	openrouter: "OPENROUTER_API_KEY",
 	"vercel-ai-gateway": "VERCEL_AI_GATEWAY_API_KEY",
-	roo: "ROO_API_KEY",
+	roo: "MEOW_API_KEY",
 }
 
 export function getEnvVarName(provider: SupportedProvider): string {

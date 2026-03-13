@@ -22,6 +22,6 @@ export const ASCII_ROO = `  _,'   ___
         //   \\\\
       ,/'     \`\\_,`
 
-export const AUTH_BASE_URL = process.env.ROO_AUTH_BASE_URL ?? "https://app.TODOURL"
+export const AUTH_BASE_URL = process.env.MEOW_AUTH_BASE_URL ?? "https://app.TODOURL"
 
-export const SDK_BASE_URL = process.env.ROO_SDK_BASE_URL ?? "https://cloud-api.TODOURL"
+export const SDK_BASE_URL = process.env.MEOW_SDK_BASE_URL ?? "https://cloud-api.TODOURL"

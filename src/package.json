@@ -20,7 +20,7 @@
         "type": "git",
         "url": "https://github.com/MeowCodeInc/Roo-Code"
     },
-    "homepage": "https://roocode.com",
+    "homepage": "TODOURL",
     "categories": [
         "AI",
         "Chat",
@@ -54,14 +54,14 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "roo-cline-ActivityBar",
+                    "id": "meow-code-ActivityBar",
                     "title": "%views.activitybar.title%",
                     "icon": "assets/icons/icon.svg"
                 }
             ]
         },
         "views": {
-            "roo-cline-ActivityBar": [
+            "meow-code-ActivityBar": [
                 {
                     "type": "webview",
                     "id": "meow-code.SidebarProvider",

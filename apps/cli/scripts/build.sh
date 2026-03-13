@@ -199,11 +199,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Set environment variables for the CLI
-process.env.ROO_CLI_ROOT = join(__dirname, '..');
-process.env.ROO_EXTENSION_PATH = join(__dirname, '..', 'extension');
+process.env.MEOW_CLI_ROOT = join(__dirname, '..');
+process.env.MEOW_EXTENSION_PATH = join(__dirname, '..', 'extension');
 const ripgrepPath = join(__dirname, 'rg');
 if (existsSync(ripgrepPath)) {
-  process.env.ROO_RIPGREP_PATH = ripgrepPath;
+  process.env.MEOW_RIPGREP_PATH = ripgrepPath;
 }
 
 // Import and run the actual CLI
@@ -258,10 +258,10 @@ verify_local_install() {
 
     TARBALL_PATH="$REPO_ROOT/$TARBALL"
 
-    ROO_LOCAL_TARBALL="$TARBALL_PATH" \
-    ROO_INSTALL_DIR="$VERIFY_INSTALL_DIR" \
-    ROO_BIN_DIR="$VERIFY_BIN_DIR" \
-    ROO_VERSION="$VERSION" \
+    MEOW_LOCAL_TARBALL="$TARBALL_PATH" \
+    MEOW_INSTALL_DIR="$VERIFY_INSTALL_DIR" \
+    MEOW_BIN_DIR="$VERIFY_BIN_DIR" \
+    MEOW_VERSION="$VERSION" \
     "$CLI_DIR/install.sh" || {
         rm -rf "$VERIFY_DIR"
         error "Installation verification failed!"
@@ -298,8 +298,8 @@ install_local() {
 
     TARBALL_PATH="$REPO_ROOT/$TARBALL"
 
-    ROO_LOCAL_TARBALL="$TARBALL_PATH" \
-    ROO_VERSION="$VERSION" \
+    MEOW_LOCAL_TARBALL="$TARBALL_PATH" \
+    MEOW_VERSION="$VERSION" \
     "$CLI_DIR/install.sh" || {
         error "Local installation failed!"
     }
@@ -324,7 +324,7 @@ print_summary() {
         echo "    roo --help"
     else
         echo "  To install manually:"
-        echo "    ROO_LOCAL_TARBALL=$REPO_ROOT/$TARBALL ./apps/cli/install.sh"
+        echo "    MEOW_LOCAL_TARBALL=$REPO_ROOT/$TARBALL ./apps/cli/install.sh"
         echo ""
         echo "  Or re-run with --install:"
         echo "    ./apps/cli/scripts/build.sh --install"

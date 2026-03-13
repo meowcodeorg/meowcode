@@ -36,7 +36,7 @@ import { isExpectedControlFlowError } from "./cancellation.js"
 import { runStdinStreamMode } from "./stdin-stream.js"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const ROO_MODEL_WARMUP_TIMEOUT_MS = 10_000
+const MEOW_MODEL_WARMUP_TIMEOUT_MS = 10_000
 const SIGNAL_ONLY_EXIT_KEEPALIVE_MS = 60_000
 const STREAM_RESUME_WAIT_TIMEOUT_MS = 2_000
 
@@ -99,8 +99,8 @@ async function warmRooModels(host: ExtensionHost): Promise<void> {
 		}
 
 		const timeoutId = setTimeout(() => {
-			finish(() => reject(new Error(`timed out waiting for Meow models after ${ROO_MODEL_WARMUP_TIMEOUT_MS}ms`)))
-		}, ROO_MODEL_WARMUP_TIMEOUT_MS)
+			finish(() => reject(new Error(`timed out waiting for Meow models after ${MEOW_MODEL_WARMUP_TIMEOUT_MS}ms`)))
+		}, MEOW_MODEL_WARMUP_TIMEOUT_MS)
 
 		host.on("extensionWebviewMessage", onMessage)
 		host.sendToExtension({ type: "requestRooModels" })
@@ -263,13 +263,13 @@ export async function run(promptArg: string | undefined, flagOptions: FlagOption
 				if (!flagOptions.apiKey && !getApiKeyFromEnv(extensionHostOptions.provider)) {
 					console.error("[CLI] Your MeowCode Router token is not valid.")
 					console.error("[CLI] Please run: roo auth login")
-					console.error("[CLI] Or use --api-key or set ROO_API_KEY to provide your own API key.")
+					console.error("[CLI] Or use --api-key or set MEOW_API_KEY to provide your own API key.")
 					process.exit(1)
 				}
 			}
 		}
 		// If no rooToken, fall through to the general API key resolution below
-		// which will check flagOptions.apiKey and ROO_API_KEY env var.
+		// which will check flagOptions.apiKey and MEOW_API_KEY env var.
 	}
 
 	// Validations
