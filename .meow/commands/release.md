@@ -1,5 +1,5 @@
 ---
-description: "Create a new release of the Roo Code extension"
+description: "Create a new release of the MeowCode extension"
 argument-hint: patch | minor | major
 mode: code
 ---
@@ -12,7 +12,7 @@ mode: code
 
 ```
 ---
-"roo-cline": patch|minor|major
+"meow-code": patch|minor|major
 ---
 [list of changes]
 ```

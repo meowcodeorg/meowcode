@@ -1,5 +1,5 @@
 ---
-description: "Prepare a new release of the Roo Code CLI"
+description: "Prepare a new release of the MeowCode CLI"
 argument-hint: "[version-description]"
 mode: code
 ---

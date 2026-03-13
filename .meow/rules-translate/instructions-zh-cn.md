@@ -174,9 +174,9 @@
 > > > > > > > AFTER
 
 <<<<<<< BEFORE
-"description": "启用后，Roo 将能够与 MCP 服务器交互以获取高级功能。"
+"description": "启用后，MeowCode 将能够与 MCP 服务器交互以获取高级功能。"
 =======
-"description": "启用后 Roo 可与 MCP 服务交互获取高级功能。"
+"description": "启用后 Meow 可与 MCP 服务交互获取高级功能。"
 
 > > > > > > > AFTER
 

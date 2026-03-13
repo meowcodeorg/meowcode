@@ -68,5 +68,5 @@ GIT_EDITOR=true git rebase --continue
 
 ## Examples
 
-- `/roo-resolve-conflicts #123` - Resolve conflicts for PR #123
-- `/roo-resolve-conflicts 456` - Resolve conflicts for PR #456
+- `/meow-resolve-conflicts #123` - Resolve conflicts for PR #123
+- `/meow-resolve-conflicts 456` - Resolve conflicts for PR #456

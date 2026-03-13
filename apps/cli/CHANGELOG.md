@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the `@roo-code/cli` package will be documented in this file.
+All notable changes to the `@meow-code/cli` package will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -157,13 +157,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Telemetry Control**: Added `ROO_CODE_DISABLE_TELEMETRY=1` environment variable to disable cloud telemetry.
+- **Telemetry Control**: Added `MEOW_CODE_DISABLE_TELEMETRY=1` environment variable to disable cloud telemetry.
 
 ## [0.1.1] - 2026-02-24
 
 ### Added
 
-- **Roo Model Warmup**: When configured with the Roo provider, the CLI now proactively fetches and warms the model list during activation so that model information is available before the first prompt is sent. The warmup has a 10s timeout and failures are logged only in debug mode.
+- **Roo Model Warmup**: When configured with the Meow provider, the CLI now proactively fetches and warms the model list during activation so that model information is available before the first prompt is sent. The warmup has a 10s timeout and failures are logged only in debug mode.
 - **Unbound Provider**: Added Unbound as an available provider option.
 
 ## [0.1.0] - 2026-02-19
@@ -227,14 +227,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Linux Support**: The CLI now supports Linux platforms in addition to macOS
-- **Roo Provider API Key Support**: Allow `--api-key` flag and `ROO_API_KEY` environment variable for the roo provider instead of requiring cloud auth token
+- **Meow Provider API Key Support**: Allow `--api-key` flag and `MEOW_API_KEY` environment variable for the meow provider instead of requiring cloud auth token
 - **Exit on Error**: New `--exit-on-error` flag to exit immediately on API request errors instead of retrying, useful for CI/CD pipelines
 
 ### Changed
 
 - **Improved Dev Experience**: Dev scripts now use `tsx` for running directly from source without building first
 - **Path Resolution Fixes**: Fixed path resolution in [`version.ts`](src/lib/utils/version.ts), [`extension.ts`](src/lib/utils/extension.ts), and [`extension-host.ts`](src/agent/extension-host.ts) to work from both source and bundled locations
-- **Debug Logging**: Debug log file (`~/.roo/cli-debug.log`) is now disabled by default unless `--debug` flag is passed
+- **Debug Logging**: Debug log file (`~/.meow/cli-debug.log`) is now disabled by default unless `--debug` flag is passed
 - Updated README with complete environment variable table and dev workflow documentation
 
 ### Fixed
@@ -273,12 +273,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Skip onboarding flow when a provider is explicitly specified via `--provider` flag or saved in settings
 - Unified permission flags: Combined approval-skipping flags into a single option for Claude Code-like CLI compatibility
-- Improved Roo Code Router authentication flow and error messaging
+- Improved MeowCode Router authentication flow and error messaging
 
 ### Fixed
 
 - Removed unnecessary timeout that could cause issues with long-running tasks
-- Fixed authentication token validation for Roo Code Router provider
+- Fixed authentication token validation for MeowCode Router provider
 
 ## [0.0.45] - 2026-01-08
 

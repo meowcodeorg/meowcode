@@ -1,15 +1,15 @@
 ---
-name: roo-translation
-description: Provides comprehensive guidelines for translating and localizing Roo Code extension strings. Use when tasks involve i18n, translation, localization, adding new languages, or updating existing translation files. This skill covers both core extension (src/i18n/locales/) and WebView UI (webview-ui/src/i18n/locales/) localization.
+name: meow-translation
+description: Provides comprehensive guidelines for translating and localizing MeowCode extension strings. Use when tasks involve i18n, translation, localization, adding new languages, or updating existing translation files. This skill covers both core extension (src/i18n/locales/) and WebView UI (webview-ui/src/i18n/locales/) localization.
 ---
 
-# Roo Code Translation Skill
+# MeowCode Translation Skill
 
 ## When to Use This Skill
 
 Use this skill when the task involves:
 
-- Adding new translatable strings to the Roo Code extension
+- Adding new translatable strings to the MeowCode extension
 - Translating existing strings to new languages
 - Updating or fixing translations in existing language files
 - Understanding i18n patterns used in the codebase
@@ -38,7 +38,7 @@ The VSCode extension has two main areas that require localization:
 
 For detailed brand voice, tone, and word choice guidance, refer to the guidance file:
 
-- [`.roo/guidance/roo-translator.md`](../../guidance/roo-translator.md)
+- [`.meow/guidance/roo-translator.md`](../../guidance/roo-translator.md)
 
 This guidance file is loaded at runtime and should be consulted for the latest brand and style standards.
 

@@ -1,10 +1,10 @@
 ---
-description: "Translate and localize strings in the Roo Code extension"
+description: "Translate and localize strings in the MeowCode extension"
 argument-hint: "[language-code or 'all'] [string-key or file-path]"
 mode: translate
 ---
 
-Perform translation and localization tasks for the Roo Code extension. This command activates the translation workflow with comprehensive i18n guidelines.
+Perform translation and localization tasks for the MeowCode extension. This command activates the translation workflow with comprehensive i18n guidelines.
 
 ## Quick Start
 
@@ -45,6 +45,6 @@ Perform translation and localization tasks for the Roo Code extension. This comm
 
 ## Examples
 
-- `/roo-translate de` - Focus on German translations
-- `/roo-translate all welcome.title` - Translate a specific key to all languages
-- `/roo-translate zh-CN src/i18n/locales/zh-CN/core.json` - Work on specific file
+- `/meow-translate de` - Focus on German translations
+- `/meow-translate all welcome.title` - Translate a specific key to all languages
+- `/meow-translate zh-CN src/i18n/locales/zh-CN/core.json` - Work on specific file

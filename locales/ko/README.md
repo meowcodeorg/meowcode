@@ -1,21 +1,21 @@
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline"><img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=flat&logo=visualstudiocode&logoColor=white" alt="VS Code Marketplace"></a>
-  <a href="https://x.com/roocode"><img src="https://img.shields.io/badge/roocode-000000?style=flat&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://youtube.com/@roocodeyt?feature=shared"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube"></a>
-  <a href="https://discord.gg/roocode"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Join Discord"></a>
-  <a href="https://www.reddit.com/r/RooCode/"><img src="https://img.shields.io/badge/Join%20r%2FRooCode-FF4500?style=flat&logo=reddit&logoColor=white" alt="Join r/RooCode"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=MeowCodeOrg.meow-code"><img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=flat&logo=visualstudiocode&logoColor=white" alt="VS Code Marketplace"></a>
+  <a href="https://x.com/meowcode"><img src="https://img.shields.io/badge/meowcode-000000?style=flat&logo=x&logoColor=white" alt="X"></a>
+  <a href="https://youtube.com/@meowcodeyt?feature=shared"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://discord.gg/meowcode"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Join Discord"></a>
+  <a href="https://www.reddit.com/r/MeowCode/"><img src="https://img.shields.io/badge/Join%20r%2FMeowCode-FF4500?style=flat&logo=reddit&logoColor=white" alt="Join r/MeowCode"></a>
 </p>
 <p align="center">
-  <em>빠른 도움 받기 → <a href="https://discord.gg/roocode">Discord 가입하기</a> • 비동기 선호? → <a href="https://www.reddit.com/r/RooCode/">r/RooCode 가입하기</a></em>
+  <em>빠른 도움 받기 → <a href="https://discord.gg/meowcode">Discord 가입하기</a> • 비동기 선호? → <a href="https://www.reddit.com/r/MeowCode/">r/MeowCode 가입하기</a></em>
 </p>
 
-# Roo Code
+# MeowCode
 
 > AI로 강화된 너의 개발 팀, 네 에디터 안에
 
 ## v3.51.0의 새로운 기능
 
-- OpenAI GPT-5.4와 GPT-5.3 Chat Latest 지원을 추가해 Roo Code에서 최신 OpenAI 채팅 모델을 사용할 수 있어요.
+- OpenAI GPT-5.4와 GPT-5.3 Chat Latest 지원을 추가해 MeowCode에서 최신 OpenAI 채팅 모델을 사용할 수 있어요.
 - 이제 스킬을 슬래시 명령어로 노출하고 fallback 실행도 지원해 재사용 가능한 워크플로를 더 빠르게 트리거할 수 있어요.
 
 <details>
@@ -44,7 +44,7 @@
 
 ---
 
-## Roo Code가 당신을 위해 무엇을 할 수 있을까요?
+## MeowCode가 당신을 위해 무엇을 할 수 있을까요?
 
 - 자연어 설명으로 코드 생성
 - 모드로 적응: 코드, 아키텍트, 질문, 디버그 및 사용자 지정 모드
@@ -56,7 +56,7 @@
 
 ## 모드
 
-Roo Code는 당신의 작업 방식에 맞춰 적응합니다.
+MeowCode는 당신의 작업 방식에 맞춰 적응합니다.
 
 - 코드 모드: 일상적인 코딩, 편집 및 파일 작업
 - 아키텍트 모드: 시스템, 사양 및 마이그레이션 계획
@@ -64,7 +64,7 @@ Roo Code는 당신의 작업 방식에 맞춰 적응합니다.
 - 디버그 모드: 문제 추적, 로그 추가, 근본 원인 격리
 - 사용자 지정 모드: 팀이나 워크플로우를 위한 특수 모드 구축
 
-자세히: [모드 사용](https://docs.roocode.com/basic-usage/using-modes) • [사용자 지정 모드](https://docs.roocode.com/advanced-usage/custom-modes)
+자세히: [모드 사용](https://docs.TODOURL/basic-usage/using-modes) • [사용자 지정 모드](https://docs.TODOURL/advanced-usage/custom-modes)
 
 ## 튜토리얼 및 기능 비디오
 
@@ -72,22 +72,22 @@ Roo Code는 당신의 작업 방식에 맞춰 적응합니다.
 
 |                                                                                                                                                                         |                                                                                                                                                                       |                                                                                                                                                                         |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <a href="https://www.youtube.com/watch?v=Mcq3r1EPZ-4"><img src="https://img.youtube.com/vi/Mcq3r1EPZ-4/maxresdefault.jpg" width="100%"></a><br><b>Roo Code 설치하기</b> | <a href="https://www.youtube.com/watch?v=ZBML8h5cCgo"><img src="https://img.youtube.com/vi/ZBML8h5cCgo/maxresdefault.jpg" width="100%"></a><br><b>프로필 구성하기</b> | <a href="https://www.youtube.com/watch?v=r1bpod1VWhg"><img src="https://img.youtube.com/vi/r1bpod1VWhg/maxresdefault.jpg" width="100%"></a><br><b>코드베이스 인덱싱</b> |
+| <a href="https://www.youtube.com/watch?v=Mcq3r1EPZ-4"><img src="https://img.youtube.com/vi/Mcq3r1EPZ-4/maxresdefault.jpg" width="100%"></a><br><b>MeowCode 설치하기</b> | <a href="https://www.youtube.com/watch?v=ZBML8h5cCgo"><img src="https://img.youtube.com/vi/ZBML8h5cCgo/maxresdefault.jpg" width="100%"></a><br><b>프로필 구성하기</b> | <a href="https://www.youtube.com/watch?v=r1bpod1VWhg"><img src="https://img.youtube.com/vi/r1bpod1VWhg/maxresdefault.jpg" width="100%"></a><br><b>코드베이스 인덱싱</b> |
 | <a href="https://www.youtube.com/watch?v=iiAv1eKOaxk"><img src="https://img.youtube.com/vi/iiAv1eKOaxk/maxresdefault.jpg" width="100%"></a><br><b>사용자 지정 모드</b>  |   <a href="https://www.youtube.com/watch?v=Ho30nyY332E"><img src="https://img.youtube.com/vi/Ho30nyY332E/maxresdefault.jpg" width="100%"></a><br><b>체크포인트</b>    |   <a href="https://www.youtube.com/watch?v=HmnNSasv7T8"><img src="https://img.youtube.com/vi/HmnNSasv7T8/maxresdefault.jpg" width="100%"></a><br><b>컨텍스트 관리</b>   |
 
 </div>
 <p align="center">
-<a href="https://docs.roocode.com/tutorial-videos">더 많은 빠른 튜토리얼 및 기능 비디오...</a>
+<a href="https://docs.TODOURL/tutorial-videos">더 많은 빠른 튜토리얼 및 기능 비디오...</a>
 </p>
 
 ## 리소스
 
-- **[문서](https://docs.roocode.com):** Roo Code 설치, 구성 및 마스터하기 위한 공식 가이드.
-- **[YouTube 채널](https://youtube.com/@roocodeyt?feature=shared):** 튜토리얼을 시청하고 실제 기능을 확인하세요.
-- **[Discord 서버](https://discord.gg/roocode):** 커뮤니티에 가입하여 실시간 도움과 토론에 참여하세요.
-- **[Reddit 커뮤니티](https://www.reddit.com/r/RooCode):** 경험을 공유하고 다른 사람들이 무엇을 만들고 있는지 확인하세요.
-- **[GitHub 문제](https://github.com/RooCodeInc/Roo-Code/issues):** 버그를 보고하고 개발을 추적하세요.
-- **[기능 요청](https://github.com/RooCodeInc/Roo-Code/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop):** 아이디어가 있으신가요? 개발자들과 공유하세요.
+- **[문서](https://docs.TODOURL):** MeowCode 설치, 구성 및 마스터하기 위한 공식 가이드.
+- **[YouTube 채널](https://youtube.com/@meowcodeyt?feature=shared):** 튜토리얼을 시청하고 실제 기능을 확인하세요.
+- **[Discord 서버](https://discord.gg/meowcode):** 커뮤니티에 가입하여 실시간 도움과 토론에 참여하세요.
+- **[Reddit 커뮤니티](https://www.reddit.com/r/MeowCode):** 경험을 공유하고 다른 사람들이 무엇을 만들고 있는지 확인하세요.
+- **[GitHub 문제](https://github.com/MeowCodeInc/MeowCode/issues):** 버그를 보고하고 개발을 추적하세요.
+- **[기능 요청](https://github.com/MeowCodeInc/MeowCode/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop):** 아이디어가 있으신가요? 개발자들과 공유하세요.
 
 ---
 
@@ -96,7 +96,7 @@ Roo Code는 당신의 작업 방식에 맞춰 적응합니다.
 1. **리포지토리 복제**:
 
 ```sh
-git clone https://github.com/RooCodeInc/Roo-Code.git
+git clone https://github.com/MeowCodeInc/MeowCode.git
 ```
 
 2. **의존성 설치**:
@@ -107,13 +107,13 @@ pnpm install
 
 3. **확장 프로그램 실행**:
 
-Roo Code 확장 프로그램을 실행하는 방법에는 여러 가지가 있습니다:
+MeowCode 확장 프로그램을 실행하는 방법에는 여러 가지가 있습니다:
 
 ### 개발 모드 (F5)
 
 활성 개발을 위해 VSCode의 내장 디버깅을 사용하세요:
 
-VSCode에서 `F5`를 누르거나 **실행** → **디버깅 시작**으로 이동하세요. 그러면 Roo Code 확장 프로그램이 실행되는 새 VSCode 창이 열립니다.
+VSCode에서 `F5`를 누르거나 **실행** → **디버깅 시작**으로 이동하세요. 그러면 MeowCode 확장 프로그램이 실행되는 새 VSCode 창이 열립니다.
 
 - 웹뷰 변경 사항은 즉시 나타납니다.
 - 핵심 확장 프로그램 변경 사항도 자동으로 핫 리로드됩니다.
@@ -147,10 +147,10 @@ VSIX 패키지를 수동으로 설치하려면:
     ```sh
     pnpm vsix
     ```
-2.  `.vsix` 파일이 `bin/` 디렉터리에 생성됩니다(예: `bin/roo-cline-<version>.vsix`).
+2.  `.vsix` 파일이 `bin/` 디렉터리에 생성됩니다(예: `bin/meow-code-<version>.vsix`).
 3.  VSCode CLI를 사용하여 수동으로 설치합니다:
     ```sh
-    code --install-extension bin/roo-cline-<version>.vsix
+    code --install-extension bin/meow-code-<version>.vsix
     ```
 
 ---
@@ -161,7 +161,7 @@ VSIX 패키지를 수동으로 설치하려면:
 
 ## 면책 조항
 
-**참고:** Roo Code, Inc.는 Roo Code, 관련 타사 도구 또는 그 결과물과 관련하여 제공되거나 사용 가능하게 된 어떠한 코드, 모델 또는 기타 도구에 대해서도 어떠한 진술이나 보증을 하지 **않습니다**. 귀하는 그러한 도구나 결과물의 사용과 관련된 **모든 위험**을 부담합니다. 해당 도구는 **"있는 그대로"** 및 **"사용 가능한 대로"** 제공됩니다. 그러한 위험에는 지적 재산권 침해, 사이버 취약성 또는 공격, 편견, 부정확성, 오류, 결함, 바이러스, 다운타임, 재산 손실 또는 손상 및/또는 개인 상해가 포함될 수 있으며 이에 국한되지 않습니다. 귀하는 그러한 도구 또는 결과물의 사용(합법성, 적절성 및 그 결과를 포함하되 이에 국한되지 않음)에 대해 전적으로 책임을 집니다.
+**참고:** MeowCode, Inc.는 MeowCode, 관련 타사 도구 또는 그 결과물과 관련하여 제공되거나 사용 가능하게 된 어떠한 코드, 모델 또는 기타 도구에 대해서도 어떠한 진술이나 보증을 하지 **않습니다**. 귀하는 그러한 도구나 결과물의 사용과 관련된 **모든 위험**을 부담합니다. 해당 도구는 **"있는 그대로"** 및 **"사용 가능한 대로"** 제공됩니다. 그러한 위험에는 지적 재산권 침해, 사이버 취약성 또는 공격, 편견, 부정확성, 오류, 결함, 바이러스, 다운타임, 재산 손실 또는 손상 및/또는 개인 상해가 포함될 수 있으며 이에 국한되지 않습니다. 귀하는 그러한 도구 또는 결과물의 사용(합법성, 적절성 및 그 결과를 포함하되 이에 국한되지 않음)에 대해 전적으로 책임을 집니다.
 
 ---
 
@@ -173,8 +173,8 @@ VSIX 패키지를 수동으로 설치하려면:
 
 ## 라이선스
 
-[Apache 2.0 © 2025 Roo Code, Inc.](../../LICENSE)
+[Apache 2.0 © 2025 MeowCode, Inc.](../../LICENSE)
 
 ---
 
-**Roo Code를 즐기세요!** 짧은 줄에 묶어두든 자율적으로 돌아다니게 하든, 여러분이 무엇을 만들지 기대됩니다. 질문이나 기능 아이디어가 있으면 저희 [Reddit 커뮤니티](https://www.reddit.com/r/RooCode/)나 [Discord](https://discord.gg/roocode)에 들러주세요. 즐거운 코딩 되세요!
+**MeowCode를 즐기세요!** 짧은 줄에 묶어두든 자율적으로 돌아다니게 하든, 여러분이 무엇을 만들지 기대됩니다. 질문이나 기능 아이디어가 있으면 저희 [Reddit 커뮤니티](https://www.reddit.com/r/MeowCode/)나 [Discord](https://discord.gg/meowcode)에 들러주세요. 즐거운 코딩 되세요!

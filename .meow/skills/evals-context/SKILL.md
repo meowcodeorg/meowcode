@@ -1,6 +1,6 @@
 ---
 name: evals-context
-description: Provides context about the Roo Code evals system structure in this monorepo. Use when tasks mention "evals", "evaluation", "eval runs", "eval exercises", or working with the evals infrastructure. Helps distinguish between the evals execution system (packages/evals, apps/web-evals) and the public website evals display page (apps/web-roo-code/src/app/evals).
+description: Provides context about the MeowCode evals system structure in this monorepo. Use when tasks mention "evals", "evaluation", "eval runs", "eval exercises", or working with the evals infrastructure. Helps distinguish between the evals execution system (packages/evals, apps/web-evals) and the public website evals display page (apps/web-meow-code/src/app/evals).
 ---
 
 # Evals Codebase Context
@@ -12,7 +12,7 @@ Use this skill when the task involves:
 - Modifying or debugging the evals execution infrastructure
 - Adding new eval exercises or languages
 - Working with the evals web interface (apps/web-evals)
-- Modifying the public evals display page on roocode.com
+- Modifying the public evals display page on TODOURL
 - Understanding where evals code lives in this monorepo
 
 ## When NOT to Use This Skill
@@ -31,8 +31,8 @@ This monorepo has **two distinct evals-related locations** that can cause confus
 | --------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
 | **Evals Execution System**  | `packages/evals/`                                              | Core eval infrastructure: CLI, DB schema, Docker configs       |
 | **Evals Management UI**     | `apps/web-evals/`                                              | Next.js app for creating/monitoring eval runs (localhost:3446) |
-| **Website Evals Page**      | `apps/web-roo-code/src/app/evals/`                             | Public roocode.com page displaying eval results                |
-| **External Exercises Repo** | [Roo-Code-Evals](https://github.com/RooCodeInc/Roo-Code-Evals) | Actual coding exercises (NOT in this monorepo)                 |
+| **Website Evals Page**      | `apps/web-meow-code/src/app/evals/`                             | Public TODOURL page displaying eval results                |
+| **External Exercises Repo** | [MeowCode-Evals](https://github.com/MeowCodeInc/MeowCode-Evals) | Actual coding exercises (NOT in this monorepo)                 |
 
 ## Directory Structure Reference
 
@@ -84,17 +84,17 @@ apps/web-evals/
 │   └── lib/                 # Utilities and schemas
 ```
 
-### `apps/web-roo-code/src/app/evals/` - Public Website Evals Page
+### `apps/web-meow-code/src/app/evals/` - Public Website Evals Page
 
 ```
-apps/web-roo-code/src/app/evals/
+apps/web-meow-code/src/app/evals/
 ├── page.tsx      # Fetches and displays public eval results
 ├── evals.tsx     # Main evals display component
 ├── plot.tsx      # Visualization component
 └── types.ts      # EvalRun type (extends packages/evals types)
 ```
 
-This page **displays** eval results on the public roocode.com website. It imports types from `@roo-code/evals` but does NOT run evals.
+This page **displays** eval results on the public TODOURL website. It imports types from `@meow-code/evals` but does NOT run evals.
 
 ## Architecture Overview
 
@@ -115,7 +115,7 @@ The evals system is a distributed evaluation platform that runs AI coding tasks 
 **Key components:**
 
 - **Controller**: Orchestrates eval runs, spawns runners, manages task queue (p-queue)
-- **Runner**: Isolated Docker container with VS Code + Roo Code extension + language runtimes
+- **Runner**: Isolated Docker container with VS Code + MeowCode extension + language runtimes
 - **Redis**: Pub/sub for real-time events (NOT task queuing)
 - **PostgreSQL**: Stores runs, tasks, metrics
 
@@ -123,7 +123,7 @@ The evals system is a distributed evaluation platform that runs AI coding tasks 
 
 ### Adding a New Eval Exercise
 
-1. Add exercise to [Roo-Code-Evals](https://github.com/RooCodeInc/Roo-Code-Evals) repo (external)
+1. Add exercise to [MeowCode-Evals](https://github.com/MeowCodeInc/MeowCode-Evals) repo (external)
 2. See [`packages/evals/ADDING-EVALS.md`](packages/evals/ADDING-EVALS.md) for structure
 
 ### Modifying Eval CLI Behavior
@@ -143,10 +143,10 @@ Edit files in [`apps/web-evals/src/`](apps/web-evals/src/):
 
 ### Modifying the Public Evals Display Page
 
-Edit files in [`apps/web-roo-code/src/app/evals/`](apps/web-roo-code/src/app/evals/):
+Edit files in [`apps/web-meow-code/src/app/evals/`](apps/web-meow-code/src/app/evals/):
 
-- [`evals.tsx`](apps/web-roo-code/src/app/evals/evals.tsx) - Display component
-- [`plot.tsx`](apps/web-roo-code/src/app/evals/plot.tsx) - Charts
+- [`evals.tsx`](apps/web-meow-code/src/app/evals/evals.tsx) - Display component
+- [`plot.tsx`](apps/web-meow-code/src/app/evals/plot.tsx) - Charts
 
 ### Database Schema Changes
 
@@ -179,10 +179,10 @@ cd packages/evals && npx vitest run
 cd apps/web-evals && npx vitest run
 ```
 
-## Key Types/Exports from `@roo-code/evals`
+## Key Types/Exports from `@meow-code/evals`
 
 The package exports are defined in [`packages/evals/src/index.ts`](packages/evals/src/index.ts):
 
 - Database queries: `getRuns`, `getTasks`, `getTaskMetrics`, etc.
 - Schema types: `Run`, `Task`, `TaskMetrics`
-- Used by both `apps/web-evals` and `apps/web-roo-code`
+- Used by both `apps/web-evals` and `apps/web-meow-code`

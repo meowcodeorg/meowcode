@@ -1,6 +1,6 @@
-# Roo Code Translation Guidance
+# MeowCode Translation Guidance
 
-This file contains brand voice, tone, and word choice guidelines for Roo Code translations.
+This file contains brand voice, tone, and word choice guidelines for MeowCode translations.
 
 ## Brand Voice
 
