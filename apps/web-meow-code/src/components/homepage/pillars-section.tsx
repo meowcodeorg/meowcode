@@ -55,7 +55,7 @@ export function PillarsSection() {
 						To trust an agent, you have to do it on your own terms.
 					</h2>
 					<p className="text-xl text-muted-foreground max-w-xl mx-auto">
-						Roo is designed from the ground up to give you the confidence to do ever more with AI.
+						Meow is designed from the ground up to give you the confidence to do ever more with AI.
 					</p>
 				</div>
 
@@ -74,7 +74,7 @@ export function PillarsSection() {
 										throttle models with no warning. 1st-party coding agents only work with their
 										own models.
 									</p>
-									<p>Roo doesn&apos;t care.</p>
+									<p>Meow doesn&apos;t care.</p>
 									<p>
 										It works great with 10s of models, from frontier to open weight. Choose from{" "}
 										<Link href="/provider">the curated selection we offer at-cost</Link> or bring
@@ -117,7 +117,7 @@ export function PillarsSection() {
 										real damage.
 									</p>
 									<p>
-										Roo&apos;s Modes keep models focused on a given task and limit their access to
+										Meow&apos;s Modes keep models focused on a given task and limit their access to
 										tools which are relevant to their role, keeping the context window clearer and
 										avoiding surprises.
 									</p>
@@ -164,7 +164,7 @@ export function PillarsSection() {
 										Developer tools need to fit like gloves. Highly tweakable,
 										keyboard-shortcut-heavy gloves.
 									</p>
-									<p>We made Roo thoughtfully configurable to fit your workflow as best it can.</p>
+									<p>We made Meow thoughtfully configurable to fit your workflow as best it can.</p>
 								</div>
 							</div>
 						</div>
@@ -180,8 +180,8 @@ export function PillarsSection() {
 								<h4 className="font-semibold text-lg">Open source from the get go.</h4>
 								<div className="text-muted-foreground my-4 space-y-1">
 									<p>
-										The Roo Code Extension is{" "}
-										<Link target="_blank" href="https://github.com/RooCodeInc/Roo-Code">
+										The MeowCode Extension is{" "}
+										<Link target="_blank" href="https://github.com/MeowCodeInc/Meow-Code">
 											open source
 										</Link>{" "}
 										so you can see for yourself exactly what it&apos;s doing and we don&apos;t use

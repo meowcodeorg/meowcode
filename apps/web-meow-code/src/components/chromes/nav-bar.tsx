@@ -47,7 +47,7 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 			<div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center flex-shrink-0">
 					<Link href="/" className="flex items-center">
-						<Image src={logoSrc} alt="Roo Code Logo" width={130} height={24} className="h-[24px] w-auto" />
+						<Image src={logoSrc} alt="MeowCode Logo" width={130} height={24} className="h-[24px] w-auto" />
 					</Link>
 				</div>
 
@@ -65,7 +65,7 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 												href="/extension"
 												className="flex items-center select-none rounded-md px-3 py-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
 												<Puzzle className="size-3 mr-2" />
-												Roo Code VS Code Extension
+												MeowCode VS Code Extension
 											</Link>
 										</NavigationMenuLink>
 									</li>
@@ -75,7 +75,7 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 												href="/cloud"
 												className="flex items-center select-none rounded-md px-3 py-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
 												<Cloud className="size-3 mr-2" />
-												Roo Code Cloud
+												MeowCode Cloud
 											</Link>
 										</NavigationMenuLink>
 									</li>
@@ -85,7 +85,7 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 												href="/slack"
 												className="flex items-center select-none rounded-md px-3 py-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
 												<Slack className="size-3 mr-2" />
-												Roo Code for Slack
+												MeowCode for Slack
 											</Link>
 										</NavigationMenuLink>
 									</li>
@@ -95,7 +95,7 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 												href="/linear"
 												className="flex items-center select-none rounded-md px-3 py-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
 												<LinearIcon className="size-3 mr-2" />
-												Roo Code for Linear
+												MeowCode for Linear
 											</Link>
 										</NavigationMenuLink>
 									</li>
@@ -105,7 +105,7 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 												href="/provider"
 												className="flex items-center select-none rounded-md px-3 py-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
 												<Brain className="size-3 mr-2" />
-												Roo Code Router
+												MeowCode Router
 											</Link>
 										</NavigationMenuLink>
 									</li>
@@ -263,25 +263,25 @@ export function NavBar({ stars, downloads }: NavBarProps) {
 								href="/extension"
 								className="block w-full p-5 py-3 text-left text-foreground active:opacity-50"
 								onClick={() => setIsMenuOpen(false)}>
-								Roo Code VS Code Extension
+								MeowCode VS Code Extension
 							</Link>
 							<Link
 								href="/cloud"
 								className="block w-full p-5 py-3 text-left text-foreground active:opacity-50"
 								onClick={() => setIsMenuOpen(false)}>
-								Roo Code Cloud
+								MeowCode Cloud
 							</Link>
 							<Link
 								href="/slack"
 								className="block w-full p-5 py-3 text-left text-foreground active:opacity-50"
 								onClick={() => setIsMenuOpen(false)}>
-								Roo Code for Slack
+								MeowCode for Slack
 							</Link>
 							<Link
 								href="/provider"
 								className="block w-full p-5 py-3 text-left text-foreground active:opacity-50"
 								onClick={() => setIsMenuOpen(false)}>
-								Roo Code Router
+								MeowCode Router
 							</Link>
 						</div>
 

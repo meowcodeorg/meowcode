@@ -1,8 +1,8 @@
 import { Anthropic } from "@anthropic-ai/sdk"
 import * as path from "path"
 import * as diff from "diff"
-import { RooIgnoreController, LOCK_TEXT_SYMBOL } from "../ignore/RooIgnoreController"
-import { RooProtectedController } from "../protect/RooProtectedController"
+import { MeowIgnoreController, LOCK_TEXT_SYMBOL } from "../ignore/MeowIgnoreController"
+import { MeowProtectedController } from "../protect/MeowProtectedController"
 
 export const formatResponse = {
 	toolDenied: () =>
@@ -118,9 +118,9 @@ Otherwise, if you have not completed the task and do not need additional informa
 		absolutePath: string,
 		files: string[],
 		didHitLimit: boolean,
-		rooIgnoreController: RooIgnoreController | undefined,
+		rooIgnoreController: MeowIgnoreController | undefined,
 		showRooIgnoredFiles: boolean,
-		rooProtectedController?: RooProtectedController,
+		rooProtectedController?: MeowProtectedController,
 	): string => {
 		const sorted = files
 			.map((file) => {

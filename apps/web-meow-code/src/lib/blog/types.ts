@@ -7,7 +7,7 @@
  * Content source for blog posts
  * Posts derived from podcast episodes have a source; standalone articles may not
  */
-export type BlogSource = "Office Hours" | "After Hours" | "Roo Cast"
+export type BlogSource = "Office Hours" | "After Hours" | "Meow Cast"
 
 export interface BlogPostFrontmatter {
 	title: string

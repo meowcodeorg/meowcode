@@ -6,7 +6,7 @@ import { Model, ModelWithTotalPrice, ModelsResponse, SortOption } from "@/lib/ty
 import Link from "next/link"
 import { ChevronDown, CircleX, Cloud, Loader, LoaderCircle, Puzzle, Search } from "lucide-react"
 
-const API_URL = "https://api.roocode.com/proxy/v1/models?include_paid=true"
+const API_URL = "https://api.TODOURL/proxy/v1/models?include_paid=true"
 
 const faqs = [
 	{
@@ -14,16 +14,16 @@ const faqs = [
 		answer: "AI model providers offer various language models with different capabilities and pricing.",
 	},
 	{
-		question: "What is the Roo Code Router?",
+		question: "What is the MeowCode Router?",
 		answer: (
 			<>
-				<p>This is our very own model router, optimized to work seamlessly with Roo Code Cloud.</p>
-				<p>You don&apos;t have to use it to use Roo Code, but it&apos;s the easiest way to do it.</p>
+				<p>This is our very own model router, optimized to work seamlessly with MeowCode Cloud.</p>
+				<p>You don&apos;t have to use it to use MeowCode, but it&apos;s the easiest way to do it.</p>
 			</>
 		),
 	},
 	{
-		question: "Do I have to use the Roo Code Router to use the Roo Code products?",
+		question: "Do I have to use the MeowCode Router to use the MeowCode products?",
 		answer: "Not at all! You can bring your own provider key, no problem. This is just meant to make it easier.",
 	},
 	{
@@ -32,10 +32,10 @@ const faqs = [
 	},
 	{
 		question: "How is my data treated?",
-		answer: "The Roo Code Router doesn't keep any of your data, the service only aims to make it easier to use Roo Code. Each model vendor has their own privacy policy though, and usually free models use your data for training, so keep that in mind.",
+		answer: "The MeowCode Router doesn't keep any of your data, the service only aims to make it easier to use MeowCode. Each model vendor has their own privacy policy though, and usually free models use your data for training, so keep that in mind.",
 	},
 	{
-		question: "How much does the Roo Code Cloud service cost?",
+		question: "How much does the MeowCode Cloud service cost?",
 		answer: (
 			<>
 				Our{" "}
@@ -134,9 +134,9 @@ export default function ProviderPage() {
 			<section className="relative overflow-hidden py-16">
 				<div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center">
-						<h1 className="text-4xl md:text-5xl font-bold tracking-tight">The Roo Code Router</h1>
+						<h1 className="text-4xl md:text-5xl font-bold tracking-tight">The MeowCode Router</h1>
 						<p className="mx-auto mt-4 max-w-3xl md:text-lg text-muted-foreground">
-							The easiest way to use Roo Code (in the{" "}
+							The easiest way to use MeowCode (in the{" "}
 							<Link href="/cloud" className="underline hover:no-underline">
 								<Cloud className="inline size-5 mx-1 -mt-0.5" />
 								Cloud

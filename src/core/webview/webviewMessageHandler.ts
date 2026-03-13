@@ -16,13 +16,13 @@ import {
 	type WebviewMessage,
 	type EditQueuedMessagePayload,
 	TelemetryEventName,
-	RooCodeSettings,
+	MeowCodeSettings,
 	ExperimentId,
 	checkoutDiffPayloadSchema,
 	checkoutRestorePayloadSchema,
-} from "@roo-code/types"
-import { customToolRegistry } from "@roo-code/core"
-import { TelemetryService } from "@roo-code/telemetry"
+} from "@meow-code/types"
+import { customToolRegistry } from "@meow-code/core"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { type ApiMessage } from "../task-persistence/apiMessages"
 import { saveTaskMessages } from "../task-persistence"
@@ -60,7 +60,7 @@ import { getOpenAiModels } from "../../api/providers/openai"
 import { getVsCodeLmModels } from "../../api/providers/vscode-lm"
 import { openMention } from "../mentions"
 import { resolveImageMentions } from "../mentions/resolveImageMentions"
-import { RooIgnoreController } from "../ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../ignore/MeowIgnoreController"
 import { getWorkspacePath } from "../../utils/path"
 import { isPathOutsideWorkspace } from "../../utils/pathUtils"
 import { Mode, defaultModeSlug } from "../../shared/modes"
@@ -740,7 +740,7 @@ export const webviewMessageHandler = async (
 						}
 					}
 
-					await provider.contextProxy.setValue(key as keyof RooCodeSettings, newValue)
+					await provider.contextProxy.setValue(key as keyof MeowCodeSettings, newValue)
 				}
 
 				await provider.postStateToWebview()
@@ -946,7 +946,7 @@ export const webviewMessageHandler = async (
 					key: "roo",
 					options: {
 						provider: "roo",
-						baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
+						baseUrl: process.env.MEOW_CODE_PROVIDER_URL ?? "https://api.TODOURL/proxy",
 						apiKey: undefined,
 					},
 				},
@@ -1069,7 +1069,7 @@ export const webviewMessageHandler = async (
 			try {
 				const rooOptions = {
 					provider: "roo" as const,
-					baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
+					baseUrl: process.env.MEOW_CODE_PROVIDER_URL ?? "https://api.TODOURL/proxy",
 					apiKey: undefined,
 				}
 				// Flush cache and refresh to ensure fresh models with current auth state
@@ -1274,7 +1274,7 @@ export const webviewMessageHandler = async (
 			break
 		}
 		case "openKeyboardShortcuts": {
-			// Open VSCode keyboard shortcuts settings and optionally filter to show the Roo Code commands
+			// Open VSCode keyboard shortcuts settings and optionally filter to show the MeowCode commands
 			const searchQuery = message.text || ""
 			if (searchQuery) {
 				// Open with a search query pre-filled
@@ -1680,14 +1680,14 @@ export const webviewMessageHandler = async (
 					20, // Use default limit, as filtering is now done in the backend
 				)
 
-				// Get the RooIgnoreController from the current task, or create a new one
+				// Get the MeowIgnoreController from the current task, or create a new one
 				const currentTask = provider.getCurrentTask()
 				let rooIgnoreController = currentTask?.rooIgnoreController
-				let tempController: RooIgnoreController | undefined
+				let tempController: MeowIgnoreController | undefined
 
 				// If no current task or no controller, create a temporary one
 				if (!rooIgnoreController) {
-					tempController = new RooIgnoreController(workspacePath)
+					tempController = new MeowIgnoreController(workspacePath)
 					await tempController.initialize()
 					rooIgnoreController = tempController
 				}
@@ -1696,7 +1696,7 @@ export const webviewMessageHandler = async (
 					// Get showRooIgnoredFiles setting from state
 					const { showRooIgnoredFiles = false } = (await provider.getState()) ?? {}
 
-					// Filter results using RooIgnoreController if showRooIgnoredFiles is false
+					// Filter results using MeowIgnoreController if showRooIgnoredFiles is false
 					let filteredResults = results
 					if (!showRooIgnoredFiles && rooIgnoreController) {
 						const allowedPaths = rooIgnoreController.filterPaths(results.map((r) => r.path))

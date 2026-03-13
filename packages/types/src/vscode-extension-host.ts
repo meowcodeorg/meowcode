@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import type { GlobalSettings, RooCodeSettings } from "./global-settings.js"
+import type { GlobalSettings, MeowCodeSettings } from "./global-settings.js"
 import type { ProviderSettings, ProviderSettingsEntry } from "./provider-settings.js"
 import type { HistoryItem } from "./history.js"
 import type { ModeConfig, PromptComponent } from "./mode.js"
@@ -678,9 +678,9 @@ export interface WebviewMessage {
 		codebaseIndexVercelAiGatewayApiKey?: string
 		codebaseIndexOpenRouterApiKey?: string
 	}
-	updatedSettings?: RooCodeSettings
+	updatedSettings?: MeowCodeSettings
 	/** Task configuration applied via `createTask()` when starting a cloud task. */
-	taskConfiguration?: RooCodeSettings
+	taskConfiguration?: MeowCodeSettings
 	// Worktree properties
 	worktreePath?: string
 	worktreeBranch?: string

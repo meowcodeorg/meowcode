@@ -1,5 +1,5 @@
 /**
- * Theme configuration for Roo Code CLI TUI
+ * Theme configuration for MeowCode CLI TUI
  * Using Hardcore color scheme
  */
 

@@ -31,9 +31,9 @@ export default async function Home() {
 					</h1>
 					<div className="mt-2 max-w-3xl text-lg text-muted-foreground mb-10 space-y-3">
 						<p>
-							Use the <strong className="text-nowrap">Roo Code Extension</strong> on your computer for
+							Use the <strong className="text-nowrap">MeowCode Extension</strong> on your computer for
 							full control, or delegate work to your{" "}
-							<strong className="text-nowrap">Roo Code Cloud Agents</strong> from the web, Slack, GitHub
+							<strong className="text-nowrap">MeowCode Cloud Agents</strong> from the web, Slack, GitHub
 							or wherever your team is.
 						</p>
 					</div>

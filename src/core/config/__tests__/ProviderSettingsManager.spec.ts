@@ -2,7 +2,7 @@
 
 import { ExtensionContext } from "vscode"
 
-import type { ProviderSettings } from "@roo-code/types"
+import type { ProviderSettings } from "@meow-code/types"
 
 import { ProviderSettingsManager, ProviderProfiles, SyncCloudProfilesResult } from "../ProviderSettingsManager"
 
@@ -267,7 +267,7 @@ describe("ProviderSettingsManager", () => {
 			const calls = mockSecrets.store.mock.calls
 			const storedConfig = JSON.parse(calls[calls.length - 1][1])
 
-			// Roo provider configs should be migrated
+			// Meow provider configs should be migrated
 			expect(storedConfig.apiConfigs.default.apiModelId).toEqual("roo/code-supernova-1-million")
 			expect(storedConfig.apiConfigs.test.apiModelId).toEqual("roo/code-supernova-1-million")
 			expect(storedConfig.apiConfigs.existing.apiModelId).toEqual("roo/code-supernova-1-million")

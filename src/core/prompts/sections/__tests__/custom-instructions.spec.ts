@@ -667,7 +667,7 @@ describe("addCustomInstructions", () => {
 				return Promise.resolve("Agent rules content")
 			}
 			if (pathStr.endsWith(".roorules")) {
-				return Promise.resolve("Roo rules content")
+				return Promise.resolve("Meow rules content")
 			}
 			return Promise.reject({ code: "ENOENT" })
 		})
@@ -690,7 +690,7 @@ describe("addCustomInstructions", () => {
 		expect(result).toContain("# Agent Rules Standard (AGENTS.md):")
 		expect(result).toContain("Agent rules content")
 		expect(result).toContain("# Rules from .roorules:")
-		expect(result).toContain("Roo rules content")
+		expect(result).toContain("Meow rules content")
 	})
 
 	it("should follow symlinks when loading AGENTS.md", async () => {

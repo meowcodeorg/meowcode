@@ -1,7 +1,7 @@
 "use server"
 
-import { getModelId, rooCodeSettingsSchema } from "@roo-code/types"
-import { getRuns, getLanguageScores } from "@roo-code/evals"
+import { getModelId, meowCodeSettingsSchema } from "@meow-code/types"
+import { getRuns, getLanguageScores } from "@meow-code/evals"
 
 import { formatScore } from "@/lib"
 
@@ -10,10 +10,10 @@ export async function getEvalRuns() {
 
 	const runs = (await getRuns())
 		.filter((run) => !!run.taskMetrics)
-		.filter(({ settings }) => rooCodeSettingsSchema.safeParse(settings).success)
+		.filter(({ settings }) => meowCodeSettingsSchema.safeParse(settings).success)
 		.sort((a, b) => b.passed - a.passed)
 		.map((run) => {
-			const settings = rooCodeSettingsSchema.parse(run.settings)
+			const settings = meowCodeSettingsSchema.parse(run.settings)
 
 			return {
 				...run,

@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk"
 import crypto from "crypto"
 
-import { TelemetryService } from "@roo-code/telemetry"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { t } from "../../i18n"
 import { ApiHandler, ApiHandlerCreateMessageMetadata } from "../../api"
@@ -9,7 +9,7 @@ import { ApiMessage } from "../task-persistence/apiMessages"
 import { maybeRemoveImageBlocks } from "../../api/transform/image-cleaning"
 import { findLast } from "../../shared/array"
 import { supportPrompt } from "../../shared/support-prompt"
-import { RooIgnoreController } from "../ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../ignore/MeowIgnoreController"
 import { generateFoldedFileContext } from "./foldedFileContext"
 
 export type { FoldedFileContextResult, FoldedFileContextOptions } from "./foldedFileContext"
@@ -232,7 +232,7 @@ export type SummarizeConversationOptions = {
 	environmentDetails?: string
 	filesReadByRoo?: string[]
 	cwd?: string
-	rooIgnoreController?: RooIgnoreController
+	rooIgnoreController?: MeowIgnoreController
 }
 
 /**

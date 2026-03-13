@@ -1,4 +1,4 @@
-import { RooCodeSettings } from "@roo-code/types"
+import { MeowCodeSettings } from "@meow-code/types"
 
 import type { SupportedProvider } from "@/types/index.js"
 
@@ -24,8 +24,8 @@ export function getProviderSettings(
 	provider: SupportedProvider,
 	apiKey: string | undefined,
 	model: string | undefined,
-): RooCodeSettings {
-	const config: RooCodeSettings = { apiProvider: provider }
+): MeowCodeSettings {
+	const config: MeowCodeSettings = { apiProvider: provider }
 
 	switch (provider) {
 		case "anthropic":

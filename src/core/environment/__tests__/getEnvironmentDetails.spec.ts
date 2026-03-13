@@ -15,7 +15,7 @@ import { arePathsEqual } from "../../../utils/path"
 import { FileContextTracker } from "../../context-tracking/FileContextTracker"
 import { ApiHandler } from "../../../api/index"
 import { ClineProvider } from "../../webview/ClineProvider"
-import { RooIgnoreController } from "../../ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../../ignore/MeowIgnoreController"
 import { formatResponse } from "../../prompts/responses"
 import { getGitStatus } from "../../../utils/git"
 import { Task } from "../../task/Task"
@@ -106,7 +106,7 @@ describe("getEnvironmentDetails", () => {
 				addToIgnore: vi.fn(),
 				removeFromIgnore: vi.fn(),
 				dispose: vi.fn(),
-			} as unknown as RooIgnoreController,
+			} as unknown as MeowIgnoreController,
 			clineMessages: [],
 			api: {
 				getModel: vi.fn().mockReturnValue({ id: "test-model", info: { contextWindow: 100000 } }),

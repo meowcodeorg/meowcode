@@ -20,8 +20,8 @@ import { EXTERNAL_LINKS } from "@/lib/constants"
 import { SEO } from "@/lib/seo"
 import { ogImageUrl } from "@/lib/og"
 
-const TITLE = "Roo Code for Linear"
-const DESCRIPTION = "Assign development work to @Roo Code directly from Linear. Get PRs back without switching tools."
+const TITLE = "MeowCode for Linear"
+const DESCRIPTION = "Assign development work to @MeowCode directly from Linear. Get PRs back without switching tools."
 const OG_DESCRIPTION = "Turn Linear Issues into Pull Requests"
 const PATH = "/linear"
 
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
 		"issue to PR",
 		"AI in Linear",
 		"engineering workflow automation",
-		"Roo Code Cloud",
+		"MeowCode Cloud",
 	],
 }
 
@@ -80,19 +80,19 @@ const VALUE_PROPS: ValueProp[] = [
 		icon: GitBranch,
 		title: "Work where you already work.",
 		description:
-			"Assign development work to @Roo Code directly from Linear. No new tools to learn, no context switching required.",
+			"Assign development work to @MeowCode directly from Linear. No new tools to learn, no context switching required.",
 	},
 	{
 		icon: Eye,
 		title: "Progress is visible.",
 		description:
-			"Watch progress unfold in real-time. Roo Code posts updates as comments, so your whole team stays in the loop.",
+			"Watch progress unfold in real-time. MeowCode posts updates as comments, so your whole team stays in the loop.",
 	},
 	{
 		icon: MessageSquare,
 		title: "Mention for refinement.",
 		description:
-			'Need changes? Just comment "@Roo Code also add dark mode support" and the agent picks up where it left off.',
+			'Need changes? Just comment "@MeowCode also add dark mode support" and the agent picks up where it left off.',
 	},
 	{
 		icon: Link2,
@@ -104,7 +104,7 @@ const VALUE_PROPS: ValueProp[] = [
 		icon: Settings,
 		title: "Organization-level setup.",
 		description:
-			"Connect once, use everywhere. Your team members can assign issues to @Roo Code without individual configuration.",
+			"Connect once, use everywhere. Your team members can assign issues to @MeowCode without individual configuration.",
 	},
 	{
 		icon: Shield,
@@ -128,13 +128,13 @@ const VALUE_PROPS: ValueProp[] = [
 // 	},
 // 	{
 // 		step: 2,
-// 		title: "Call @Roo Code",
-// 		description: "Mention @Roo Code in a comment to start. The agent begins working immediately.",
+// 		title: "Call @MeowCode",
+// 		description: "Mention @MeowCode in a comment to start. The agent begins working immediately.",
 // 	},
 // 	{
 // 		step: 3,
 // 		title: "Watch progress",
-// 		description: "Roo Code posts status updates as comments. Refine with @-mentions if needed.",
+// 		description: "MeowCode posts status updates as comments. Refine with @-mentions if needed.",
 // 	},
 // 	{
 // 		step: 4,
@@ -166,7 +166,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 	{
 		icon: GitPullRequest,
 		title: "2. Connect GitHub",
-		description: "Link your repositories so Roo Code can open PRs on your behalf.",
+		description: "Link your repositories so MeowCode can open PRs on your behalf.",
 	},
 	{
 		icon: Settings,
@@ -176,7 +176,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 	{
 		icon: CheckCircle,
 		title: "4. Link & Start",
-		description: "Map your Linear project to a repo, then assign or mention @Roo Code.",
+		description: "Map your Linear project to a repo, then assign or mention @MeowCode.",
 	},
 ]
 
@@ -199,13 +199,13 @@ export default function LinearPage(): JSX.Element {
 						<div className="text-center lg:text-left">
 							<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-6">
 								<LinearIcon className="size-4" />
-								Powered by Roo Code Cloud
+								Powered by MeowCode Cloud
 							</div>
 							<h1 className="text-4xl font-bold tracking-tight mb-6 md:text-5xl lg:text-6xl">
 								Turn Linear Issues into <span className="text-indigo-500">Pull&nbsp;Requests</span>
 							</h1>
 							<p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0">
-								Assign development work to @Roo Code directly from Linear. Get PRs back without
+								Assign development work to @MeowCode directly from Linear. Get PRs back without
 								switching tools.
 							</p>
 							<div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -240,7 +240,7 @@ export default function LinearPage(): JSX.Element {
 					</div>
 					<div className="text-center mb-16">
 						<h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-							Why your team will love using Roo Code in&nbsp;Linear
+							Why your team will love using MeowCode in&nbsp;Linear
 						</h2>
 						<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
 							AI agents that understand context, keep your team in the loop, and deliver PRs you can
@@ -280,7 +280,7 @@ export default function LinearPage(): JSX.Element {
 						</div>
 						<h2 className="text-3xl font-bold tracking-tight sm:text-5xl mb-4">Issue to Shipped Feature</h2>
 						<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-							Stay in Linear from assignment to review. Roo Code keeps the issue updated and links the PR
+							Stay in Linear from assignment to review. MeowCode keeps the issue updated and links the PR
 							when it&apos;s ready.
 						</p>
 					</div>
@@ -293,7 +293,7 @@ export default function LinearPage(): JSX.Element {
 									<iframe
 										className="aspect-video w-full"
 										src={`https://www.youtube-nocookie.com/embed/${LINEAR_DEMO_YOUTUBE_ID}?rel=0`}
-										title="Roo Code Linear Integration Demo"
+										title="MeowCode Linear Integration Demo"
 										allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 										referrerPolicy="strict-origin-when-cross-origin"
 										allowFullScreen
@@ -305,7 +305,7 @@ export default function LinearPage(): JSX.Element {
 											Demo Video Coming Soon
 										</p>
 										<p className="text-sm text-muted-foreground max-w-md">
-											See the workflow in action: assign an issue to @Roo Code and watch as it
+											See the workflow in action: assign an issue to @MeowCode and watch as it
 											analyzes requirements, writes code, and opens a PR.
 										</p>
 									</div>
@@ -385,7 +385,7 @@ export default function LinearPage(): JSX.Element {
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="mx-auto max-w-4xl rounded-3xl border border-border/50 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-blue-500/5 p-8 text-center shadow-2xl backdrop-blur-xl dark:border-white/10 sm:p-16">
 						<h2 className="mb-6 text-3xl font-bold tracking-tight sm:text-4xl">
-							Start using Roo Code in Linear
+							Start using MeowCode in Linear
 						</h2>
 						<p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
 							Start a free 14 day Team trial.

@@ -1,7 +1,7 @@
 // npx vitest run __tests__/extension.spec.ts
 
 import type * as vscode from "vscode"
-import type { AuthState } from "@roo-code/types"
+import type { AuthState } from "@meow-code/types"
 
 vi.mock("vscode", () => ({
 	window: {
@@ -51,28 +51,7 @@ vi.mock("fs", () => ({
 	existsSync: vi.fn().mockReturnValue(false),
 }))
 
-const mockCloudServiceInstance = {
-	off: vi.fn(),
-	on: vi.fn(),
-	getUserInfo: vi.fn().mockReturnValue(null),
-	isTaskSyncEnabled: vi.fn().mockReturnValue(false),
-	authService: {
-		getSessionToken: vi.fn().mockReturnValue("test-session-token"),
-	},
-}
-
-vi.mock("@roo-code/cloud", () => ({
-	CloudService: {
-		createInstance: vi.fn(),
-		hasInstance: vi.fn().mockReturnValue(true),
-		get instance() {
-			return mockCloudServiceInstance
-		},
-	},
-	getRooCodeApiUrl: vi.fn().mockReturnValue("https://app.roocode.com"),
-}))
-
-vi.mock("@roo-code/telemetry", () => ({
+vi.mock("@meow-code/telemetry", () => ({
 	TelemetryService: {
 		createInstance: vi.fn().mockReturnValue({
 			register: vi.fn(),
@@ -178,7 +157,6 @@ vi.mock("../core/webview/ClineProvider", async () => {
 		postStateToWebview: vi.fn(),
 		postStateToWebviewWithoutClineMessages: vi.fn(),
 		getState: vi.fn().mockResolvedValue({}),
-		initializeCloudProfileSyncWhenReady: vi.fn().mockResolvedValue(undefined),
 		providerSettingsManager: {},
 		contextProxy: { getGlobalState: vi.fn() },
 		customModesManager: {},

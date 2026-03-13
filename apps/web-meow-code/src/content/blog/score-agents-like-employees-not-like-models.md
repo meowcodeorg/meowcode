@@ -14,7 +14,7 @@ status: published
 featured: true
 publish_date: "2025-11-05"
 publish_time_pt: "9:00am"
-source: "Roo Cast"
+source: "Meow Cast"
 ---
 
 You're grading your AI agent on the wrong rubric.
@@ -37,7 +37,7 @@ Some of the teams building these agents grade them differently. They treat the a
 
 > "If you design your coding evals like you would a software engineer performance review, then you can measure their ability in the same ways as you can measure somebody who's coding."
 >
-> Brian Fioca, [Roo Cast S01E16](https://www.youtube.com/watch?v=Nu5TeVQbOOE&t=1225)
+> Brian Fioca, [Meow Cast S01E16](https://www.youtube.com/watch?v=Nu5TeVQbOOE&t=1225)
 
 The rubric he described:
 
@@ -79,11 +79,11 @@ The approach: human-grade first, then tune an LLM-as-a-judge until it matches yo
 
 The tradeoff: this takes more upfront work than a correctness benchmark. The payoff is catching failure modes before they hit production.
 
-## How Roo Code makes agents reviewable
+## How MeowCode makes agents reviewable
 
 Closing the loop is necessary, but it's not the whole job. What matters in production is whether an agent can iterate in a real environment **before the PR** and hand you something you can actually review: a diff, evidence, and a clear trail of what happened.
 
-That's the direction Roo Code is built for, and it maps directly to the rubric:
+That's the direction MeowCode is built for, and it maps directly to the rubric:
 
 - **Proactivity:** It can keep moving through sub-tasks and iterate until it has something reviewable
 - **Context management:** It can maintain context across multi-file changes without losing requirements halfway through

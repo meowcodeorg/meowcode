@@ -223,7 +223,7 @@ The CLI will look for API keys in environment variables if not provided via `--a
 
 | Variable          | Description                                                          |
 | ----------------- | -------------------------------------------------------------------- |
-| `ROO_WEB_APP_URL` | Override the Roo Code Cloud URL (default: `https://app.roocode.com`) |
+| `ROO_WEB_APP_URL` | Override the Roo Code Cloud URL (default: `https://app.TODOURL`) |
 
 ## Architecture
 
@@ -283,7 +283,7 @@ pnpm lint
 By default the `start` script points `ROO_CODE_PROVIDER_URL` at `http://localhost:8080/proxy` for local development. To point at the production API instead, override the environment variable:
 
 ```bash
-ROO_CODE_PROVIDER_URL=https://api.roocode.com/proxy pnpm dev --provider roo --api-key $ROO_API_KEY --print "Hello"
+ROO_CODE_PROVIDER_URL=https://api.TODOURL/proxy pnpm dev --provider roo --api-key $ROO_API_KEY --print "Hello"
 ```
 
 ## Releasing

@@ -190,7 +190,7 @@ describe("ChatHistoryItem", () => {
 			const { lastFrame } = render(<ChatHistoryItem message={message} />)
 			const output = lastFrame()
 
-			expect(output).toContain("Roo said:")
+			expect(output).toContain("Meow said:")
 			expect(output).toContain("Hi there")
 		})
 
@@ -204,7 +204,7 @@ describe("ChatHistoryItem", () => {
 			const { lastFrame } = render(<ChatHistoryItem message={message} />)
 			const output = lastFrame()
 
-			expect(output).toContain("Roo is thinking:")
+			expect(output).toContain("Meow is thinking:")
 			expect(output).toContain("Let me think...")
 		})
 

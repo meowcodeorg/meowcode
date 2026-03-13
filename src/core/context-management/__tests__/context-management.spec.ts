@@ -2,8 +2,8 @@
 
 import { Anthropic } from "@anthropic-ai/sdk"
 
-import type { ModelInfo } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import type { ModelInfo } from "@meow-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { BaseProvider } from "../../../api/providers/base-provider"
 import { ApiMessage } from "../../task-persistence/apiMessages"
@@ -894,9 +894,9 @@ describe("Context Management", () => {
 
 			const filesReadByRoo = ["src/test.ts", "src/utils.ts"]
 			const cwd = "/test/project"
-			const mockRooIgnoreController = {
+			const mockMeowIgnoreController = {
 				filterPaths: vi.fn(),
-			} as unknown as import("../../ignore/RooIgnoreController").RooIgnoreController
+			} as unknown as import("../../ignore/MeowIgnoreController").MeowIgnoreController
 
 			const result = await manageContext({
 				messages: messagesWithSmallContent,
@@ -912,7 +912,7 @@ describe("Context Management", () => {
 				currentProfileId: "default",
 				filesReadByRoo,
 				cwd,
-				rooIgnoreController: mockRooIgnoreController,
+				rooIgnoreController: mockMeowIgnoreController,
 			})
 
 			// Verify summarizeConversation was called with filesReadByRoo, cwd, and rooIgnoreController
@@ -924,7 +924,7 @@ describe("Context Management", () => {
 				isAutomaticTrigger: true,
 				filesReadByRoo,
 				cwd,
-				rooIgnoreController: mockRooIgnoreController,
+				rooIgnoreController: mockMeowIgnoreController,
 			})
 
 			// Verify the result contains the summary information

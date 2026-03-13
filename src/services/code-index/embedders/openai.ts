@@ -11,8 +11,8 @@ import {
 import { getModelQueryPrefix } from "../../../shared/embeddingModels"
 import { t } from "../../../i18n"
 import { withValidationErrorHandling, formatEmbeddingError, HttpError } from "../shared/validation-helpers"
-import { TelemetryEventName } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import { TelemetryEventName } from "@meow-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
 import { handleOpenAIError } from "../../../api/providers/utils/openai-error-handler"
 
 /**

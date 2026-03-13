@@ -63,11 +63,11 @@ This approach has failure modes:
 
 The mitigation is lightweight decision records: ADRs, RFC-style docs, or even structured commit messages that capture the why, not just the what. The goal is not zero documentation. The goal is documentation that emerges from shipped work rather than preceding it.
 
-## How Roo Code captures the why automatically
+## How MeowCode captures the why automatically
 
-When you build with Roo Code, you get decision documentation as a side effect of the workflow. Every task generates a log of what was tried, what failed, and what worked. The diff history shows the evolution. PR comments capture the reasoning. The prototype becomes the specification, and the trail becomes the decision record.
+When you build with MeowCode, you get decision documentation as a side effect of the workflow. Every task generates a log of what was tried, what failed, and what worked. The diff history shows the evolution. PR comments capture the reasoning. The prototype becomes the specification, and the trail becomes the decision record.
 
-This addresses the "lost rationale" failure mode without requiring a separate documentation step. The institutional memory accumulates automatically because Roo Code iterates: it proposes changes, runs tests, observes results, and keeps iterating until the code passes. All of that is logged.
+This addresses the "lost rationale" failure mode without requiring a separate documentation step. The institutional memory accumulates automatically because MeowCode iterates: it proposes changes, runs tests, observes results, and keeps iterating until the code passes. All of that is logged.
 
 ## PRD-first vs. prototype-first workflows
 
@@ -107,7 +107,7 @@ Not necessarily-but the question is when. If your PRDs take longer to write than
 
 ### How do I maintain institutional memory without detailed documentation?
 
-The answer is documentation that emerges from work, not precedes it. Task logs, PR comments, ADRs, and commit messages all capture the "why" if you're intentional about it. Tools like Roo Code generate this trail automatically-every task logs what was tried, what failed, and what worked. The prototype becomes the specification; the trail becomes the decision record.
+The answer is documentation that emerges from work, not precedes it. Task logs, PR comments, ADRs, and commit messages all capture the "why" if you're intentional about it. Tools like MeowCode generate this trail automatically-every task logs what was tried, what failed, and what worked. The prototype becomes the specification; the trail becomes the decision record.
 
 ### How do I get stakeholder buy-in without a polished PRD?
 
@@ -117,6 +117,6 @@ Align stakeholders around something they can touch, not something they have to i
 
 Lightweight constraints still matter. A one-page brief stating the problem, success criteria, and hard boundaries can anchor scope without a multi-week PRD process. The difference is that you iterate against real feedback instead of predicted requirements. If the prototype drifts, you course-correct faster because you have working software to evaluate.
 
-### How does Roo Code help with prototype-first workflows?
+### How does MeowCode help with prototype-first workflows?
 
-Roo Code connects idea to working prototype. You describe what you want; Roo Code proposes changes, runs tests, observes results, and iterates. The task log captures decisions automatically. The result is a working prototype with a built-in decision trail-no separate documentation step required.
+MeowCode connects idea to working prototype. You describe what you want; MeowCode proposes changes, runs tests, observes results, and iterates. The task log captures decisions automatically. The result is a working prototype with a built-in decision trail-no separate documentation step required.

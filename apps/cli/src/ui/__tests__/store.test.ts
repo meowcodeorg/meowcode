@@ -1,4 +1,4 @@
-import { RooCodeSettings } from "@roo-code/types"
+import { MeowCodeSettings } from "@meow-code/types"
 
 import { useCLIStore } from "../store.js"
 
@@ -168,7 +168,7 @@ describe("useCLIStore", () => {
 		})
 
 		it("should PRESERVE apiConfiguration", () => {
-			const config: RooCodeSettings = { apiProvider: "openai", apiModelId: "gpt-4" }
+			const config: MeowCodeSettings = { apiProvider: "openai", apiModelId: "gpt-4" }
 
 			useCLIStore
 				.getState()

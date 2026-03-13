@@ -5,7 +5,7 @@ import * as diff from "diff"
 import stripBom from "strip-bom"
 import delay from "delay"
 
-import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@roo-code/types"
+import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
 
 import { createDirectoriesForFile } from "../../utils/fs"
 import { arePathsEqual, getReadablePath } from "../../utils/path"
@@ -16,7 +16,7 @@ import { Task } from "../../core/task/Task"
 import { DecorationController } from "./DecorationController"
 
 export const DIFF_VIEW_URI_SCHEME = "cline-diff"
-export const DIFF_VIEW_LABEL_CHANGES = "Original ↔ Roo's Changes"
+export const DIFF_VIEW_LABEL_CHANGES = "Original ↔ Meow's Changes"
 
 // TODO: https://github.com/cline/cline/pull/3354
 export class DiffViewProvider {
@@ -219,7 +219,7 @@ export class DiffViewProvider {
 		// Getting diagnostics before and after the file edit is a better approach than
 		// automatically tracking problems in real-time. This method ensures we only
 		// report new problems that are a direct result of this specific edit.
-		// Since these are new problems resulting from Roo's edit, we know they're
+		// Since these are new problems resulting from Meow's edit, we know they're
 		// directly related to the work he's doing. This eliminates the risk of Roo
 		// going off-task or getting distracted by unrelated issues, which was a problem
 		// with the previous auto-debug approach. Some users' machines may be slow to
@@ -293,7 +293,7 @@ export class DiffViewProvider {
 
 			return { newProblemsMessage, userEdits, finalContent: normalizedEditedContent }
 		} else {
-			// No changes to Roo's edits.
+			// No changes to Meow's edits.
 			// Store the results as class properties for formatFileWriteResponse to use
 			this.newProblemsMessage = newProblemsMessage
 			this.userEdits = undefined

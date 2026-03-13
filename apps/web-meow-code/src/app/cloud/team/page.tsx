@@ -21,7 +21,7 @@ import { SEO } from "@/lib/seo"
 import { ogImageUrl } from "@/lib/og"
 import { EXTERNAL_LINKS } from "@/lib/constants"
 
-const TITLE = "Roo Code Cloud Team Plan"
+const TITLE = "MeowCode Cloud Team Plan"
 const DESCRIPTION =
 	"Scale your development with team collaboration features. Centralized billing, shared configuration, team-wide analytics, and unified GitHub, Slack, and Linear integrations."
 const OG_DESCRIPTION = "Team collaboration for AI-powered development"
@@ -75,7 +75,7 @@ const keyBenefits = [
 	{
 		title: "Centralized Billing",
 		description:
-			"Single billing point for all team members using Cloud Agents and the Roo Code Router. No more API key management.",
+			"Single billing point for all team members using Cloud Agents and the MeowCode Router. No more API key management.",
 		icon: DollarSign,
 	},
 	{
@@ -142,7 +142,7 @@ const features: Feature[] = [
 	{
 		icon: ServerIcon,
 		title: "MCP Server Controls",
-		description: "Control access to the Roo MCP Marketplace and what custom MCPs to make available to your team.",
+		description: "Control access to the Meow MCP Marketplace and what custom MCPs to make available to your team.",
 	},
 ]
 
@@ -154,7 +154,7 @@ export default function CloudTeamPage() {
 				<AnimatedBackground />
 				<div className="container relative flex flex-col items-center h-full z-10 mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="text-center max-w-4xl mx-auto mb-12">
-						<h1 className="text-4xl font-bold tracking-tight mb-6 md:text-6xl">Roo Code Cloud Team</h1>
+						<h1 className="text-4xl font-bold tracking-tight mb-6 md:text-6xl">MeowCode Cloud Team</h1>
 						<h2 className="text-2xl font-bold tracking-tight mb-6 md:text-4xl">
 							Built for <span className="text-violet-500">AI-Forward Teams</span>
 						</h2>
@@ -195,7 +195,7 @@ export default function CloudTeamPage() {
 
 					<div className="mx-auto mb-12 md:mb-24 max-w-5xl text-center">
 						<div>
-							<h2 className="text-4xl font-bold tracking-tight mb-4">Why Teams Choose Roo</h2>
+							<h2 className="text-4xl font-bold tracking-tight mb-4">Why Teams Choose Meow</h2>
 							<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
 								Streamline collaboration and scale your development capacity with team-first features.
 							</p>

@@ -18,7 +18,7 @@
 		"@radix-ui/react-navigation-menu": "^1.2.14",
 		"@radix-ui/react-slot": "^1.2.4",
 		"@meow-code/evals": "workspace:^",
-		"@meow-code/types": "^1.108.0",
+		"@meow-code/types": "workspace:^",
 		"@tanstack/react-query": "^5.90.20",
 		"@vercel/og": "^0.8.6",
 		"class-variance-authority": "^0.7.1",

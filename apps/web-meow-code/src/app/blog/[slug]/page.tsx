@@ -293,7 +293,7 @@ export default async function BlogPostPage({ params }: Props) {
 						{hasFAQ && <BlogFAQ items={faqItems} />}
 
 						{/* Product CTA Module - Inspired by Vercel's blog design
-						    Default variant prioritizes Roo Code Cloud sign-up */}
+						    Default variant prioritizes MeowCode Cloud sign-up */}
 						<BlogPostCTA />
 					</div>
 

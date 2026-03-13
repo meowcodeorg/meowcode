@@ -24,7 +24,7 @@ import { EXTERNAL_LINKS } from "@/lib/constants"
 // Workaround for next/image choking on these for some reason
 import screenshotDark from "../../../public/heroes/cloud-screen.png"
 
-const TITLE = "Roo Code Cloud"
+const TITLE = "MeowCode Cloud"
 const DESCRIPTION =
 	"Your AI Software Engineering Team in the Cloud. Delegate tasks to autonomous agents, review PRs, and collaborate with your team."
 const OG_DESCRIPTION = "Your AI Team in the Cloud"
@@ -98,7 +98,7 @@ const features: Feature[] = [
 	{
 		icon: Brain,
 		title: "Model Agnostic",
-		description: "Bring your own keys or use the Roo Code Router with access to all top models with no markup.",
+		description: "Bring your own keys or use the MeowCode Router with access to all top models with no markup.",
 	},
 	{
 		icon: Github,
@@ -114,7 +114,7 @@ const features: Feature[] = [
 	{
 		icon: ListChecks,
 		title: "Linear Integration",
-		description: "Assign issues to Roo Code directly from Linear. Get PRs back without switching tools.",
+		description: "Assign issues to MeowCode directly from Linear. Get PRs back without switching tools.",
 	},
 	{
 		icon: Users,
@@ -180,7 +180,7 @@ export default function CloudPage() {
 					<div className="relative mx-auto mt-4 md:max-w-[1000px]">
 						<Image
 							src={screenshotDark}
-							alt="Roo Code Cloud Interface"
+							alt="MeowCode Cloud Interface"
 							className="w-full h-auto"
 							width={1390}
 							height={1012}

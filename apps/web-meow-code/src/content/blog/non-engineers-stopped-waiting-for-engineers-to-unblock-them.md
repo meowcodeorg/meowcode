@@ -14,7 +14,7 @@ status: published
 featured: true
 publish_date: "2025-10-01"
 publish_time_pt: "9:00am"
-source: "Roo Cast"
+source: "Meow Cast"
 ---
 
 "I use @roomote every day to ask questions about the codebase."
@@ -27,11 +27,11 @@ Every growing startup has this bottleneck. A PM needs to know why the pricing mo
 
 The default behavior: send a Slack or schedule a meeting. Wait for engineering bandwidth. Hope someone remembers the context when they finally have time to answer.
 
-At Roo Vet, the behavior changed. Product managers, support reps, and operations staff started querying the codebase directly through a Roo Code's Slack agent. The question goes to the agent before it goes to a calendar invite.
+At Meow Vet, the behavior changed. Product managers, support reps, and operations staff started querying the codebase directly through a MeowCode's Slack agent. The question goes to the agent before it goes to a calendar invite.
 
 > "One nonobvious behavior change that came out of that I think is people don't wait around to be unblocked anymore. Non-engineers especially just ask our @roomote agent first."
 >
-> John Sterns, [Roo Cast S01E11](https://www.youtube.com/watch?v=bqLEMZ1c9Uk&t=290)
+> John Sterns, [Meow Cast S01E11](https://www.youtube.com/watch?v=bqLEMZ1c9Uk&t=290)
 
 ## The shift: ask the agent first
 
@@ -43,7 +43,7 @@ The answers come from the codebase itself. Not tribal knowledge. Not someone's m
 
 > "I use @roomote every day to ask questions about the codebase. I think that is the most effective thing as a PM."
 >
-> Theo, [Roo Cast S01E11](https://www.youtube.com/watch?v=bqLEMZ1c9Uk&t=2288)
+> Theo, [Meow Cast S01E11](https://www.youtube.com/watch?v=bqLEMZ1c9Uk&t=2288)
 
 ## What the queries look like
 
@@ -59,7 +59,7 @@ With a codebase-connected agent, the answer comes back fast.
 
 > "You can ask it questions to better understand the logic that's been built into the product... it took me like 30 seconds to find that answer."
 >
-> Audrey, [Roo Cast S01E11](https://www.youtube.com/watch?v=bqLEMZ1c9Uk)
+> Audrey, [Meow Cast S01E11](https://www.youtube.com/watch?v=bqLEMZ1c9Uk)
 
 ## The tradeoff
 
@@ -87,13 +87,13 @@ If half of those questions can be answered by the codebase directly, the compoun
 
 The behavior shift is the real outcome: people stop treating engineering bandwidth as a prerequisite for understanding the product.
 
-## How Roo Code makes questions self-serve
+## How MeowCode makes questions self-serve
 
 The key capability for cross-functional teams is read-only codebase access through integrations. People can ask questions in the tools they already use and get answers grounded in the actual implementation, not documentation that may be outdated.
 
 In practice, the best answers are inspectable: what file to look at, what function or endpoint is involved, and what conditions drive the behavior.
 
-**Roo Code helps non-engineers self-serve codebase questions, reducing engineering interruptions while keeping engineers available for decisions that require judgment.**
+**MeowCode helps non-engineers self-serve codebase questions, reducing engineering interruptions while keeping engineers available for decisions that require judgment.**
 
 ## The first step
 
@@ -109,7 +109,7 @@ Navigation and understanding questions work well: "where is X calculated," "what
 
 ### How do you prevent non-technical staff from getting confused by raw code responses?
 
-Modern AI coding agents like Roo Code explain code in plain language rather than just returning file contents. When a PM asks about pricing logic, they get an explanation of the flow, not a code dump. The agent translates between codebase structure and business concepts.
+Modern AI coding agents like MeowCode explain code in plain language rather than just returning file contents. When a PM asks about pricing logic, they get an explanation of the flow, not a code dump. The agent translates between codebase structure and business concepts.
 
 ### Does giving non-engineers codebase access create security risks?
 

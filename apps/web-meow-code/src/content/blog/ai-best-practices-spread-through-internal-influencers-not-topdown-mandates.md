@@ -75,13 +75,13 @@ The first step is naming your influencers. Who do engineers already watch? Who g
 
 Create the forum. Protect the experimentation time. Let adoption spread through trust instead of mandates.
 
-## How Roo Code supports organic adoption patterns
+## How MeowCode supports organic adoption patterns
 
-Internal influencers need tools that produce repeatable, reviewable outcomes - not just clever prompts. Roo Code helps by turning intent into inspectable artifacts (diffs, test output, and a clear trail of what happened) that are easy to demo and share.
+Internal influencers need tools that produce repeatable, reviewable outcomes - not just clever prompts. MeowCode helps by turning intent into inspectable artifacts (diffs, test output, and a clear trail of what happened) that are easy to demo and share.
 
 Influencers can share what actually worked: the workflow, the artifacts, and the failure modes. That's what spreads.
 
-**Roo Code accelerates organic adoption because internal influencers can demonstrate real, reproducible workflows - not theoretical best practices - in their monthly demo forums.**
+**MeowCode accelerates organic adoption because internal influencers can demonstrate real, reproducible workflows - not theoretical best practices - in their monthly demo forums.**
 
 ## AI adoption approaches compared
 
@@ -107,9 +107,9 @@ Monthly works best for most organizations. AI tools evolve quickly enough that q
 
 Start with 10-20% of their time dedicated to exploring new AI workflows. This is enough to build genuine expertise without disrupting delivery commitments. The investment pays back when their discoveries multiply across the team.
 
-### How does Roo Code help internal influencers share what they learn?
+### How does MeowCode help internal influencers share what they learn?
 
-Roo Code makes workflows easier to demonstrate because the artifacts are explicit: diffs, test output, and a clear trail of what was tried. That makes it easier to share what worked (and what didn't) without hand-wavy advice.
+MeowCode makes workflows easier to demonstrate because the artifacts are explicit: diffs, test output, and a clear trail of what was tried. That makes it easier to share what worked (and what didn't) without hand-wavy advice.
 
 ### Why do centralized AI wikis fail?
 

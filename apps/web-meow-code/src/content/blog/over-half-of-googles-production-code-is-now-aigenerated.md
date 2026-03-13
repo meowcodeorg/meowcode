@@ -74,11 +74,11 @@ The teams that have crossed the threshold did not adopt AI everywhere at once. T
 
 If your competitors are shipping with 50% AI-generated code, they're moving twice as fast. Start with one engineer, one repo, one workflow, and scale from there.
 
-## How Roo Code delivers review-ready code
+## How MeowCode delivers review-ready code
 
-Roo Code gives the agent execution context. It proposes a diff, runs your tests, sees the actual output, and iterates until the code passes. The agent doesn't hand you suggestions to fix. It fixes them itself. Without this, agents confidently claim success while producing a blank screen.
+MeowCode gives the agent execution context. It proposes a diff, runs your tests, sees the actual output, and iterates until the code passes. The agent doesn't hand you suggestions to fix. It fixes them itself. Without this, agents confidently claim success while producing a blank screen.
 
-For teams looking to cross the 50% threshold, the workflow matters more than the model. Roo Code provides the agentic iteration layer that turns AI suggestions into merged PRs.
+For teams looking to cross the 50% threshold, the workflow matters more than the model. MeowCode provides the agentic iteration layer that turns AI suggestions into merged PRs.
 
 ## Traditional vs. agentic AI coding workflows
 
@@ -110,9 +110,9 @@ Any AI tool can generate code. The real measure is whether that code survives th
 
 Yes. The workflow patterns that enable high AI contribution rates are not unique to Google's scale. Agentic iteration, clear approval boundaries, and code review integration can be implemented by any team. Fast-moving teams often adopt faster because they can skip months of policy review.
 
-### How does Roo Code help teams build workflows where AI code survives review?
+### How does MeowCode help teams build workflows where AI code survives review?
 
-Roo Code iterates by running commands, observing output, and converging on passing tests. Instead of generating suggestions that a human must fix, the agent produces code that is ready for review. The approval system lets teams define exactly what the agent can run autonomously, building trust incrementally.
+MeowCode iterates by running commands, observing output, and converging on passing tests. Instead of generating suggestions that a human must fix, the agent produces code that is ready for review. The approval system lets teams define exactly what the agent can run autonomously, building trust incrementally.
 
 ### What is the best first task to pilot an AI coding agent?
 

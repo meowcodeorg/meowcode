@@ -11,7 +11,7 @@ import type {
 	ClineApiReqInfo,
 	ClineAskUseMcpServer,
 	ClineSayTool,
-} from "@roo-code/types"
+} from "@meow-code/types"
 
 import { Mode } from "@roo/modes"
 
@@ -1116,7 +1116,7 @@ export const ChatRowContent = ({
 								// Non-HTTP-status-code error message - store full text as errorDetails
 								body = t("chat:apiRequest.errorMessage.unknown")
 								docsURL =
-									"mailto:support@roocode.com?subject=Unknown API Error&body=[Please include full error details]"
+									"mailto:support@TODOURL?subject=Unknown API Error&body=[Please include full error details]"
 							}
 						}
 

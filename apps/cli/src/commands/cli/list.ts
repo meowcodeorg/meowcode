@@ -4,9 +4,9 @@ import { fileURLToPath } from "url"
 
 import pWaitFor from "p-wait-for"
 
-import type { TaskSessionEntry } from "@roo-code/core/cli"
-import type { Command, ModelRecord, WebviewMessage } from "@roo-code/types"
-import { getProviderDefaultModelId } from "@roo-code/types"
+import type { TaskSessionEntry } from "@meow-code/core/cli"
+import type { Command, ModelRecord, WebviewMessage } from "@meow-code/types"
+import { getProviderDefaultModelId } from "@meow-code/types"
 
 import { ExtensionHost, type ExtensionHostOptions } from "@/agent/index.js"
 import { readWorkspaceTaskSessions } from "@/lib/task-history/index.js"
@@ -230,7 +230,7 @@ function requestRooModels(host: ExtensionHost): Promise<ModelRecord> {
 			const errorMessage =
 				typeof message.error === "string" && message.error.length > 0
 					? message.error
-					: "Failed to fetch Roo models"
+					: "Failed to fetch Meow models"
 			throw new Error(errorMessage)
 		}
 

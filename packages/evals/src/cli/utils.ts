@@ -4,7 +4,7 @@ import * as path from "path"
 
 import { execa, type ResultPromise } from "execa"
 
-import type { ToolUsage } from "@roo-code/types"
+import type { ToolUsage } from "@meow-code/types"
 
 import type { Run, Task } from "../db/index"
 
@@ -24,8 +24,8 @@ export const isDockerContainer = () => {
 }
 
 export const resetEvalsRepo = async ({ run, cwd }: { run: Run; cwd: string }) => {
-	await execa({ cwd })`git config user.name "Roo Code"`
-	await execa({ cwd })`git config user.email "support@roocode.com"`
+	await execa({ cwd })`git config user.name "MeowCode"`
+	await execa({ cwd })`git config user.email "support@TODOURL"`
 	await execa({ cwd })`git checkout -f`
 	await execa({ cwd })`git clean -fd`
 	await execa({ cwd })`git checkout -b runs/${run.id}-${crypto.randomUUID().slice(0, 8)} main`
@@ -157,7 +157,7 @@ export async function copyConversationHistory({
 	logger: Logger
 }): Promise<void> {
 	// VS Code extension global storage path within the container
-	const extensionStoragePath = "/roo/.vscode/User/globalStorage/rooveterinaryinc.roo-cline"
+	const extensionStoragePath = "/meow/.vscode/User/globalStorage/meowcodeinc.meow-code"
 	const taskStoragePath = path.join(extensionStoragePath, "tasks", rooTaskId)
 
 	const filesToCopy = ["api_conversation_history.json", "ui_messages.json"]

@@ -1,7 +1,7 @@
 import { z } from "zod"
 
-import { RooCodeEventName } from "./events.js"
-import type { RooCodeSettings } from "./global-settings.js"
+import { MeowCodeEventName } from "./events.js"
+import type { MeowCodeSettings } from "./global-settings.js"
 import type { ClineMessage, QueuedMessage, TokenUsage } from "./message.js"
 import type { ToolUsage, ToolName } from "./tool.js"
 import type { StaticAppProperties, GitProperties, TelemetryProperties } from "./telemetry.js"
@@ -20,7 +20,7 @@ export interface TaskProviderLike {
 		images?: string[],
 		parentTask?: TaskLike,
 		options?: CreateTaskOptions,
-		configuration?: RooCodeSettings,
+		configuration?: MeowCodeSettings,
 	): Promise<TaskLike>
 	cancelTask(): Promise<void>
 	clearTask(): Promise<void>
@@ -58,30 +58,30 @@ export interface TaskProviderLike {
 }
 
 export type TaskProviderEvents = {
-	[RooCodeEventName.TaskCreated]: [task: TaskLike]
-	[RooCodeEventName.TaskStarted]: [taskId: string]
-	[RooCodeEventName.TaskCompleted]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
-	[RooCodeEventName.TaskAborted]: [taskId: string]
-	[RooCodeEventName.TaskFocused]: [taskId: string]
-	[RooCodeEventName.TaskUnfocused]: [taskId: string]
-	[RooCodeEventName.TaskActive]: [taskId: string]
-	[RooCodeEventName.TaskInteractive]: [taskId: string]
-	[RooCodeEventName.TaskResumable]: [taskId: string]
-	[RooCodeEventName.TaskIdle]: [taskId: string]
+	[MeowCodeEventName.TaskCreated]: [task: TaskLike]
+	[MeowCodeEventName.TaskStarted]: [taskId: string]
+	[MeowCodeEventName.TaskCompleted]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
+	[MeowCodeEventName.TaskAborted]: [taskId: string]
+	[MeowCodeEventName.TaskFocused]: [taskId: string]
+	[MeowCodeEventName.TaskUnfocused]: [taskId: string]
+	[MeowCodeEventName.TaskActive]: [taskId: string]
+	[MeowCodeEventName.TaskInteractive]: [taskId: string]
+	[MeowCodeEventName.TaskResumable]: [taskId: string]
+	[MeowCodeEventName.TaskIdle]: [taskId: string]
 
-	[RooCodeEventName.TaskPaused]: [taskId: string]
-	[RooCodeEventName.TaskUnpaused]: [taskId: string]
-	[RooCodeEventName.TaskSpawned]: [taskId: string]
-	[RooCodeEventName.TaskDelegated]: [parentTaskId: string, childTaskId: string]
-	[RooCodeEventName.TaskDelegationCompleted]: [parentTaskId: string, childTaskId: string, summary: string]
-	[RooCodeEventName.TaskDelegationResumed]: [parentTaskId: string, childTaskId: string]
+	[MeowCodeEventName.TaskPaused]: [taskId: string]
+	[MeowCodeEventName.TaskUnpaused]: [taskId: string]
+	[MeowCodeEventName.TaskSpawned]: [taskId: string]
+	[MeowCodeEventName.TaskDelegated]: [parentTaskId: string, childTaskId: string]
+	[MeowCodeEventName.TaskDelegationCompleted]: [parentTaskId: string, childTaskId: string, summary: string]
+	[MeowCodeEventName.TaskDelegationResumed]: [parentTaskId: string, childTaskId: string]
 
-	[RooCodeEventName.TaskUserMessage]: [taskId: string]
+	[MeowCodeEventName.TaskUserMessage]: [taskId: string]
 
-	[RooCodeEventName.TaskTokenUsageUpdated]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
+	[MeowCodeEventName.TaskTokenUsageUpdated]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
 
-	[RooCodeEventName.ModeChanged]: [mode: string]
-	[RooCodeEventName.ProviderProfileChanged]: [config: { name: string; provider?: string }]
+	[MeowCodeEventName.ModeChanged]: [mode: string]
+	[MeowCodeEventName.ProviderProfileChanged]: [config: { name: string; provider?: string }]
 }
 
 /**
@@ -138,29 +138,29 @@ export interface TaskLike {
 
 export type TaskEvents = {
 	// Task Lifecycle
-	[RooCodeEventName.TaskStarted]: []
-	[RooCodeEventName.TaskCompleted]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
-	[RooCodeEventName.TaskAborted]: []
-	[RooCodeEventName.TaskFocused]: []
-	[RooCodeEventName.TaskUnfocused]: []
-	[RooCodeEventName.TaskActive]: [taskId: string]
-	[RooCodeEventName.TaskInteractive]: [taskId: string]
-	[RooCodeEventName.TaskResumable]: [taskId: string]
-	[RooCodeEventName.TaskIdle]: [taskId: string]
+	[MeowCodeEventName.TaskStarted]: []
+	[MeowCodeEventName.TaskCompleted]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
+	[MeowCodeEventName.TaskAborted]: []
+	[MeowCodeEventName.TaskFocused]: []
+	[MeowCodeEventName.TaskUnfocused]: []
+	[MeowCodeEventName.TaskActive]: [taskId: string]
+	[MeowCodeEventName.TaskInteractive]: [taskId: string]
+	[MeowCodeEventName.TaskResumable]: [taskId: string]
+	[MeowCodeEventName.TaskIdle]: [taskId: string]
 
 	// Subtask Lifecycle
-	[RooCodeEventName.TaskPaused]: [taskId: string]
-	[RooCodeEventName.TaskUnpaused]: [taskId: string]
-	[RooCodeEventName.TaskSpawned]: [taskId: string]
+	[MeowCodeEventName.TaskPaused]: [taskId: string]
+	[MeowCodeEventName.TaskUnpaused]: [taskId: string]
+	[MeowCodeEventName.TaskSpawned]: [taskId: string]
 
 	// Task Execution
-	[RooCodeEventName.Message]: [{ action: "created" | "updated"; message: ClineMessage }]
-	[RooCodeEventName.TaskModeSwitched]: [taskId: string, mode: string]
-	[RooCodeEventName.TaskAskResponded]: []
-	[RooCodeEventName.TaskUserMessage]: [taskId: string]
-	[RooCodeEventName.QueuedMessagesUpdated]: [taskId: string, messages: QueuedMessage[]]
+	[MeowCodeEventName.Message]: [{ action: "created" | "updated"; message: ClineMessage }]
+	[MeowCodeEventName.TaskModeSwitched]: [taskId: string, mode: string]
+	[MeowCodeEventName.TaskAskResponded]: []
+	[MeowCodeEventName.TaskUserMessage]: [taskId: string]
+	[MeowCodeEventName.QueuedMessagesUpdated]: [taskId: string, messages: QueuedMessage[]]
 
 	// Task Analytics
-	[RooCodeEventName.TaskToolFailed]: [taskId: string, tool: ToolName, error: string]
-	[RooCodeEventName.TaskTokenUsageUpdated]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
+	[MeowCodeEventName.TaskToolFailed]: [taskId: string, tool: ToolName, error: string]
+	[MeowCodeEventName.TaskTokenUsageUpdated]: [taskId: string, tokenUsage: TokenUsage, toolUsage: ToolUsage]
 }

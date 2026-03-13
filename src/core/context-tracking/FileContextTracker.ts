@@ -65,7 +65,7 @@ export class FileContextTracker {
 		// Track file changes
 		watcher.onDidChange(() => {
 			if (this.recentlyEditedByRoo.has(filePath)) {
-				this.recentlyEditedByRoo.delete(filePath) // This was an edit by Roo, no need to inform Roo
+				this.recentlyEditedByRoo.delete(filePath) // This was an edit by Meow, no need to inform Roo
 			} else {
 				this.recentlyModifiedFiles.add(filePath) // This was a user edit, we will inform Roo
 				this.trackFileContext(filePath, "user_edited") // Update the task metadata with file tracking
@@ -254,7 +254,7 @@ export class FileContextTracker {
 
 			return uniquePaths
 		} catch (error) {
-			console.error("Failed to get files read by Roo:", error)
+			console.error("Failed to get files read by Meow:", error)
 			return []
 		}
 	}

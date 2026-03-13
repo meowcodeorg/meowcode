@@ -20,11 +20,11 @@ import type {
 	ClineMessage,
 	ExtensionMessage,
 	ReasoningEffortExtended,
-	RooCodeSettings,
+	MeowCodeSettings,
 	WebviewMessage,
-} from "@roo-code/types"
-import { createVSCodeAPI, IExtensionHost, ExtensionHostEventMap, setRuntimeConfigValues } from "@roo-code/vscode-shim"
-import { DebugLogger, setDebugLogEnabled } from "@roo-code/core/cli"
+} from "@meow-code/types"
+import { createVSCodeAPI, IExtensionHost, ExtensionHostEventMap, setRuntimeConfigValues } from "@meow-code/vscode-shim"
+import { DebugLogger, setDebugLogEnabled } from "@meow-code/core/cli"
 
 import { DEFAULT_FLAGS, type SupportedProvider } from "@/types/index.js"
 import type { User } from "@/lib/sdk/index.js"
@@ -109,7 +109,7 @@ interface WebviewViewProvider {
 export interface ExtensionHostInterface extends IExtensionHost<ExtensionHostEventMap> {
 	client: ExtensionClient
 	activate(): Promise<void>
-	runTask(prompt: string, taskId?: string, configuration?: RooCodeSettings, images?: string[]): Promise<void>
+	runTask(prompt: string, taskId?: string, configuration?: MeowCodeSettings, images?: string[]): Promise<void>
 	resumeTask(taskId: string): Promise<void>
 	sendToExtension(message: WebviewMessage): void
 	dispose(): Promise<void>
@@ -123,7 +123,7 @@ export class ExtensionHost extends EventEmitter implements ExtensionHostInterfac
 	private options: ExtensionHostOptions
 	private isReady = false
 	private messageListener: ((message: ExtensionMessage) => void) | null = null
-	private initialSettings: RooCodeSettings
+	private initialSettings: MeowCodeSettings
 
 	// Console suppression.
 	private originalConsole: {
@@ -219,7 +219,7 @@ export class ExtensionHost extends EventEmitter implements ExtensionHostInterfac
 		this.setupClientEventHandlers()
 
 		// Populate initial settings.
-		const baseSettings: RooCodeSettings = {
+		const baseSettings: MeowCodeSettings = {
 			mode: this.options.mode,
 			consecutiveMistakeLimit: this.options.consecutiveMistakeLimit ?? DEFAULT_FLAGS.consecutiveMistakeLimit,
 			commandExecutionTimeout: 300,
@@ -447,7 +447,7 @@ export class ExtensionHost extends EventEmitter implements ExtensionHostInterfac
 		// sending webviewDidLaunch. This prevents a race condition where the
 		// webviewDidLaunch handler's first-time init sync reads default state
 		// (apiProvider: "anthropic") instead of the CLI-provided settings.
-		setRuntimeConfigValues("roo-cline", this.initialSettings as Record<string, unknown>)
+		setRuntimeConfigValues("meow-code", this.initialSettings as Record<string, unknown>)
 		this.sendToExtension({ type: "updateSettings", updatedSettings: this.initialSettings })
 
 		// Now trigger extension initialization. The context proxy should already
@@ -519,7 +519,7 @@ export class ExtensionHost extends EventEmitter implements ExtensionHostInterfac
 	public async runTask(
 		prompt: string,
 		taskId?: string,
-		configuration?: RooCodeSettings,
+		configuration?: MeowCodeSettings,
 		images?: string[],
 	): Promise<void> {
 		this.sendToExtension({

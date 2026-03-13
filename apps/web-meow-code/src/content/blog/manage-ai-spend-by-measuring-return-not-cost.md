@@ -14,7 +14,7 @@ status: published
 featured: true
 publish_date: "2025-11-14"
 publish_time_pt: "9:00am"
-source: "Roo Cast"
+source: "Meow Cast"
 ---
 
 "I own it just so that I can tell them I want you to focus on your return, not your cost."
@@ -35,7 +35,7 @@ The technical capability to track individual spend exists. You authenticate to u
 
 > "I could actually get down to it because you have to authenticate to use tokens and so then there's a tracking to amount of tokens per person but I don't. I'm kind of staying away from that. I think it will lead to bad mindset and bad behavior."
 >
-> JB Brown, [Roo Cast S01E17](https://www.youtube.com/watch?v=R4U89z9eGPg&t=824)
+> JB Brown, [Meow Cast S01E17](https://www.youtube.com/watch?v=R4U89z9eGPg&t=824)
 
 The tracking is possible. The question is whether you should. Per-person dashboards create the exact cost anxiety that undermines the productivity gain you're paying for.
 
@@ -45,7 +45,7 @@ Smartsheet took the opposite path. They moved all AI tool spend into a single ac
 
 > "Here we're trying to drive return, not trying to reduce cost. And so to get that mindset shift and behavior and practice shift, I'm sort of precluding people from thinking about the cost too much."
 >
-> JB Brown, [Roo Cast S01E17](https://www.youtube.com/watch?v=R4U89z9eGPg&t=748)
+> JB Brown, [Meow Cast S01E17](https://www.youtube.com/watch?v=R4U89z9eGPg&t=748)
 
 The goal is explicit: shift the mental model from "how do I spend less?" to "how do I ship more?"
 
@@ -57,7 +57,7 @@ Their answer: MR throughput. Merge requests completed. Commits merged. Work ship
 
 > "We would measure it by MR throughput. And that's what we're trying to drive towards as that outcome."
 >
-> JB Brown, [Roo Cast S01E17](https://www.youtube.com/watch?v=R4U89z9eGPg&t=668)
+> JB Brown, [Meow Cast S01E17](https://www.youtube.com/watch?v=R4U89z9eGPg&t=668)
 
 This is the difference between treating AI as an expense line and treating it as a productivity lever. Expenses get minimized. Levers get pulled. A frontier model costs a fraction of an intern's hourly rate but can iterate on code continuously. The return-on-cost math favors spending more, not less.
 
@@ -75,9 +75,9 @@ If you're evaluating AI coding tools at the org level, the budget question comes
 
 For a fast-moving team, the difference between cautious usage and full adoption compounds. If engineers second-guess every expensive task, you're leaving the productivity gain on the table. If they're told "focus on output, I'll handle the spend," you unlock a different behavior entirely.
 
-## How Roo Code fits this model
+## How MeowCode fits this model
 
-Roo Code's BYOK model lets you connect a single organizational API account. Engineers use full-capability models without watching their own spend.
+MeowCode's BYOK model lets you connect a single organizational API account. Engineers use full-capability models without watching their own spend.
 
 Because the agent iterates until tests pass, token spend maps to merged code rather than manual copy-paste cycles. The iteration loop that would take an engineer 30 minutes of context-switching runs autonomously.
 
@@ -111,9 +111,9 @@ Frame the conversation around measurable output, not cost containment. Present a
 
 Merge request throughput is the most direct proxy because it measures completed work. Other valid metrics include commits merged, story points delivered, or time-to-first-commit on new tasks. The key is choosing a metric that captures finished work rather than activity. Avoid measuring tokens consumed or hours using the tool - these are inputs, not outputs.
 
-### Does Roo Code support centralized API key management for teams?
+### Does MeowCode support centralized API key management for teams?
 
-Yes. Roo Code's BYOK model lets you connect a single organizational API account that all team members use. This consolidates token spend into one billing relationship while giving engineers full access to capable models. The transparent pricing - no token markup - makes it easier to correlate spend with output when you measure at the organizational level.
+Yes. MeowCode's BYOK model lets you connect a single organizational API account that all team members use. This consolidates token spend into one billing relationship while giving engineers full access to capable models. The transparent pricing - no token markup - makes it easier to correlate spend with output when you measure at the organizational level.
 
 ### What's the risk of removing cost constraints from engineers?
 

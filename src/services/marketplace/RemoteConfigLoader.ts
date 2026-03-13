@@ -7,7 +7,7 @@ import {
 	type MarketplaceItemType,
 	modeMarketplaceItemSchema,
 	mcpMarketplaceItemSchema,
-} from "@roo-code/types"
+} from "@meow-code/types"
 const modeMarketplaceResponse = z.object({
 	items: z.array(modeMarketplaceItemSchema),
 })
@@ -22,7 +22,7 @@ export class RemoteConfigLoader {
 	private cacheDuration = 5 * 60 * 1000 // 5 minutes
 
 	constructor() {
-		this.apiBaseUrl = process.env.ROO_CODE_API_URL ?? "https://api.roocode.com"
+		this.apiBaseUrl = process.env.MEOW_CODE_API_URL ?? "https://api.TODOURL"
 	}
 
 	async loadAllItems(hideMarketplaceMcps = false): Promise<MarketplaceItem[]> {

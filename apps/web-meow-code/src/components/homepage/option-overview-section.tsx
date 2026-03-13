@@ -11,7 +11,7 @@ export function OptionOverviewSection() {
 						Different form factors for different ways of working.
 					</h2>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-						Roo&apos;s always there to help you get stuff done.
+						Meow&apos;s always there to help you get stuff done.
 					</p>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto relative z-1">
@@ -23,12 +23,12 @@ export function OptionOverviewSection() {
 						<div className="size-15 p-3 rounded-full flex items-center justify-center shadow-lg absolute -top-4 -right-2 transition-all outline outline-foreground/5 bg-card group group-hover:outline-3 group-hover:scale-105">
 							<Laptop className="size-8 text-blue-500" strokeWidth={1.5} />
 						</div>
-						<h3 className="text-2xl font-bold tracking-tight mb-2">Roo Code VS Code Extension</h3>
+						<h3 className="text-2xl font-bold tracking-tight mb-2">MeowCode VS Code Extension</h3>
 						<p className="font-semibold text-blue-500 mb-4">For Individual Work</p>
 
 						<div className="text-muted-foreground mb-4">
 							<p>
-								Run Roo directly in VS Code (or any fork – even Cursor!), stay close to the code and
+								Run Meow directly in VS Code (or any fork – even Cursor!), stay close to the code and
 								control everything:
 							</p>
 							<ul className="list-inside my-4 space-y-1">
@@ -60,7 +60,7 @@ export function OptionOverviewSection() {
 						<div className="size-15 p-3 rounded-full flex items-center justify-center shadow-lg absolute -top-4 -right-2 transition-all outline outline-foreground/5 bg-card group group-hover:outline-3 group-hover:scale-105">
 							<Cloud className="size-8 text-violet-500" strokeWidth={1.5} />
 						</div>
-						<h3 className="text-2xl font-bold tracking-tight mb-2">Roo Code Cloud</h3>
+						<h3 className="text-2xl font-bold tracking-tight mb-2">MeowCode Cloud</h3>
 						<div className="font-semibold text-violet-500 mb-4">For Team Work with Agents</div>
 
 						<div className="text-muted-foreground mb-4">

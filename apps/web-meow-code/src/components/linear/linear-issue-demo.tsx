@@ -142,7 +142,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 				avatarClassName: "bg-amber-600 text-white",
 				body: (
 					<span>
-						<span className="text-indigo-400">@Roo Code</span> Can you implement this feature?
+						<span className="text-indigo-400">@MeowCode</span> Can you implement this feature?
 					</span>
 				),
 				timeLabel: "2m ago",
@@ -150,7 +150,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 			{
 				id: "a2",
 				kind: "comment",
-				author: "Roo Code",
+				author: "MeowCode",
 				avatarText: "R",
 				avatarClassName: "bg-indigo-600 text-white",
 				body: <span>Analyzing issue requirements and codebase...</span>,
@@ -159,7 +159,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 			{
 				id: "a3",
 				kind: "event",
-				author: "Roo Code",
+				author: "MeowCode",
 				avatarText: "R",
 				avatarClassName: "bg-indigo-600 text-white",
 				body: <span>moved to In Progress</span>,
@@ -168,7 +168,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 			{
 				id: "a4",
 				kind: "comment",
-				author: "Roo Code",
+				author: "MeowCode",
 				avatarText: "R",
 				avatarClassName: "bg-indigo-600 text-white",
 				body: <span>Planning implementation: Settings component with light/dark toggle.</span>,
@@ -182,7 +182,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 				avatarClassName: "bg-amber-600 text-white",
 				body: (
 					<span>
-						<span className="text-indigo-400">@Roo Code</span> Please also add a &quot;system&quot; option
+						<span className="text-indigo-400">@MeowCode</span> Please also add a &quot;system&quot; option
 						that follows OS preference.
 					</span>
 				),
@@ -191,7 +191,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 			{
 				id: "a6",
 				kind: "comment",
-				author: "Roo Code",
+				author: "MeowCode",
 				avatarText: "R",
 				avatarClassName: "bg-indigo-600 text-white",
 				body: (
@@ -209,7 +209,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 				kind: "pr-link",
 				body: (
 					<span>
-						<span className="text-[#F8F8F9]">Roo Code</span> linked{" "}
+						<span className="text-[#F8F8F9]">MeowCode</span> linked{" "}
 						<span className="text-emerald-400">PR #847</span>
 					</span>
 				),
@@ -218,7 +218,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 			{
 				id: "a8",
 				kind: "comment",
-				author: "Roo Code",
+				author: "MeowCode",
 				avatarText: "R",
 				avatarClassName: "bg-indigo-600 text-white",
 				body: (
@@ -329,7 +329,7 @@ export function LinearIssueDemo({ className }: LinearIssueDemoProps): JSX.Elemen
 		<div
 			className={cn("w-full max-w-[540px] h-[520px] sm:h-[560px]", className)}
 			role="img"
-			aria-label="Animated Linear issue showing Roo Code responding to a comment">
+			aria-label="Animated Linear issue showing MeowCode responding to a comment">
 			<div
 				aria-hidden="true"
 				className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#1F2023] shadow-2xl shadow-black/40">

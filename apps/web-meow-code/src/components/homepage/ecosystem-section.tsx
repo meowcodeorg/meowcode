@@ -47,7 +47,7 @@ export function EcosystemSection() {
 							<div className="text-sm font-bold text-blue-500 mb-2">01. DISPATCH</div>
 							<h3 className="text-xl font-bold mb-3">Trigger Task</h3>
 							<p className="text-muted-foreground text-sm max-w-[250px]">
-								Trigger a task via @Roo in Slack or the VS Code terminal.
+								Trigger a task via @Meow in Slack or the VS Code terminal.
 							</p>
 						</div>
 

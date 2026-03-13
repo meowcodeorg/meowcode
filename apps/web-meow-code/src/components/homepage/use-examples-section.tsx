@@ -398,7 +398,7 @@ export function UseExamplesSection({ agentTitle = false }: { agentTitle?: boolea
 					</h2>
 					<p className="text-xl font-light text-muted-foreground max-w-2xl mx-auto">
 						Developers, PMs, Designers, Customer Success: everyone moves faster and more independently with
-						Roo.
+						Meow.
 					</p>
 				</div>
 

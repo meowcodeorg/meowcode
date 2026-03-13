@@ -759,10 +759,10 @@ description: Agent version (should be overridden)
 				if (file === rooSkillMd) {
 					return `---
 name: common-skill
-description: Roo version (should take priority)
+description: Meow version (should take priority)
 ---
 
-# Roo Common Skill`
+# Meow Common Skill`
 				}
 				throw new Error("File not found")
 			})
@@ -773,7 +773,7 @@ description: Roo version (should take priority)
 			const commonSkill = skills.find((s) => s.name === "common-skill")
 			expect(commonSkill).toBeDefined()
 			// .roo should override .agents
-			expect(commonSkill?.description).toBe("Roo version (should take priority)")
+			expect(commonSkill?.description).toBe("Meow version (should take priority)")
 		})
 
 		it("should discover mode-specific skills from .agents directory", async () => {

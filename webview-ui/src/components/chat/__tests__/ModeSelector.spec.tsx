@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@/utils/test-utils"
 
-import type { ModeConfig } from "@roo-code/types"
+import type { ModeConfig } from "@meow-code/types"
 
 import type { Mode } from "@roo/modes"
 
@@ -25,8 +25,8 @@ vi.mock("@/i18n/TranslationContext", () => ({
 	}),
 }))
 
-vi.mock("@/components/ui/hooks/useRooPortal", () => ({
-	useRooPortal: () => document.body,
+vi.mock("@/components/ui/hooks/useMeowPortal", () => ({
+	useMeowPortal: () => document.body,
 }))
 
 vi.mock("@/utils/TelemetryClient", () => ({

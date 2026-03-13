@@ -3,7 +3,7 @@
  * MKT-68: Blog Index Page
  *
  * Lists published blog posts with two views:
- * - Featured (default): Curated 24 posts aligned with Roo Code positioning
+ * - Featured (default): Curated 24 posts aligned with MeowCode positioning
  * - All: Full list with pagination (12 posts per page)
  *
  * Uses dynamic rendering (force-dynamic) for request-time publish gating.
