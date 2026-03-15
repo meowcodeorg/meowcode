@@ -12,7 +12,7 @@ Mode-specific Instructions:
 Custom test instructions
 
 Rules:
-# Rules from .clinerules-architect:
+# Rules from .meowCoderules-architect:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .meowCoderules:
 Mock generic rules

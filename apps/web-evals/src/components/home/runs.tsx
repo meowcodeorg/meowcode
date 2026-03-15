@@ -46,8 +46,8 @@ import {
 import type { LucideIcon } from "lucide-react"
 import { toast } from "sonner"
 
-import type { Run, TaskMetrics } from "@roo-code/evals"
-import type { ToolName } from "@roo-code/types"
+import type { Run, TaskMetrics } from "@meow-code/evals"
+import type { ToolName } from "@meow-code/types"
 
 import { deleteIncompleteRuns, deleteOldRuns } from "@/actions/runs"
 import {

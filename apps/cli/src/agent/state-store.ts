@@ -2,7 +2,7 @@
  * State Store
  *
  * This module manages the client's internal state, including:
- * - The clineMessages array (source of truth for agent state)
+ * - The meowCodeMessages array (source of truth for agent state)
  * - The computed agent state info
  * - Any extension state we want to cache
  *
@@ -12,7 +12,7 @@
  * - Queryable: Current state is always accessible
  */
 
-import { ClineMessage, ExtensionState } from "@roo-code/types"
+import { MeowCodeMessage, ExtensionState } from "@meow-code/types"
 
 import { detectAgentState, AgentStateInfo, AgentLoopState } from "./agent-state.js"
 import { Observable } from "./events.js"
@@ -29,7 +29,7 @@ export interface StoreState {
 	 * The array of messages from the extension.
 	 * This is the primary data used to compute agent state.
 	 */
-	messages: ClineMessage[]
+	messages: MeowCodeMessage[]
 
 	/**
 	 * The computed agent state info.
@@ -82,7 +82,7 @@ function createInitialState(): StoreState {
  * StateStore manages all client state and provides reactive updates.
  *
  * Key features:
- * - Stores the clineMessages array
+ * - Stores the meowCodeMessages array
  * - Automatically computes agent state when messages change
  * - Provides observable pattern for state changes
  * - Tracks state history for debugging (optional)
@@ -144,14 +144,14 @@ export class StateStore {
 	/**
 	 * Get the current messages array.
 	 */
-	getMessages(): ClineMessage[] {
+	getMessages(): MeowCodeMessage[] {
 		return this.state.messages
 	}
 
 	/**
 	 * Get the last message, if any.
 	 */
-	getLastMessage(): ClineMessage | undefined {
+	getLastMessage(): MeowCodeMessage | undefined {
 		return this.state.messages[this.state.messages.length - 1]
 	}
 
@@ -208,7 +208,7 @@ export class StateStore {
 	 * @param messages - The new messages array
 	 * @returns The previous agent state (for comparison)
 	 */
-	setMessages(messages: ClineMessage[]): AgentStateInfo {
+	setMessages(messages: MeowCodeMessage[]): AgentStateInfo {
 		const previousAgentState = this.state.agentState
 		const newAgentState = detectAgentState(messages)
 
@@ -230,7 +230,7 @@ export class StateStore {
 	 * @param message - The message to add
 	 * @returns The previous agent state
 	 */
-	addMessage(message: ClineMessage): AgentStateInfo {
+	addMessage(message: MeowCodeMessage): AgentStateInfo {
 		const newMessages = [...this.state.messages, message]
 		return this.setMessages(newMessages)
 	}
@@ -242,7 +242,7 @@ export class StateStore {
 	 * @param message - The updated message
 	 * @returns The previous agent state, or undefined if message not found
 	 */
-	updateMessage(message: ClineMessage): AgentStateInfo | undefined {
+	updateMessage(message: MeowCodeMessage): AgentStateInfo | undefined {
 		const index = this.state.messages.findIndex((m) => m.ts === message.ts)
 		if (index === -1) {
 			// Message not found, add it instead
@@ -303,8 +303,8 @@ export class StateStore {
 	 */
 	setExtensionState(extensionState: Partial<ExtensionState>): void {
 		// Extract and store messages if present
-		if (extensionState.clineMessages) {
-			this.setMessages(extensionState.clineMessages)
+		if (extensionState.meowCodeMessages) {
+			this.setMessages(extensionState.meowCodeMessages)
 		}
 
 		// Store the rest of the extension state

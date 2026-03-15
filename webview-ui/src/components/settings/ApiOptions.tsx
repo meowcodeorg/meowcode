@@ -32,7 +32,7 @@ import {
 	vercelAiGatewayDefaultModelId,
 	minimaxDefaultModelId,
 	unboundDefaultModelId,
-} from "@roo-code/types"
+} from "@meow-code/types"
 
 import {
 	getProviderServiceConfig,
@@ -82,7 +82,7 @@ import {
 	OpenRouter,
 	QwenCode,
 	Requesty,
-	Roo,
+	Meow,
 	SambaNova,
 	Unbound,
 	Vertex,
@@ -105,7 +105,7 @@ import { TemperatureControl } from "./TemperatureControl"
 import { RateLimitSecondsControl } from "./RateLimitSecondsControl"
 import { ConsecutiveMistakeLimitControl } from "./ConsecutiveMistakeLimitControl"
 import { BedrockCustomArn } from "./providers/BedrockCustomArn"
-import { RooBalanceDisplay } from "./providers/RooBalanceDisplay"
+import { MeowBalanceDisplay } from "./providers/MeowBalanceDisplay"
 import { buildDocLink } from "@src/utils/docLinks"
 import { BookOpenText } from "lucide-react"
 
@@ -463,7 +463,7 @@ const ApiOptions = ({
 				<div className="flex justify-between items-center">
 					<label className="block font-medium">{t("settings:providers.apiProvider")}</label>
 					{selectedProvider === "roo" && cloudIsAuthenticated ? (
-						<RooBalanceDisplay />
+						<MeowBalanceDisplay />
 					) : (
 						docs && (
 							<VSCodeLink href={docs.url} target="_blank" className="flex gap-2">
@@ -704,7 +704,7 @@ const ApiOptions = ({
 					)}
 
 					{selectedProvider === "roo" && (
-						<Roo
+						<Meow
 							apiConfiguration={apiConfiguration}
 							setApiConfigurationField={setApiConfigurationField}
 							routerModels={routerModels}

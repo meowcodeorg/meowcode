@@ -1,9 +1,9 @@
-import type { ClineMessage } from "@roo-code/types"
+import type { MeowCodeMessage } from "@meow-code/types"
 
 import { detectAgentState } from "../agent-state.js"
 import { taskCompleted } from "../events.js"
 
-function createMessage(overrides: Partial<ClineMessage>): ClineMessage {
+function createMessage(overrides: Partial<MeowCodeMessage>): MeowCodeMessage {
 	return { ts: Date.now() + Math.random() * 1000, type: "say", ...overrides }
 }
 

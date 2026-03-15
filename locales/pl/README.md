@@ -1,21 +1,21 @@
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline"><img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=flat&logo=visualstudiocode&logoColor=white" alt="VS Code Marketplace"></a>
-  <a href="https://x.com/roocode"><img src="https://img.shields.io/badge/roocode-000000?style=flat&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://youtube.com/@roocodeyt?feature=shared"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube"></a>
-  <a href="https://discord.gg/roocode"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Join Discord"></a>
-  <a href="https://www.reddit.com/r/RooCode/"><img src="https://img.shields.io/badge/Join%20r%2FRooCode-FF4500?style=flat&logo=reddit&logoColor=white" alt="Join r/RooCode"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=MeowCodeOrg.meow-code"><img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=flat&logo=visualstudiocode&logoColor=white" alt="VS Code Marketplace"></a>
+  <a href="https://x.com/meowcode"><img src="https://img.shields.io/badge/meowcode-000000?style=flat&logo=x&logoColor=white" alt="X"></a>
+  <a href="https://youtube.com/@meowcodeyt?feature=shared"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://discord.gg/meowcode"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Join Discord"></a>
+  <a href="https://www.reddit.com/r/MeowCode/"><img src="https://img.shields.io/badge/Join%20r%2FMeowCode-FF4500?style=flat&logo=reddit&logoColor=white" alt="Join r/MeowCode"></a>
 </p>
 <p align="center">
-  <em>Uzyskaj szybką pomoc → <a href="https://discord.gg/roocode">Dołącz do Discorda</a> • Wolisz asynchronicznie? → <a href="https://www.reddit.com/r/RooCode/">Dołącz do r/RooCode</a></em>
+  <em>Uzyskaj szybką pomoc → <a href="https://discord.gg/meowcode">Dołącz do Discorda</a> • Wolisz asynchronicznie? → <a href="https://www.reddit.com/r/MeowCode/">Dołącz do r/MeowCode</a></em>
 </p>
 
-# Roo Code
+# MeowCode
 
 > Twój zespół deweloperski zasilany AI — prosto w edytorze
 
 ## Nowości w v3.51.0
 
-- Dodano obsługę OpenAI GPT-5.4 i GPT-5.3 Chat Latest, żebyś mógł używać najnowszych modeli czatu OpenAI w Roo Code.
+- Dodano obsługę OpenAI GPT-5.4 i GPT-5.3 Chat Latest, żebyś mógł używać najnowszych modeli czatu OpenAI w MeowCode.
 - Skills można teraz udostępniać jako slash commandy z wykonaniem awaryjnym, żeby szybciej uruchamiać wielokrotnego użytku workflowy.
 
 <details>
@@ -44,7 +44,7 @@
 
 ---
 
-## Co Roo Code może zrobić dla CIEBIE?
+## Co MeowCode może zrobić dla CIEBIE?
 
 - Generowanie kodu z opisów w języku naturalnym
 - Dostosuj się za pomocą trybów: Kod, Architekt, Zapytaj, Debugowanie i Tryby niestandardowe
@@ -56,7 +56,7 @@
 
 ## Tryby
 
-Roo Code dostosowuje się do Twojego sposobu pracy, a nie odwrotnie:
+MeowCode dostosowuje się do Twojego sposobu pracy, a nie odwrotnie:
 
 - Tryb Kod: codzienne kodowanie, edycje i operacje na plikach
 - Tryb Architekt: planowanie systemów, specyfikacji i migracji
@@ -64,7 +64,7 @@ Roo Code dostosowuje się do Twojego sposobu pracy, a nie odwrotnie:
 - Tryb Debugowanie: śledzenie problemów, dodawanie logów, izolowanie przyczyn źródłowych
 - Tryby niestandardowe: buduj specjalistyczne tryby dla swojego zespołu lub przepływu pracy
 
-Więcej: [Korzystanie z trybów](https://docs.roocode.com/basic-usage/using-modes) • [Tryby niestandardowe](https://docs.roocode.com/advanced-usage/custom-modes)
+Więcej: [Korzystanie z trybów](https://docs.TODOURL/basic-usage/using-modes) • [Tryby niestandardowe](https://docs.TODOURL/advanced-usage/custom-modes)
 
 ## Filmy instruktażowe i prezentujące funkcje
 
@@ -72,22 +72,22 @@ Więcej: [Korzystanie z trybów](https://docs.roocode.com/basic-usage/using-mode
 
 |                                                                                                                                                                            |                                                                                                                                                                            |                                                                                                                                                                              |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <a href="https://www.youtube.com/watch?v=Mcq3r1EPZ-4"><img src="https://img.youtube.com/vi/Mcq3r1EPZ-4/maxresdefault.jpg" width="100%"></a><br><b>Instalacja Roo Code</b>  | <a href="https://www.youtube.com/watch?v=ZBML8h5cCgo"><img src="https://img.youtube.com/vi/ZBML8h5cCgo/maxresdefault.jpg" width="100%"></a><br><b>Konfiguracja profili</b> | <a href="https://www.youtube.com/watch?v=r1bpod1VWhg"><img src="https://img.youtube.com/vi/r1bpod1VWhg/maxresdefault.jpg" width="100%"></a><br><b>Indeksowanie bazy kodu</b> |
+| <a href="https://www.youtube.com/watch?v=Mcq3r1EPZ-4"><img src="https://img.youtube.com/vi/Mcq3r1EPZ-4/maxresdefault.jpg" width="100%"></a><br><b>Instalacja MeowCode</b>  | <a href="https://www.youtube.com/watch?v=ZBML8h5cCgo"><img src="https://img.youtube.com/vi/ZBML8h5cCgo/maxresdefault.jpg" width="100%"></a><br><b>Konfiguracja profili</b> | <a href="https://www.youtube.com/watch?v=r1bpod1VWhg"><img src="https://img.youtube.com/vi/r1bpod1VWhg/maxresdefault.jpg" width="100%"></a><br><b>Indeksowanie bazy kodu</b> |
 | <a href="https://www.youtube.com/watch?v=iiAv1eKOaxk"><img src="https://img.youtube.com/vi/iiAv1eKOaxk/maxresdefault.jpg" width="100%"></a><br><b>Tryby niestandardowe</b> |   <a href="https://www.youtube.com/watch?v=Ho30nyY332E"><img src="https://img.youtube.com/vi/Ho30nyY332E/maxresdefault.jpg" width="100%"></a><br><b>Punkty kontrolne</b>   | <a href="https://www.youtube.com/watch?v=HmnNSasv7T8"><img src="https://img.youtube.com/vi/HmnNSasv7T8/maxresdefault.jpg" width="100%"></a><br><b>Zarządzanie Kontekstem</b> |
 
 </div>
 <p align="center">
-<a href="https://docs.roocode.com/tutorial-videos">Więcej szybkich filmów instruktażowych i prezentujących funkcje...</a>
+<a href="https://docs.TODOURL/tutorial-videos">Więcej szybkich filmów instruktażowych i prezentujących funkcje...</a>
 </p>
 
 ## Zasoby
 
-- **[Dokumentacja](https://docs.roocode.com):** Oficjalny przewodnik po instalacji, konfiguracji i opanowaniu Roo Code.
-- **[Kanał YouTube](https://youtube.com/@roocodeyt?feature=shared):** Oglądaj samouczki i zobacz funkcje w akcji.
-- **[Serwer Discord](https://discord.gg/roocode):** Dołącz do społeczności, aby uzyskać pomoc i dyskutować w czasie rzeczywistym.
-- **[Społeczność Reddit](https://www.reddit.com/r/RooCode):** Dziel się swoimi doświadczeniami i zobacz, co budują inni.
-- **[Problemy na GitHub](https://github.com/RooCodeInc/Roo-Code/issues):** Zgłaszaj błędy i śledź rozwój.
-- **[Prośby o funkcje](https://github.com/RooCodeInc/Roo-Code/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop):** Masz pomysł? Podziel się nim z deweloperami.
+- **[Dokumentacja](https://docs.TODOURL):** Oficjalny przewodnik po instalacji, konfiguracji i opanowaniu MeowCode.
+- **[Kanał YouTube](https://youtube.com/@meowcodeyt?feature=shared):** Oglądaj samouczki i zobacz funkcje w akcji.
+- **[Serwer Discord](https://discord.gg/meowcode):** Dołącz do społeczności, aby uzyskać pomoc i dyskutować w czasie rzeczywistym.
+- **[Społeczność Reddit](https://www.reddit.com/r/MeowCode):** Dziel się swoimi doświadczeniami i zobacz, co budują inni.
+- **[Problemy na GitHub](https://github.com/MeowCodeInc/MeowCode/issues):** Zgłaszaj błędy i śledź rozwój.
+- **[Prośby o funkcje](https://github.com/MeowCodeInc/MeowCode/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop):** Masz pomysł? Podziel się nim z deweloperami.
 
 ---
 
@@ -96,7 +96,7 @@ Więcej: [Korzystanie z trybów](https://docs.roocode.com/basic-usage/using-mode
 1. **Sklonuj** repozytorium:
 
 ```sh
-git clone https://github.com/RooCodeInc/Roo-Code.git
+git clone https://github.com/MeowCodeInc/MeowCode.git
 ```
 
 2. **Zainstaluj zależności**:
@@ -107,13 +107,13 @@ pnpm install
 
 3. **Uruchom rozszerzenie**:
 
-Istnieje kilka sposobów na uruchomienie rozszerzenia Roo Code:
+Istnieje kilka sposobów na uruchomienie rozszerzenia MeowCode:
 
 ### Tryb deweloperski (F5)
 
 Do aktywnego programowania użyj wbudowanego debugowania VSCode:
 
-Naciśnij `F5` (lub przejdź do **Uruchom** → **Rozpocznij debugowanie**) w VSCode. Otworzy to nowe okno VSCode z uruchomionym rozszerzeniem Roo Code.
+Naciśnij `F5` (lub przejdź do **Uruchom** → **Rozpocznij debugowanie**) w VSCode. Otworzy to nowe okno VSCode z uruchomionym rozszerzeniem MeowCode.
 
 - Zmiany w widoku internetowym pojawią się natychmiast.
 - Zmiany w rdzeniu rozszerzenia również zostaną automatycznie przeładowane na gorąco.
@@ -147,10 +147,10 @@ Jeśli wolisz zainstalować pakiet VSIX ręcznie:
     ```sh
     pnpm vsix
     ```
-2.  Plik `.vsix` zostanie wygenerowany w katalogu `bin/` (np. `bin/roo-cline-<version>.vsix`).
+2.  Plik `.vsix` zostanie wygenerowany w katalogu `bin/` (np. `bin/meow-code-<version>.vsix`).
 3.  Zainstaluj go ręcznie za pomocą VSCode CLI:
     ```sh
-    code --install-extension bin/roo-cline-<version>.vsix
+    code --install-extension bin/meow-code-<version>.vsix
     ```
 
 ---
@@ -161,7 +161,7 @@ Używamy [changesets](https://github.com/changesets/changesets) do wersjonowania
 
 ## Zastrzeżenie
 
-**Uwaga** Roo Code, Inc. **nie** składa żadnych oświadczeń ani nie udziela żadnych gwarancji dotyczących jakiegokolwiek kodu, modeli lub innych narzędzi dostarczonych lub udostępnionych w związku z Roo Code, jakimikolwiek powiązanymi narzędziami stron trzecich ani żadnymi wynikami. Użytkownik przyjmuje na siebie **wszelkie ryzyko** związane z korzystaniem z takich narzędzi lub wyników; takie narzędzia są dostarczane na zasadzie **"TAK JAK JEST"** i **"W MIARĘ DOSTĘPNOŚCI"**. Takie ryzyko może obejmować, bez ograniczeń, naruszenie własności intelektualnej, luki w zabezpieczeniach cybernetycznych lub ataki, stronniczość, niedokładności, błędy, wady, wirusy, przestoje, utratę lub uszkodzenie mienia i/lub obrażenia ciała. Użytkownik ponosi wyłączną odpowiedzialność za korzystanie z takich narzędzi lub wyników (w tym, bez ograniczeń, za ich legalność, stosowność i wyniki).
+**Uwaga** MeowCode, Inc. **nie** składa żadnych oświadczeń ani nie udziela żadnych gwarancji dotyczących jakiegokolwiek kodu, modeli lub innych narzędzi dostarczonych lub udostępnionych w związku z MeowCode, jakimikolwiek powiązanymi narzędziami stron trzecich ani żadnymi wynikami. Użytkownik przyjmuje na siebie **wszelkie ryzyko** związane z korzystaniem z takich narzędzi lub wyników; takie narzędzia są dostarczane na zasadzie **"TAK JAK JEST"** i **"W MIARĘ DOSTĘPNOŚCI"**. Takie ryzyko może obejmować, bez ograniczeń, naruszenie własności intelektualnej, luki w zabezpieczeniach cybernetycznych lub ataki, stronniczość, niedokładności, błędy, wady, wirusy, przestoje, utratę lub uszkodzenie mienia i/lub obrażenia ciała. Użytkownik ponosi wyłączną odpowiedzialność za korzystanie z takich narzędzi lub wyników (w tym, bez ograniczeń, za ich legalność, stosowność i wyniki).
 
 ---
 
@@ -173,8 +173,8 @@ Uwielbiamy wkłady społeczności! Zacznij od przeczytania naszego pliku [CONTRI
 
 ## Licencja
 
-[Apache 2.0 © 2025 Roo Code, Inc.](../../LICENSE)
+[Apache 2.0 © 2025 MeowCode, Inc.](../../LICENSE)
 
 ---
 
-**Miłej zabawy z Roo Code!** Trzymaj go na krótkiej smyczy albo pozwól działać autonomicznie — nie możemy się doczekać, co zbudujesz. Masz pytania lub pomysły na funkcje? Wpadnij na naszą [społeczność Reddit](https://www.reddit.com/r/RooCode/) lub [Discord](https://discord.gg/roocode). Miłego kodowania!
+**Miłej zabawy z MeowCode!** Trzymaj go na krótkiej smyczy albo pozwól działać autonomicznie — nie możemy się doczekać, co zbudujesz. Masz pytania lub pomysły na funkcje? Wpadnij na naszą [społeczność Reddit](https://www.reddit.com/r/MeowCode/) lub [Discord](https://discord.gg/meowcode). Miłego kodowania!

@@ -3,9 +3,9 @@ import { spawn } from "child_process"
 import { VERSION } from "@/lib/utils/version.js"
 import { isRecord } from "@/lib/utils/guards.js"
 
-const RELEASES_URL = "https://api.github.com/repos/RooCodeInc/Roo-Code/releases?per_page=100"
+const RELEASES_URL = "https://api.github.com/repos/MeowCodeInc/Meow-Code/releases?per_page=100"
 export const INSTALL_SCRIPT_COMMAND =
-	"curl -fsSL https://raw.githubusercontent.com/RooCodeInc/Roo-Code/main/apps/cli/install.sh | sh"
+	"curl -fsSL https://raw.githubusercontent.com/MeowCodeInc/Meow-Code/main/apps/cli/install.sh | sh"
 
 export interface UpgradeOptions {
 	currentVersion?: string
@@ -111,7 +111,7 @@ export async function getLatestCliVersion(fetchImpl: typeof fetch = fetch): Prom
 
 export function runUpgradeInstaller(version?: string, spawnImpl: typeof spawn = spawn): Promise<void> {
 	return new Promise((resolve, reject) => {
-		const env = version ? { ...process.env, ROO_VERSION: version } : process.env
+		const env = version ? { ...process.env, MEOW_VERSION: version } : process.env
 		const child = spawnImpl("sh", ["-c", INSTALL_SCRIPT_COMMAND], { stdio: "inherit", env })
 
 		child.once("error", (error) => {
@@ -141,11 +141,11 @@ export async function upgrade(options: UpgradeOptions = {}): Promise<void> {
 	console.log(`Latest version: ${latestVersion}`)
 
 	if (compareVersions(latestVersion, currentVersion) <= 0) {
-		console.log("Roo CLI is already up to date.")
+		console.log("Meow CLI is already up to date.")
 		return
 	}
 
-	console.log(`Upgrading Roo CLI from ${currentVersion} to ${latestVersion}...`)
+	console.log(`Upgrading Meow CLI from ${currentVersion} to ${latestVersion}...`)
 	if (runInstaller) {
 		await runInstaller()
 	} else {

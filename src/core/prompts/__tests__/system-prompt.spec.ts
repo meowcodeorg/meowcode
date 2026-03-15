@@ -45,7 +45,7 @@ vi.mock("fs/promises")
 
 import * as vscode from "vscode"
 
-import { ModeConfig } from "@roo-code/types"
+import { ModeConfig } from "@meow-code/types"
 
 import { SYSTEM_PROMPT } from "../system"
 import { McpHub } from "../../../services/mcp/McpHub"
@@ -103,9 +103,9 @@ __setMockImplementation(
 		// Add rules
 		const rules = []
 		if (mode) {
-			rules.push(`# Rules from .clinerules-${mode}:\nMock mode-specific rules`)
+			rules.push(`# Rules from .meowCoderules-${mode}:\nMock mode-specific rules`)
 		}
-		rules.push(`# Rules from .clinerules:\nMock generic rules`)
+		rules.push(`# Rules from .meowCoderules:\nMock generic rules`)
 
 		if (rules.length > 0) {
 			sections.push(`Rules:\n${rules.join("\n")}`)

@@ -1,6 +1,6 @@
 import * as path from "path"
 
-import { type ClineSayTool } from "@roo-code/types"
+import { type MeowCodeSayTool } from "@meow-code/types"
 
 import { Task } from "../task/Task"
 import { formatResponse } from "../prompts/responses"
@@ -49,13 +49,13 @@ export class ListFilesTool extends BaseTool<"list_files"> {
 				task.rooProtectedController,
 			)
 
-			const sharedMessageProps: ClineSayTool = {
+			const sharedMessageProps: MeowCodeSayTool = {
 				tool: !recursive ? "listFilesTopLevel" : "listFilesRecursive",
 				path: getReadablePath(task.cwd, relDirPath),
 				isOutsideWorkspace,
 			}
 
-			const completeMessage = JSON.stringify({ ...sharedMessageProps, content: result } satisfies ClineSayTool)
+			const completeMessage = JSON.stringify({ ...sharedMessageProps, content: result } satisfies MeowCodeSayTool)
 			const didApprove = await askApproval("tool", completeMessage)
 
 			if (!didApprove) {
@@ -76,13 +76,13 @@ export class ListFilesTool extends BaseTool<"list_files"> {
 		const absolutePath = relDirPath ? path.resolve(task.cwd, relDirPath) : task.cwd
 		const isOutsideWorkspace = isPathOutsideWorkspace(absolutePath)
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: !recursive ? "listFilesTopLevel" : "listFilesRecursive",
 			path: getReadablePath(task.cwd, relDirPath ?? ""),
 			isOutsideWorkspace,
 		}
 
-		const partialMessage = JSON.stringify({ ...sharedMessageProps, content: "" } satisfies ClineSayTool)
+		const partialMessage = JSON.stringify({ ...sharedMessageProps, content: "" } satisfies MeowCodeSayTool)
 		await task.ask("tool", partialMessage, block.partial).catch(() => {})
 	}
 }

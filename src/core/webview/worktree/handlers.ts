@@ -15,10 +15,10 @@ import type {
 	WorktreeIncludeStatus,
 	WorktreeListResponse,
 	WorktreeDefaultsResponse,
-} from "@roo-code/types"
-import { worktreeService, worktreeIncludeService, type CopyProgressCallback } from "@roo-code/core"
+} from "@meow-code/types"
+import { worktreeService, worktreeIncludeService, type CopyProgressCallback } from "@meow-code/core"
 
-import type { ClineProvider } from "../ClineProvider"
+import type { MeowCodeProvider } from "../MeowCodeProvider"
 
 /**
  * Generate a random alphanumeric suffix for branch/folder names.
@@ -49,7 +49,7 @@ async function isWorkspaceSubfolder(cwd: string): Promise<boolean> {
 	return normalizedCwd !== normalizedGitRoot && normalizedCwd.startsWith(normalizedGitRoot)
 }
 
-export async function handleListWorktrees(provider: ClineProvider): Promise<WorktreeListResponse> {
+export async function handleListWorktrees(provider: MeowCodeProvider): Promise<WorktreeListResponse> {
 	const workspaceFolders = vscode.workspace.workspaceFolders
 	const isMultiRoot = workspaceFolders ? workspaceFolders.length > 1 : false
 
@@ -129,7 +129,7 @@ export async function handleListWorktrees(provider: ClineProvider): Promise<Work
 }
 
 export async function handleCreateWorktree(
-	provider: ClineProvider,
+	provider: MeowCodeProvider,
 	options: {
 		path: string
 		branch?: string
@@ -172,7 +172,7 @@ export async function handleCreateWorktree(
 }
 
 export async function handleDeleteWorktree(
-	provider: ClineProvider,
+	provider: MeowCodeProvider,
 	worktreePath: string,
 	force = false,
 ): Promise<WorktreeResult> {
@@ -181,7 +181,7 @@ export async function handleDeleteWorktree(
 }
 
 export async function handleSwitchWorktree(
-	provider: ClineProvider,
+	provider: MeowCodeProvider,
 	worktreePath: string,
 	newWindow: boolean,
 ): Promise<WorktreeResult> {
@@ -189,7 +189,7 @@ export async function handleSwitchWorktree(
 		const worktreeUri = vscode.Uri.file(worktreePath)
 
 		if (newWindow) {
-			// Set the auto-open path so the new window opens Roo Code sidebar.
+			// Set the auto-open path so the new window opens MeowCode sidebar.
 			await provider.contextProxy.setValue("worktreeAutoOpenPath", worktreePath)
 
 			// Open in new window.
@@ -215,13 +215,13 @@ export async function handleSwitchWorktree(
 	}
 }
 
-export async function handleGetAvailableBranches(provider: ClineProvider): Promise<BranchInfo> {
+export async function handleGetAvailableBranches(provider: MeowCodeProvider): Promise<BranchInfo> {
 	const cwd = provider.cwd
 	// Include branches already in worktrees since we use this for base branch selection
 	return worktreeService.getAvailableBranches(cwd, true)
 }
 
-export async function handleGetWorktreeDefaults(provider: ClineProvider): Promise<WorktreeDefaultsResponse> {
+export async function handleGetWorktreeDefaults(provider: MeowCodeProvider): Promise<WorktreeDefaultsResponse> {
 	const suffix = generateRandomSuffix()
 	const workspaceFolders = vscode.workspace.workspaceFolders
 	const projectName = workspaceFolders?.[0]?.name || "project"
@@ -235,17 +235,17 @@ export async function handleGetWorktreeDefaults(provider: ClineProvider): Promis
 	}
 }
 
-export async function handleGetWorktreeIncludeStatus(provider: ClineProvider): Promise<WorktreeIncludeStatus> {
+export async function handleGetWorktreeIncludeStatus(provider: MeowCodeProvider): Promise<WorktreeIncludeStatus> {
 	const cwd = provider.cwd
 	return worktreeIncludeService.getStatus(cwd)
 }
 
-export async function handleCheckBranchWorktreeInclude(provider: ClineProvider, branch: string): Promise<boolean> {
+export async function handleCheckBranchWorktreeInclude(provider: MeowCodeProvider, branch: string): Promise<boolean> {
 	const cwd = provider.cwd
 	return worktreeIncludeService.branchHasWorktreeInclude(cwd, branch)
 }
 
-export async function handleCreateWorktreeInclude(provider: ClineProvider, content: string): Promise<WorktreeResult> {
+export async function handleCreateWorktreeInclude(provider: MeowCodeProvider, content: string): Promise<WorktreeResult> {
 	const cwd = provider.cwd
 
 	try {
@@ -273,7 +273,7 @@ export async function handleCreateWorktreeInclude(provider: ClineProvider, conte
 	}
 }
 
-export async function handleCheckoutBranch(provider: ClineProvider, branch: string): Promise<WorktreeResult> {
+export async function handleCheckoutBranch(provider: MeowCodeProvider, branch: string): Promise<WorktreeResult> {
 	const cwd = provider.cwd
 	return worktreeService.checkoutBranch(cwd, branch)
 }

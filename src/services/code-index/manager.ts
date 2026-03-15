@@ -8,13 +8,13 @@ import { CodeIndexServiceFactory } from "./service-factory"
 import { CodeIndexSearchService } from "./search-service"
 import { CodeIndexOrchestrator } from "./orchestrator"
 import { CacheManager } from "./cache-manager"
-import { RooIgnoreController } from "../../core/ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../../core/ignore/MeowIgnoreController"
 import fs from "fs/promises"
 import ignore from "ignore"
 import path from "path"
 import { t } from "../../i18n"
-import { TelemetryService } from "@roo-code/telemetry"
-import { TelemetryEventName } from "@roo-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
+import { TelemetryEventName } from "@meow-code/types"
 
 export class CodeIndexManager {
 	// --- Singleton Implementation ---
@@ -386,8 +386,8 @@ export class CodeIndexManager {
 			})
 		}
 
-		// Create RooIgnoreController instance
-		const rooIgnoreController = new RooIgnoreController(workspacePath)
+		// Create MeowIgnoreController instance
+		const rooIgnoreController = new MeowIgnoreController(workspacePath)
 		await rooIgnoreController.initialize()
 
 		// (Re)Create shared service instances

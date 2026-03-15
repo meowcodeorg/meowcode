@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import type { WebviewMessage } from "@roo-code/types"
+import type { WebviewMessage } from "@meow-code/types"
 
 import type {
 	AutocompletePickerState,
@@ -113,7 +113,7 @@ export function usePickerHandlers({
 
 					// Send message to resume the selected task
 					// This triggers createTaskWithHistoryItem -> postStateToWebview
-					// which includes clineMessages and handles mode restoration
+					// which includes meowCodeMessages and handles mode restoration
 					sendToExtension({ type: "showTaskWithId", text: historyItem.id })
 				}
 

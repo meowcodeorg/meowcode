@@ -1,17 +1,17 @@
 // npx vitest run __tests__/provider-delegation.spec.ts
 
 import { describe, it, expect, vi } from "vitest"
-import { RooCodeEventName } from "@roo-code/types"
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { MeowCodeEventName } from "@meow-code/types"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
 
-describe("ClineProvider.delegateParentAndOpenChild()", () => {
+describe("MeowCodeProvider.delegateParentAndOpenChild()", () => {
 	it("persists parent delegation metadata and emits TaskDelegated", async () => {
 		const providerEmit = vi.fn()
 		const parentTask = { taskId: "parent-1", emit: vi.fn() } as any
 
 		const childStart = vi.fn()
 		const updateTaskHistory = vi.fn()
-		const removeClineFromStack = vi.fn().mockResolvedValue(undefined)
+		const removeMeowCodeFromStack = vi.fn().mockResolvedValue(undefined)
 		const createTask = vi.fn().mockResolvedValue({ taskId: "child-1", start: childStart })
 		const handleModeSwitch = vi.fn().mockResolvedValue(undefined)
 		const getTaskWithId = vi.fn().mockImplementation(async (id: string) => {
@@ -42,13 +42,13 @@ describe("ClineProvider.delegateParentAndOpenChild()", () => {
 		const provider = {
 			emit: providerEmit,
 			getCurrentTask: vi.fn(() => parentTask),
-			removeClineFromStack,
+			removeMeowCodeFromStack,
 			createTask,
 			getTaskWithId,
 			updateTaskHistory,
 			handleModeSwitch,
 			log: vi.fn(),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
 		const params = {
 			parentTaskId: "parent-1",
@@ -57,12 +57,12 @@ describe("ClineProvider.delegateParentAndOpenChild()", () => {
 			mode: "code",
 		}
 
-		const child = await (ClineProvider.prototype as any).delegateParentAndOpenChild.call(provider, params)
+		const child = await (MeowCodeProvider.prototype as any).delegateParentAndOpenChild.call(provider, params)
 
 		expect(child.taskId).toBe("child-1")
 
 		// Invariant: parent closed before child creation
-		expect(removeClineFromStack).toHaveBeenCalledTimes(1)
+		expect(removeMeowCodeFromStack).toHaveBeenCalledTimes(1)
 		// Child task is created with startTask: false and initialStatus: "active"
 		expect(createTask).toHaveBeenCalledWith("Do something", undefined, parentTask, {
 			initialTodos: [],
@@ -89,7 +89,7 @@ describe("ClineProvider.delegateParentAndOpenChild()", () => {
 		expect(childStart).toHaveBeenCalledTimes(1)
 
 		// Event emission (provider-level)
-		expect(providerEmit).toHaveBeenCalledWith(RooCodeEventName.TaskDelegated, "parent-1", "child-1")
+		expect(providerEmit).toHaveBeenCalledWith(MeowCodeEventName.TaskDelegated, "parent-1", "child-1")
 
 		// Mode switch
 		expect(handleModeSwitch).toHaveBeenCalledWith("code")
@@ -104,7 +104,7 @@ describe("ClineProvider.delegateParentAndOpenChild()", () => {
 		const updateTaskHistory = vi.fn(async () => {
 			callOrder.push("updateTaskHistory")
 		})
-		const removeClineFromStack = vi.fn().mockResolvedValue(undefined)
+		const removeMeowCodeFromStack = vi.fn().mockResolvedValue(undefined)
 		const createTask = vi.fn(async () => {
 			callOrder.push("createTask")
 			return { taskId: "child-1", start: childStart }
@@ -124,15 +124,15 @@ describe("ClineProvider.delegateParentAndOpenChild()", () => {
 		const provider = {
 			emit: vi.fn(),
 			getCurrentTask: vi.fn(() => parentTask),
-			removeClineFromStack,
+			removeMeowCodeFromStack,
 			createTask,
 			getTaskWithId,
 			updateTaskHistory,
 			handleModeSwitch,
 			log: vi.fn(),
-		} as unknown as ClineProvider
+		} as unknown as MeowCodeProvider
 
-		await (ClineProvider.prototype as any).delegateParentAndOpenChild.call(provider, {
+		await (MeowCodeProvider.prototype as any).delegateParentAndOpenChild.call(provider, {
 			parentTaskId: "parent-1",
 			message: "Do something",
 			initialTodos: [],

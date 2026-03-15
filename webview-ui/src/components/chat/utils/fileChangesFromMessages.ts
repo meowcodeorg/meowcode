@@ -1,7 +1,7 @@
-import type { ClineMessage, ClineSayTool } from "@roo-code/types"
+import type { MeowCodeMessage, MeowCodeSayTool } from "@meow-code/types"
 import { safeJsonParse } from "@roo/core"
 
-/** File-edit tool names from ClineSayTool["tool"] (packages/types). */
+/** File-edit tool names from MeowCodeSayTool["tool"] (packages/types). */
 const FILE_EDIT_TOOLS = new Set<string>(["editedExistingFile", "appliedDiff", "newFileCreated"])
 
 export interface FileChangeEntry {
@@ -13,12 +13,12 @@ export interface FileChangeEntry {
 }
 
 /**
- * Derives a list of file changes from clineMessages for the current conversation.
+ * Derives a list of file changes from meowCodeMessages for the current conversation.
  * Includes:
  * - type "say" + say "tool" (applied tool results, if any are ever pushed that way)
  * - type "ask" + ask "tool" (tool approval messages; after approval the message stays as ask, so this is where file edits appear in the UI)
  */
-export function fileChangesFromMessages(messages: ClineMessage[] | undefined): FileChangeEntry[] {
+export function fileChangesFromMessages(messages: MeowCodeMessage[] | undefined): FileChangeEntry[] {
 	if (!messages?.length) return []
 
 	const entries: FileChangeEntry[] = []
@@ -31,7 +31,7 @@ export function fileChangesFromMessages(messages: ClineMessage[] | undefined): F
 		// Only include ask "tool" file edits that the user (or auto-approval) has approved
 		if (isAskTool && !msg.isAnswered) continue
 
-		const tool = safeJsonParse<ClineSayTool>(msg.text)
+		const tool = safeJsonParse<MeowCodeSayTool>(msg.text)
 		if (!tool || !FILE_EDIT_TOOLS.has(tool.tool as string)) continue
 
 		// Batch diffs

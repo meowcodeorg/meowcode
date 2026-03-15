@@ -1,5 +1,5 @@
 /**
- * Roo Code Client
+ * MeowCode Client
  *
  * This is the main entry point for the client library. It provides a high-level
  * API for:
@@ -27,7 +27,7 @@
  * ```
  */
 
-import type { ExtensionMessage, WebviewMessage, ClineAskResponse, ClineMessage, ClineAsk } from "@roo-code/types"
+import type { ExtensionMessage, WebviewMessage, MeowCodeAskResponse, MeowCodeMessage, MeowCodeAsk } from "@meow-code/types"
 
 import { StateStore } from "./state-store.js"
 import { MessageProcessor, parseExtensionMessage } from "./message-processor.js"
@@ -84,7 +84,7 @@ export interface ExtensionClientConfig {
 // =============================================================================
 
 /**
- * ExtensionClient is the main interface for interacting with the Roo Code extension.
+ * ExtensionClient is the main interface for interacting with the MeowCode extension.
  *
  * Basic usage:
  * ```typescript
@@ -235,21 +235,21 @@ export class ExtensionClient {
 	/**
 	 * Get all messages in the current task.
 	 */
-	getMessages(): ClineMessage[] {
+	getMessages(): MeowCodeMessage[] {
 		return this.store.getMessages()
 	}
 
 	/**
 	 * Get the last message.
 	 */
-	getLastMessage(): ClineMessage | undefined {
+	getLastMessage(): MeowCodeMessage | undefined {
 		return this.store.getLastMessage()
 	}
 
 	/**
 	 * Get the current ask type if the agent is waiting for input.
 	 */
-	getCurrentAsk(): ClineAsk | undefined {
+	getCurrentAsk(): MeowCodeAsk | undefined {
 		return this.store.getAgentState().currentAsk
 	}
 
@@ -381,7 +381,7 @@ export class ExtensionClient {
 	 * @param text - Optional text content
 	 * @param images - Optional images
 	 */
-	sendResponse(response: ClineAskResponse, text?: string, images?: string[]): void {
+	sendResponse(response: MeowCodeAskResponse, text?: string, images?: string[]): void {
 		const message: WebviewMessage = {
 			type: "askResponse",
 			askResponse: response,

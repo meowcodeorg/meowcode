@@ -1,8 +1,8 @@
 import path from "path"
 import fs from "fs/promises"
 
-import { type ClineSayTool, DEFAULT_WRITE_DELAY_MS } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import { type MeowCodeSayTool, DEFAULT_WRITE_DELAY_MS } from "@meow-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { getReadablePath } from "../../utils/path"
 import { Task } from "../task/Task"
@@ -138,7 +138,7 @@ export class ApplyDiffTool extends BaseTool<"apply_diff"> {
 			// Check if file is write-protected
 			const isWriteProtected = task.rooProtectedController?.isWriteProtected(relPath) || false
 
-			const sharedMessageProps: ClineSayTool = {
+			const sharedMessageProps: MeowCodeSayTool = {
 				tool: "appliedDiff",
 				path: getReadablePath(task.cwd, relPath),
 				diff: diffContent,
@@ -153,7 +153,7 @@ export class ApplyDiffTool extends BaseTool<"apply_diff"> {
 					originalContent,
 					diffStats,
 					isProtected: isWriteProtected,
-				} satisfies ClineSayTool)
+				} satisfies MeowCodeSayTool)
 
 				let toolProgressStatus
 
@@ -198,7 +198,7 @@ export class ApplyDiffTool extends BaseTool<"apply_diff"> {
 					originalContent,
 					diffStats,
 					isProtected: isWriteProtected,
-				} satisfies ClineSayTool)
+				} satisfies MeowCodeSayTool)
 
 				let toolProgressStatus
 
@@ -278,7 +278,7 @@ export class ApplyDiffTool extends BaseTool<"apply_diff"> {
 			return
 		}
 
-		const sharedMessageProps: ClineSayTool = {
+		const sharedMessageProps: MeowCodeSayTool = {
 			tool: "appliedDiff",
 			path: getReadablePath(task.cwd, relPath),
 			diff: diffContent,

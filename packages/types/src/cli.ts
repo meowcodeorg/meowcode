@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { rooCodeSettingsSchema } from "./global-settings.js"
+import { meowCodeSettingsSchema } from "./global-settings.js"
 
 /**
  * Roo CLI stdin commands
@@ -29,7 +29,7 @@ export const rooCliStartCommandSchema = rooCliCommandBaseSchema.extend({
 	prompt: z.string(),
 	taskId: rooCliSessionIdSchema.optional(),
 	images: z.array(z.string()).optional(),
-	configuration: rooCodeSettingsSchema.optional(),
+	configuration: meowCodeSettingsSchema.optional(),
 })
 
 export type RooCliStartCommand = z.infer<typeof rooCliStartCommandSchema>

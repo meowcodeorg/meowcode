@@ -1,6 +1,6 @@
 import * as path from "path"
 import { parseSourceCodeDefinitionsForFile } from "../../services/tree-sitter"
-import { RooIgnoreController } from "../ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../ignore/MeowIgnoreController"
 
 /**
  * Checks if a definitions string is actually an error message from tree-sitter
@@ -37,8 +37,8 @@ export interface FoldedFileContextOptions {
 	maxCharacters?: number
 	/** The current working directory for resolving relative paths */
 	cwd: string
-	/** Optional RooIgnoreController for file access validation */
-	rooIgnoreController?: RooIgnoreController
+	/** Optional MeowIgnoreController for file access validation */
+	rooIgnoreController?: MeowIgnoreController
 }
 
 /**

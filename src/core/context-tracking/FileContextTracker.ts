@@ -7,7 +7,7 @@ import { fileExistsAtPath } from "../../utils/fs"
 import fs from "fs/promises"
 import { ContextProxy } from "../config/ContextProxy"
 import type { FileMetadataEntry, RecordSource, TaskMetadata } from "./FileContextTrackerTypes"
-import { ClineProvider } from "../webview/ClineProvider"
+import { MeowCodeProvider } from "../webview/MeowCodeProvider"
 
 // This class is responsible for tracking file operations that may result in stale context.
 // If a user modifies a file outside of Roo, the context may become stale and need to be updated.
@@ -22,7 +22,7 @@ import { ClineProvider } from "../webview/ClineProvider"
 // If a file is modified outside of Roo, we detect and track this change to prevent stale context.
 export class FileContextTracker {
 	readonly taskId: string
-	private providerRef: WeakRef<ClineProvider>
+	private providerRef: WeakRef<MeowCodeProvider>
 
 	// File tracking and watching
 	private fileWatchers = new Map<string, vscode.FileSystemWatcher>()
@@ -30,7 +30,7 @@ export class FileContextTracker {
 	private recentlyEditedByRoo = new Set<string>()
 	private checkpointPossibleFiles = new Set<string>()
 
-	constructor(provider: ClineProvider, taskId: string) {
+	constructor(provider: MeowCodeProvider, taskId: string) {
 		this.providerRef = new WeakRef(provider)
 		this.taskId = taskId
 	}
@@ -65,7 +65,7 @@ export class FileContextTracker {
 		// Track file changes
 		watcher.onDidChange(() => {
 			if (this.recentlyEditedByRoo.has(filePath)) {
-				this.recentlyEditedByRoo.delete(filePath) // This was an edit by Roo, no need to inform Roo
+				this.recentlyEditedByRoo.delete(filePath) // This was an edit by Meow, no need to inform Roo
 			} else {
 				this.recentlyModifiedFiles.add(filePath) // This was a user edit, we will inform Roo
 				this.trackFileContext(filePath, "user_edited") // Update the task metadata with file tracking
@@ -97,7 +97,7 @@ export class FileContextTracker {
 	public getContextProxy(): ContextProxy | undefined {
 		const provider = this.providerRef.deref()
 		if (!provider) {
-			console.error("ClineProvider reference is no longer valid")
+			console.error("MeowCodeProvider reference is no longer valid")
 			return undefined
 		}
 		const context = provider.contextProxy
@@ -254,7 +254,7 @@ export class FileContextTracker {
 
 			return uniquePaths
 		} catch (error) {
-			console.error("Failed to get files read by Roo:", error)
+			console.error("Failed to get files read by Meow:", error)
 			return []
 		}
 	}

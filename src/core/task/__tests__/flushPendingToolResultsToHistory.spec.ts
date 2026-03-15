@@ -4,11 +4,11 @@ import * as os from "os"
 import * as path from "path"
 import * as vscode from "vscode"
 
-import type { GlobalState, ProviderSettings } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import type { GlobalState, ProviderSettings } from "@meow-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { Task } from "../Task"
-import { ClineProvider } from "../../webview/ClineProvider"
+import { MeowCodeProvider } from "../../webview/MeowCodeProvider"
 import { ContextProxy } from "../../config/ContextProxy"
 
 // Mock delay before any imports that might use it
@@ -124,7 +124,7 @@ vi.mock("../../environment/getEnvironmentDetails", () => ({
 	getEnvironmentDetails: vi.fn().mockResolvedValue(""),
 }))
 
-vi.mock("../../ignore/RooIgnoreController")
+vi.mock("../../ignore/MeowIgnoreController")
 
 vi.mock("../../condense", async (importOriginal) => {
 	const actual = (await importOriginal()) as any
@@ -203,7 +203,7 @@ describe("flushPendingToolResultsToHistory", () => {
 			dispose: vi.fn(),
 		}
 
-		mockProvider = new ClineProvider(
+		mockProvider = new MeowCodeProvider(
 			mockExtensionContext,
 			mockOutputChannel,
 			"sidebar",

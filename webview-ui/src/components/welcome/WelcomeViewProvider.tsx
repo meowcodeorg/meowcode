@@ -7,7 +7,7 @@ import {
 	VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react"
 
-import type { ProviderSettings } from "@roo-code/types"
+import type { ProviderSettings } from "@meow-code/types"
 
 import { useExtensionState } from "@src/context/ExtensionStateContext"
 import { validateApiConfiguration } from "@src/utils/validate"
@@ -18,7 +18,7 @@ import { Button } from "@src/components/ui"
 import ApiOptions from "../settings/ApiOptions"
 import { Tab, TabContent } from "../common/Tab"
 
-import RooHero from "./RooHero"
+import MeowHero from "./MeowHero"
 import { Trans } from "react-i18next"
 import { ArrowLeft, ArrowRight, BadgeInfo, Brain, TriangleAlert } from "lucide-react"
 import { buildDocLink } from "@/utils/docLinks"
@@ -239,7 +239,7 @@ const WelcomeViewProvider = () => {
 												ref={manualUrlInputRef as any}
 												value={manualUrl}
 												onKeyUp={handleManualUrlChange}
-												placeholder="vscode://RooVeterinaryInc.roo-cline/auth/clerk/callback?state=..."
+												placeholder="vscode://MeowCodeOrg.meow-code/auth/clerk/callback?state=..."
 												className="flex-1"
 											/>
 											<Button
@@ -255,7 +255,7 @@ const WelcomeViewProvider = () => {
 												components={{
 													DocsLink: (
 														<a
-															href={buildDocLink("roo-code-cloud/login", "setup")}
+															href={buildDocLink("meow-code-cloud/login", "setup")}
 															target="_blank"
 															rel="noopener noreferrer"
 															className="text-vscode-textLink-foreground hover:underline">
@@ -292,7 +292,7 @@ const WelcomeViewProvider = () => {
 		return (
 			<Tab>
 				<TabContent className="relative flex flex-col gap-4 p-6 justify-center">
-					<RooHero />
+					<MeowHero />
 					<h2 className="mt-0 mb-0 text-xl">{t("welcome:landing.greeting")}</h2>
 
 					<div className="space-y-4 leading-normal">
@@ -344,7 +344,7 @@ const WelcomeViewProvider = () => {
 								(e.target as HTMLInputElement)) as HTMLInputElement
 							setSelectedProvider(target.value as ProviderOption)
 						}}>
-						{/* Roo Code Router Option */}
+						{/* MeowCode Router Option */}
 						<VSCodeRadio value="roo" className="flex items-start gap-2">
 							<div className="flex-1 space-y-1 cursor-pointer">
 								<p className="text-lg font-semibold block -mt-1">
@@ -353,7 +353,7 @@ const WelcomeViewProvider = () => {
 								<p className="text-base text-vscode-descriptionForeground mt-0">
 									{t("welcome:providerSignup.rooCloudDescription")}{" "}
 									<VSCodeLink
-										href="https://roocode.com/provider/pricing?utm_source=extension&utm_medium=welcome-screen&utm_campaign=provider-signup&utm_content=learn-more"
+										href="https://TODOURL/provider/pricing?utm_source=extension&utm_medium=welcome-screen&utm_campaign=provider-signup&utm_content=learn-more"
 										className="cursor-pointer">
 										{t("welcome:providerSignup.learnMore")}
 									</VSCodeLink>

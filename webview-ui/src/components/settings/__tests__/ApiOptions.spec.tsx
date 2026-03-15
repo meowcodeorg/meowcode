@@ -3,8 +3,8 @@
 import { render, screen, fireEvent } from "@/utils/test-utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
-import { type ModelInfo, type ProviderSettings, openAiModelInfoSaneDefaults } from "@roo-code/types"
-import { openAiCodexDefaultModelId } from "@roo-code/types"
+import { type ModelInfo, type ProviderSettings, openAiModelInfoSaneDefaults } from "@meow-code/types"
+import { openAiCodexDefaultModelId } from "@meow-code/types"
 
 import * as ExtensionStateContext from "@src/context/ExtensionStateContext"
 const { ExtensionStateContextProvider } = ExtensionStateContext
@@ -213,16 +213,16 @@ vi.mock("../providers/LiteLLM", () => ({
 	),
 }))
 
-// Mock Roo provider for tests
-vi.mock("../providers/Roo", () => ({
-	Roo: ({ cloudIsAuthenticated }: any) => (
+// Mock Meow provider for tests
+vi.mock("../providers/Meow", () => ({
+	Meow: ({ cloudIsAuthenticated }: any) => (
 		<div data-testid="roo-provider">{cloudIsAuthenticated ? "Authenticated" : "Not Authenticated"}</div>
 	),
 }))
 
-// Mock RooBalanceDisplay for tests
-vi.mock("../providers/RooBalanceDisplay", () => ({
-	RooBalanceDisplay: () => <div data-testid="roo-balance-display">Balance: $10.00</div>,
+// Mock MeowBalanceDisplay for tests
+vi.mock("../providers/MeowBalanceDisplay", () => ({
+	MeowBalanceDisplay: () => <div data-testid="roo-balance-display">Balance: $10.00</div>,
 }))
 
 vi.mock("@src/components/ui/hooks/useSelectedModel", () => ({
@@ -569,7 +569,7 @@ describe("ApiOptions", () => {
 		})
 	})
 
-	describe("Roo provider tests", () => {
+	describe("Meow provider tests", () => {
 		it("shows balance display when authenticated", () => {
 			// Mock useExtensionState to return authenticated state
 			const useExtensionStateMock = vi.spyOn(ExtensionStateContext, "useExtensionState")

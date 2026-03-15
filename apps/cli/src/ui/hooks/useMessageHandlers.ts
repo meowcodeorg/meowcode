@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react"
-import type { ExtensionMessage, ClineMessage, ClineAsk, ClineSay, TodoItem } from "@roo-code/types"
-import { consolidateTokenUsage, consolidateApiRequests, consolidateCommands } from "@roo-code/core/cli"
+import type { ExtensionMessage, MeowCodeMessage, MeowCodeAsk, MeowCodeSay, TodoItem } from "@meow-code/types"
+import { consolidateTokenUsage, consolidateApiRequests, consolidateCommands } from "@meow-code/core/cli"
 
 import type { TUIMessage, ToolData } from "../types.js"
 import type { FileResult, SlashCommandResult, ModeResult } from "../components/autocomplete/index.js"
@@ -26,7 +26,7 @@ export interface UseMessageHandlersReturn {
  * 2. "ask" messages - Requests for user input (approvals, followup questions)
  * 3. Extension state updates - Mode changes, task history, file search results
  *
- * Transforms ClineMessage format to TUIMessage format and updates the store.
+ * Transforms MeowCodeMessage format to TUIMessage format and updates the store.
  */
 export function useMessageHandlers({ nonInteractive }: UseMessageHandlersOptions): UseMessageHandlersReturn {
 	const {
@@ -57,7 +57,7 @@ export function useMessageHandlers({ nonInteractive }: UseMessageHandlersOptions
 	 * Map extension "say" messages to TUI messages
 	 */
 	const handleSayMessage = useCallback(
-		(ts: number, say: ClineSay, text: string, partial: boolean) => {
+		(ts: number, say: MeowCodeSay, text: string, partial: boolean) => {
 			const messageId = ts.toString()
 			const isResuming = useCLIStore.getState().isResumingTask
 
@@ -125,7 +125,7 @@ export function useMessageHandlers({ nonInteractive }: UseMessageHandlersOptions
 	 * Handle extension "ask" messages
 	 */
 	const handleAskMessage = useCallback(
-		(ts: number, ask: ClineAsk, text: string, partial: boolean) => {
+		(ts: number, ask: MeowCodeAsk, text: string, partial: boolean) => {
 			const messageId = ts.toString()
 
 			if (partial) {
@@ -322,16 +322,16 @@ export function useMessageHandlers({ nonInteractive }: UseMessageHandlersOptions
 					setTaskHistory(newTaskHistory)
 				}
 
-				const clineMessages = state.clineMessages
+				const meowCodeMessages = state.meowCodeMessages
 
-				if (clineMessages) {
-					for (const clineMsg of clineMessages) {
-						const ts = clineMsg.ts
-						const type = clineMsg.type
-						const say = clineMsg.say
-						const ask = clineMsg.ask
-						const text = clineMsg.text || ""
-						const partial = clineMsg.partial || false
+				if (meowCodeMessages) {
+					for (const meowCodeMsg of meowCodeMessages) {
+						const ts = meowCodeMsg.ts
+						const type = meowCodeMsg.type
+						const say = meowCodeMsg.say
+						const ask = meowCodeMsg.ask
+						const text = meowCodeMsg.text || ""
+						const partial = meowCodeMsg.partial || false
 
 						if (type === "say" && say) {
 							handleSayMessage(ts, say, text, partial)
@@ -340,11 +340,11 @@ export function useMessageHandlers({ nonInteractive }: UseMessageHandlersOptions
 						}
 					}
 
-					// Compute token usage metrics from clineMessages
+					// Compute token usage metrics from meowCodeMessages
 					// Skip first message (task prompt) as per webview UI pattern
-					if (clineMessages.length > 1) {
+					if (meowCodeMessages.length > 1) {
 						const processed = consolidateApiRequests(
-							consolidateCommands(clineMessages.slice(1) as ClineMessage[]),
+							consolidateCommands(meowCodeMessages.slice(1) as MeowCodeMessage[]),
 						)
 
 						const metrics = consolidateTokenUsage(processed)
@@ -358,18 +358,18 @@ export function useMessageHandlers({ nonInteractive }: UseMessageHandlersOptions
 					useCLIStore.getState().setIsResumingTask(false)
 				}
 			} else if (msg.type === "messageUpdated") {
-				const clineMessage = msg.clineMessage
+				const meowCodeMessage = msg.meowCodeMessage
 
-				if (!clineMessage) {
+				if (!meowCodeMessage) {
 					return
 				}
 
-				const ts = clineMessage.ts
-				const type = clineMessage.type
-				const say = clineMessage.say
-				const ask = clineMessage.ask
-				const text = clineMessage.text || ""
-				const partial = clineMessage.partial || false
+				const ts = meowCodeMessage.ts
+				const type = meowCodeMessage.type
+				const say = meowCodeMessage.say
+				const ask = meowCodeMessage.ask
+				const text = meowCodeMessage.text || ""
+				const partial = meowCodeMessage.partial || false
 
 				if (type === "say" && say) {
 					handleSayMessage(ts, say, text, partial)

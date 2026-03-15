@@ -44,11 +44,11 @@ vi.mock("@src/components/welcome/RooCloudCTA", () => ({
 	default: () => null,
 }))
 
-vi.mock("@src/components/welcome/RooTips", () => ({
+vi.mock("@src/components/welcome/MeowTips", () => ({
 	default: () => null,
 }))
 
-vi.mock("@src/components/welcome/RooHero", () => ({
+vi.mock("@src/components/welcome/MeowHero", () => ({
 	default: () => null,
 }))
 
@@ -98,7 +98,7 @@ const mockPostMessage = (state: any) => {
 			type: "state",
 			state: {
 				version: "1.0.0",
-				clineMessages: [],
+				meowCodeMessages: [],
 				taskHistory: [],
 				shouldShowAnnouncement: false,
 				allowedCommands: [],

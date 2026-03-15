@@ -9,7 +9,7 @@ import { ExtensionStateContextProvider } from "@src/context/ExtensionStateContex
 import ChatView, { ChatViewProps } from "../ChatView"
 
 // Define minimal types needed for testing
-interface ClineMessage {
+interface MeowCodeMessage {
 	type: "say" | "ask"
 	say?: string
 	ask?: string
@@ -20,7 +20,7 @@ interface ClineMessage {
 
 interface ExtensionState {
 	version: string
-	clineMessages: ClineMessage[]
+	meowCodeMessages: MeowCodeMessage[]
 	taskHistory: any[]
 	shouldShowAnnouncement: boolean
 	allowedCommands: string[]
@@ -45,7 +45,7 @@ vi.mock("use-sound", () => ({
 
 // Mock components that use ESM dependencies
 vi.mock("../ChatRow", () => ({
-	default: function MockChatRow({ message }: { message: ClineMessage }) {
+	default: function MockChatRow({ message }: { message: MeowCodeMessage }) {
 		return <div data-testid="chat-row">{JSON.stringify(message)}</div>
 	},
 }))
@@ -69,13 +69,6 @@ vi.mock("../Announcement", () => ({
 			React.createElement("div", null, "What's New"),
 			React.createElement("button", { onClick: hideAnnouncement }, "Close"),
 		)
-	},
-}))
-
-// Mock DismissibleUpsell component
-vi.mock("@/components/common/DismissibleUpsell", () => ({
-	default: function MockDismissibleUpsell({ children }: { children: React.ReactNode }) {
-		return <div data-testid="dismissible-upsell">{children}</div>
 	},
 }))
 
@@ -107,16 +100,16 @@ vi.mock("../QueuedMessages", () => ({
 	},
 }))
 
-// Mock RooTips component
-vi.mock("@src/components/welcome/RooTips", () => ({
-	default: function MockRooTips() {
+// Mock MeowTips component
+vi.mock("@src/components/welcome/MeowTips", () => ({
+	default: function MockMeowTips() {
 		return <div data-testid="roo-tips">Tips content</div>
 	},
 }))
 
-// Mock RooHero component
-vi.mock("@src/components/welcome/RooHero", () => ({
-	default: function MockRooHero() {
+// Mock MeowHero component
+vi.mock("@src/components/welcome/MeowHero", () => ({
+	default: function MockMeowHero() {
 		return <div data-testid="roo-hero">Hero content</div>
 	},
 }))
@@ -209,8 +202,8 @@ vi.mock("react-virtuoso", () => ({
 		data,
 		itemContent,
 	}: {
-		data: ClineMessage[]
-		itemContent: (index: number, item: ClineMessage) => React.ReactNode
+		data: MeowCodeMessage[]
+		itemContent: (index: number, item: MeowCodeMessage) => React.ReactNode
 	}) {
 		return (
 			<div data-testid="virtuoso-item-list">
@@ -231,7 +224,7 @@ const mockPostMessage = (state: Partial<ExtensionState>) => {
 			type: "state",
 			state: {
 				version: "1.0.0",
-				clineMessages: [],
+				meowCodeMessages: [],
 				taskHistory: [],
 				shouldShowAnnouncement: false,
 				allowedCommands: [],
@@ -272,7 +265,7 @@ describe("ChatView - Preserve Images During Chat Activity", () => {
 		// Hydrate state with an active task
 		await act(async () => {
 			mockPostMessage({
-				clineMessages: [
+				meowCodeMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -311,7 +304,7 @@ describe("ChatView - Preserve Images During Chat Activity", () => {
 		// Now simulate an api_req_started message (which happens during chat activity)
 		await act(async () => {
 			mockPostMessage({
-				clineMessages: [
+				meowCodeMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -343,7 +336,7 @@ describe("ChatView - Preserve Images During Chat Activity", () => {
 		// Hydrate state with an active task
 		await act(async () => {
 			mockPostMessage({
-				clineMessages: [
+				meowCodeMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -381,7 +374,7 @@ describe("ChatView - Preserve Images During Chat Activity", () => {
 		for (let i = 0; i < 3; i++) {
 			await act(async () => {
 				mockPostMessage({
-					clineMessages: [
+					meowCodeMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -415,7 +408,7 @@ describe("ChatView - Preserve Images During Chat Activity", () => {
 		// Hydrate with an active task that has a followup ask (so sending is enabled)
 		await act(async () => {
 			mockPostMessage({
-				clineMessages: [
+				meowCodeMessages: [
 					{
 						type: "say",
 						say: "task",

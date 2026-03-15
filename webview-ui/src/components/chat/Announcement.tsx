@@ -13,7 +13,7 @@ interface AnnouncementProps {
 }
 
 /**
- * You must update the `latestAnnouncementId` in ClineProvider for new
+ * You must update the `latestAnnouncementId` in MeowCodeProvider for new
  * announcements to show to users. This new id will be compared with what's in
  * state for the 'last announcement shown', and if it's different then the
  * announcement will render. As soon as an announcement is shown, the id will be
@@ -64,7 +64,7 @@ const Announcement = ({ hideAnnouncement }: AnnouncementProps) => {
 							<SocialLink
 								icon={<SiReddit className="w-4 h-4" aria-hidden />}
 								label="Reddit"
-								href="https://www.reddit.com/r/RooCode/"
+								href="https://www.reddit.com/r/MeowCode/"
 							/>
 						</div>
 					</div>
@@ -103,10 +103,10 @@ const SocialLink = ({ icon, label, href }: { icon: ReactNode; label: string; hre
 
 const GitHubLink = ({ children }: { children?: ReactNode }) => (
 	<VSCodeLink
-		href="https://github.com/RooCodeInc/Roo-Code"
+		href="https://github.com/MeowCodeInc/Meow-Code"
 		onClick={(e) => {
 			e.preventDefault()
-			vscode.postMessage({ type: "openExternal", url: "https://github.com/RooCodeInc/Roo-Code" })
+			vscode.postMessage({ type: "openExternal", url: "https://github.com/MeowCodeInc/Meow-Code" })
 		}}>
 		{children}
 	</VSCodeLink>
@@ -114,10 +114,10 @@ const GitHubLink = ({ children }: { children?: ReactNode }) => (
 
 const CareersLink = ({ children }: { children?: ReactNode }) => (
 	<VSCodeLink
-		href="https://careers.roocode.com"
+		href="https://careers.TODOURL"
 		onClick={(e) => {
 			e.preventDefault()
-			vscode.postMessage({ type: "openExternal", url: "https://careers.roocode.com" })
+			vscode.postMessage({ type: "openExternal", url: "https://careers.TODOURL" })
 		}}>
 		{children}
 	</VSCodeLink>

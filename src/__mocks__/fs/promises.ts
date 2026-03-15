@@ -27,12 +27,12 @@ const baseTestDirs = [
 ]
 
 type RuleFiles = {
-	".clinerules-code": string
-	".clinerules-ask": string
-	".clinerules-architect": string
-	".clinerules-test": string
-	".clinerules-review": string
-	".clinerules": string
+	".meowCoderules-code": string
+	".meowCoderules-ask": string
+	".meowCoderules-architect": string
+	".meowCoderules-test": string
+	".meowCoderules-review": string
+	".meowCoderules": string
 }
 
 // Helper function to ensure directory exists
@@ -55,14 +55,14 @@ const mockFs = {
 
 		// Handle rule files
 		const ruleFiles: RuleFiles = {
-			".clinerules-code": "# Code Mode Rules\n1. Code specific rule",
-			".clinerules-ask": "# Ask Mode Rules\n1. Ask specific rule",
-			".clinerules-architect": "# Architect Mode Rules\n1. Architect specific rule",
-			".clinerules-test":
+			".meowCoderules-code": "# Code Mode Rules\n1. Code specific rule",
+			".meowCoderules-ask": "# Ask Mode Rules\n1. Ask specific rule",
+			".meowCoderules-architect": "# Architect Mode Rules\n1. Architect specific rule",
+			".meowCoderules-test":
 				"# Test Engineer Rules\n1. Always write tests first\n2. Get approval before modifying non-test code",
-			".clinerules-review":
+			".meowCoderules-review":
 				"# Code Reviewer Rules\n1. Provide specific examples in feedback\n2. Focus on maintainability and best practices",
-			".clinerules": "# Test Rules\n1. First rule\n2. Second rule",
+			".meowCoderules": "# Test Rules\n1. First rule\n2. Second rule",
 		}
 
 		// Check for exact file name match

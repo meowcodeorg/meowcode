@@ -17,20 +17,20 @@ vi.mock("vscode", () => ({
 
 describe("checkpointRestoreHandler", () => {
 	let mockProvider: any
-	let mockCline: any
+	let mockMeowCode: any
 
 	beforeEach(() => {
 		vi.clearAllMocks()
 
-		// Setup mock Cline instance
-		mockCline = {
+		// Setup mock MeowCode instance
+		mockMeowCode = {
 			taskId: "test-task-123",
 			abort: false,
 			abortTask: vi.fn(() => {
-				mockCline.abort = true
+				mockMeowCode.abort = true
 			}),
 			checkpointRestore: vi.fn(),
-			clineMessages: [
+			meowCodeMessages: [
 				{ ts: 1, type: "user", say: "user", text: "First message" },
 				{ ts: 2, type: "assistant", say: "assistant", text: "Response" },
 				{
@@ -46,10 +46,10 @@ describe("checkpointRestoreHandler", () => {
 
 		// Setup mock provider
 		mockProvider = {
-			getCurrentTask: vi.fn(() => mockCline),
+			getCurrentTask: vi.fn(() => mockMeowCode),
 			postMessageToWebview: vi.fn(),
 			getTaskWithId: vi.fn(() => ({
-				historyItem: { id: "test-task-123", messages: mockCline.clineMessages },
+				historyItem: { id: "test-task-123", messages: mockMeowCode.meowCodeMessages },
 			})),
 			createTaskWithHistoryItem: vi.fn(),
 			setPendingEditOperation: vi.fn(),
@@ -68,11 +68,11 @@ describe("checkpointRestoreHandler", () => {
 	describe("handleCheckpointRestoreOperation", () => {
 		it("should abort task before checkpoint restore for delete operations", async () => {
 			// Simulate a task that hasn't been aborted yet
-			mockCline.abort = false
+			mockMeowCode.abort = false
 
 			await handleCheckpointRestoreOperation({
 				provider: mockProvider,
-				currentCline: mockCline,
+				currentMeowCode: mockMeowCode,
 				messageTs: 3,
 				messageIndex: 2,
 				checkpoint: { hash: "abc123" },
@@ -80,22 +80,22 @@ describe("checkpointRestoreHandler", () => {
 			})
 
 			// Verify abortTask was called before checkpointRestore
-			expect(mockCline.abortTask).toHaveBeenCalled()
-			expect(mockCline.checkpointRestore).toHaveBeenCalled()
+			expect(mockMeowCode.abortTask).toHaveBeenCalled()
+			expect(mockMeowCode.checkpointRestore).toHaveBeenCalled()
 
 			// Verify the order of operations
-			const abortOrder = mockCline.abortTask.mock.invocationCallOrder[0]
-			const restoreOrder = mockCline.checkpointRestore.mock.invocationCallOrder[0]
+			const abortOrder = mockMeowCode.abortTask.mock.invocationCallOrder[0]
+			const restoreOrder = mockMeowCode.checkpointRestore.mock.invocationCallOrder[0]
 			expect(abortOrder).toBeLessThan(restoreOrder)
 		})
 
 		it("should not abort task if already aborted", async () => {
 			// Simulate a task that's already aborted
-			mockCline.abort = true
+			mockMeowCode.abort = true
 
 			await handleCheckpointRestoreOperation({
 				provider: mockProvider,
-				currentCline: mockCline,
+				currentMeowCode: mockMeowCode,
 				messageTs: 3,
 				messageIndex: 2,
 				checkpoint: { hash: "abc123" },
@@ -103,8 +103,8 @@ describe("checkpointRestoreHandler", () => {
 			})
 
 			// Verify abortTask was not called
-			expect(mockCline.abortTask).not.toHaveBeenCalled()
-			expect(mockCline.checkpointRestore).toHaveBeenCalled()
+			expect(mockMeowCode.abortTask).not.toHaveBeenCalled()
+			expect(mockMeowCode.checkpointRestore).toHaveBeenCalled()
 		})
 
 		it("should handle edit operations with pending edit data", async () => {
@@ -116,7 +116,7 @@ describe("checkpointRestoreHandler", () => {
 
 			await handleCheckpointRestoreOperation({
 				provider: mockProvider,
-				currentCline: mockCline,
+				currentMeowCode: mockMeowCode,
 				messageTs: 3,
 				messageIndex: 2,
 				checkpoint: { hash: "abc123" },
@@ -125,7 +125,7 @@ describe("checkpointRestoreHandler", () => {
 			})
 
 			// Verify abortTask was NOT called for edit operations
-			expect(mockCline.abortTask).not.toHaveBeenCalled()
+			expect(mockMeowCode.abortTask).not.toHaveBeenCalled()
 
 			// Verify pending edit operation was set
 			expect(mockProvider.setPendingEditOperation).toHaveBeenCalledWith("task-test-task-123", {
@@ -137,7 +137,7 @@ describe("checkpointRestoreHandler", () => {
 			})
 
 			// Verify checkpoint restore was called with edit operation
-			expect(mockCline.checkpointRestore).toHaveBeenCalledWith({
+			expect(mockMeowCode.checkpointRestore).toHaveBeenCalledWith({
 				ts: 3,
 				commitHash: "abc123",
 				mode: "restore",
@@ -147,13 +147,13 @@ describe("checkpointRestoreHandler", () => {
 
 		it("should save messages after delete operation", async () => {
 			// Mock the checkpoint restore to simulate message deletion
-			mockCline.checkpointRestore.mockImplementation(async () => {
-				mockCline.clineMessages = mockCline.clineMessages.slice(0, 2)
+			mockMeowCode.checkpointRestore.mockImplementation(async () => {
+				mockMeowCode.meowCodeMessages = mockMeowCode.meowCodeMessages.slice(0, 2)
 			})
 
 			await handleCheckpointRestoreOperation({
 				provider: mockProvider,
-				currentCline: mockCline,
+				currentMeowCode: mockMeowCode,
 				messageTs: 3,
 				messageIndex: 2,
 				checkpoint: { hash: "abc123" },
@@ -162,7 +162,7 @@ describe("checkpointRestoreHandler", () => {
 
 			// Verify saveTaskMessages was called
 			expect(saveTaskMessages).toHaveBeenCalledWith({
-				messages: mockCline.clineMessages,
+				messages: mockMeowCode.meowCodeMessages,
 				taskId: "test-task-123",
 				globalStoragePath: "/test/storage",
 			})
@@ -174,12 +174,12 @@ describe("checkpointRestoreHandler", () => {
 		it("should reinitialize task with correct history item after delete", async () => {
 			const expectedHistoryItem = {
 				id: "test-task-123",
-				messages: mockCline.clineMessages,
+				messages: mockMeowCode.meowCodeMessages,
 			}
 
 			await handleCheckpointRestoreOperation({
 				provider: mockProvider,
-				currentCline: mockCline,
+				currentMeowCode: mockMeowCode,
 				messageTs: 3,
 				messageIndex: 2,
 				checkpoint: { hash: "abc123" },
@@ -202,7 +202,7 @@ describe("checkpointRestoreHandler", () => {
 
 			await handleCheckpointRestoreOperation({
 				provider: mockProvider,
-				currentCline: mockCline,
+				currentMeowCode: mockMeowCode,
 				messageTs: 3,
 				messageIndex: 2,
 				checkpoint: { hash: "abc123" },
@@ -219,13 +219,13 @@ describe("checkpointRestoreHandler", () => {
 
 		it("should handle errors gracefully", async () => {
 			// Mock checkpoint restore to throw an error
-			mockCline.checkpointRestore.mockRejectedValue(new Error("Checkpoint restore failed"))
+			mockMeowCode.checkpointRestore.mockRejectedValue(new Error("Checkpoint restore failed"))
 
 			// The function should throw and show an error message
 			await expect(
 				handleCheckpointRestoreOperation({
 					provider: mockProvider,
-					currentCline: mockCline,
+					currentMeowCode: mockMeowCode,
 					messageTs: 3,
 					messageIndex: 2,
 					checkpoint: { hash: "abc123" },

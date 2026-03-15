@@ -1,17 +1,17 @@
-import { ProviderSettings } from "@roo-code/types"
+import { ProviderSettings } from "@meow-code/types"
 
 import { Task } from "../Task"
-import { ClineProvider } from "../../webview/ClineProvider"
+import { MeowCodeProvider } from "../../webview/MeowCodeProvider"
 
 // Mock dependencies
-vi.mock("../../webview/ClineProvider")
+vi.mock("../../webview/MeowCodeProvider")
 vi.mock("../../../integrations/terminal/TerminalRegistry", () => ({
 	TerminalRegistry: {
 		releaseTerminalsForTask: vi.fn(),
 	},
 }))
-vi.mock("../../ignore/RooIgnoreController")
-vi.mock("../../protect/RooProtectedController")
+vi.mock("../../ignore/MeowIgnoreController")
+vi.mock("../../protect/MeowProtectedController")
 vi.mock("../../context-tracking/FileContextTracker")
 vi.mock("../../../integrations/editor/DiffViewProvider")
 vi.mock("../../tools/ToolRepetitionDetector")
@@ -22,7 +22,7 @@ vi.mock("../../../api", () => ({
 }))
 
 // Mock TelemetryService
-vi.mock("@roo-code/telemetry", () => ({
+vi.mock("@meow-code/telemetry", () => ({
 	TelemetryService: {
 		instance: {
 			captureTaskCreated: vi.fn(),
@@ -57,7 +57,7 @@ describe("Task dispose method", () => {
 
 		// Create task instance without starting it
 		task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			startTask: false,
 		})

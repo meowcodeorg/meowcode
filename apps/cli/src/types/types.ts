@@ -1,4 +1,4 @@
-import type { ProviderName, ReasoningEffortExtended } from "@roo-code/types"
+import type { ProviderName, ReasoningEffortExtended } from "@meow-code/types"
 import type { OutputFormat } from "./json-events.js"
 
 export const supportedProviders = [
@@ -44,7 +44,7 @@ export type FlagOptions = {
 }
 
 export enum OnboardingProviderChoice {
-	Roo = "roo",
+	Meow = "roo",
 	Byok = "byok",
 }
 

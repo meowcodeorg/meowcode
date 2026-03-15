@@ -11,7 +11,7 @@ import {
 	isDynamicProvider,
 	isFauxProvider,
 	isCustomProvider,
-} from "@roo-code/types"
+} from "@meow-code/types"
 
 export function validateApiConfiguration(
 	apiConfiguration: ProviderSettings,

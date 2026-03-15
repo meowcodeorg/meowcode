@@ -6,7 +6,7 @@ import {
 	IMAGE_GENERATION_MODEL_IDS,
 	IMAGE_GENERATION_MODELS,
 	getImageGenerationProvider,
-} from "@roo-code/types"
+} from "@meow-code/types"
 import { Task } from "../task/Task"
 import { formatResponse } from "../prompts/responses"
 import { fileExistsAtPath } from "../../utils/fs"
@@ -14,7 +14,7 @@ import { getReadablePath } from "../../utils/path"
 import { isPathOutsideWorkspace } from "../../utils/pathUtils"
 import { EXPERIMENT_IDS, experiments } from "../../shared/experiments"
 import { OpenRouterHandler } from "../../api/providers/openrouter"
-import { RooHandler } from "../../api/providers/roo"
+import { MeowHandler } from "../../api/providers/meow"
 import { BaseTool, ToolCallbacks } from "./BaseTool"
 import type { ToolUse } from "../../shared/tools"
 import { t } from "../../i18n"
@@ -191,8 +191,8 @@ export class GenerateImageTool extends BaseTool<"generate_image"> {
 
 			let result
 			if (modelProvider === "roo") {
-				// Use Roo Code Cloud provider (supports both chat completions and images API)
-				const rooHandler = new RooHandler({} as any)
+				// Use MeowCode Cloud provider (supports both chat completions and images API)
+				const rooHandler = new MeowHandler({} as any)
 				result = await rooHandler.generateImage(prompt, selectedModel, inputImageData, apiMethod)
 			} else {
 				// Use OpenRouter provider (only supports chat completions API)

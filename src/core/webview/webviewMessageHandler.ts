@@ -9,27 +9,25 @@ import * as vscode from "vscode"
 import {
 	type Language,
 	type GlobalState,
-	type ClineMessage,
+	type MeowCodeMessage,
 	type TelemetrySetting,
-	type UserSettingsConfig,
 	type ModelRecord,
 	type Command as SlashCommand,
 	type WebviewMessage,
 	type EditQueuedMessagePayload,
 	TelemetryEventName,
-	RooCodeSettings,
+	MeowCodeSettings,
 	ExperimentId,
 	checkoutDiffPayloadSchema,
 	checkoutRestorePayloadSchema,
-} from "@roo-code/types"
-import { customToolRegistry } from "@roo-code/core"
-import { CloudService } from "@roo-code/cloud"
-import { TelemetryService } from "@roo-code/telemetry"
+} from "@meow-code/types"
+import { customToolRegistry } from "@meow-code/core"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { type ApiMessage } from "../task-persistence/apiMessages"
 import { saveTaskMessages } from "../task-persistence"
 
-import { ClineProvider } from "./ClineProvider"
+import { MeowCodeProvider } from "./MeowCodeProvider"
 import { handleCheckpointRestoreOperation } from "./checkpointRestoreHandler"
 import { generateErrorDiagnostics } from "./diagnosticsHandler"
 import {
@@ -62,7 +60,7 @@ import { getOpenAiModels } from "../../api/providers/openai"
 import { getVsCodeLmModels } from "../../api/providers/vscode-lm"
 import { openMention } from "../mentions"
 import { resolveImageMentions } from "../mentions/resolveImageMentions"
-import { RooIgnoreController } from "../ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../ignore/MeowIgnoreController"
 import { getWorkspacePath } from "../../utils/path"
 import { isPathOutsideWorkspace } from "../../utils/pathUtils"
 import { Mode, defaultModeSlug } from "../../shared/modes"
@@ -90,7 +88,7 @@ import {
 } from "./worktree"
 
 export const webviewMessageHandler = async (
-	provider: ClineProvider,
+	provider: MeowCodeProvider,
 	message: WebviewMessage,
 	marketplaceManager?: MarketplaceManager,
 ) => {
@@ -194,12 +192,12 @@ export const webviewMessageHandler = async (
 	 * this function prefers non-summary messages to ensure user operations
 	 * target the intended message rather than the summary.
 	 */
-	const findMessageIndices = (messageTs: number, currentCline: any) => {
+	const findMessageIndices = (messageTs: number, currentMeowCode: any) => {
 		// Find the exact message by timestamp, not the first one after a cutoff
-		const messageIndex = currentCline.clineMessages.findIndex((msg: ClineMessage) => msg.ts === messageTs)
+		const messageIndex = currentMeowCode.meowCodeMessages.findIndex((msg: MeowCodeMessage) => msg.ts === messageTs)
 
 		// Find all matching API messages by timestamp
-		const allApiMatches = currentCline.apiConversationHistory
+		const allApiMatches = currentMeowCode.apiConversationHistory
 			.map((msg: ApiMessage, idx: number) => ({ msg, idx }))
 			.filter(({ msg }: { msg: ApiMessage }) => msg.ts === messageTs)
 
@@ -214,9 +212,9 @@ export const webviewMessageHandler = async (
 	 * Fallback: find first API history index at or after a timestamp.
 	 * Used when the exact user message isn't present in apiConversationHistory (e.g., after condense).
 	 */
-	const findFirstApiIndexAtOrAfter = (ts: number, currentCline: any) => {
+	const findFirstApiIndexAtOrAfter = (ts: number, currentMeowCode: any) => {
 		if (typeof ts !== "number") return -1
-		return currentCline.apiConversationHistory.findIndex(
+		return currentMeowCode.apiConversationHistory.findIndex(
 			(msg: ApiMessage) => typeof msg?.ts === "number" && (msg.ts as number) >= ts,
 		)
 	}
@@ -226,19 +224,19 @@ export const webviewMessageHandler = async (
 	 */
 	const handleDeleteOperation = async (messageTs: number): Promise<void> => {
 		// Check if there's a checkpoint before this message
-		const currentCline = provider.getCurrentTask()
+		const currentMeowCode = provider.getCurrentTask()
 		let hasCheckpoint = false
 
-		if (!currentCline) {
+		if (!currentMeowCode) {
 			await vscode.window.showErrorMessage(t("common:errors.message.no_active_task_to_delete"))
 			return
 		}
 
-		const { messageIndex } = findMessageIndices(messageTs, currentCline)
+		const { messageIndex } = findMessageIndices(messageTs, currentMeowCode)
 
 		if (messageIndex !== -1) {
 			// Find the last checkpoint before this message
-			const checkpoints = currentCline.clineMessages.filter(
+			const checkpoints = currentMeowCode.meowCodeMessages.filter(
 				(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 			)
 			hasCheckpoint = checkpoints.length > 0
@@ -256,18 +254,18 @@ export const webviewMessageHandler = async (
 	 * Handles confirmed message deletion from webview dialog
 	 */
 	const handleDeleteMessageConfirm = async (messageTs: number, restoreCheckpoint?: boolean): Promise<void> => {
-		const currentCline = provider.getCurrentTask()
-		if (!currentCline) {
-			console.error("[handleDeleteMessageConfirm] No current cline available")
+		const currentMeowCode = provider.getCurrentTask()
+		if (!currentMeowCode) {
+			console.error("[handleDeleteMessageConfirm] No current meowCode available")
 			return
 		}
 
-		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentCline)
+		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentMeowCode)
 		// Determine API truncation index with timestamp fallback if exact match not found
 		let apiIndexToUse = apiConversationHistoryIndex
-		const tsThreshold = currentCline.clineMessages[messageIndex]?.ts
+		const tsThreshold = currentMeowCode.meowCodeMessages[messageIndex]?.ts
 		if (apiIndexToUse === -1 && typeof tsThreshold === "number") {
-			apiIndexToUse = findFirstApiIndexAtOrAfter(tsThreshold, currentCline)
+			apiIndexToUse = findFirstApiIndexAtOrAfter(tsThreshold, currentMeowCode)
 		}
 
 		if (messageIndex === -1) {
@@ -276,12 +274,12 @@ export const webviewMessageHandler = async (
 		}
 
 		try {
-			const targetMessage = currentCline.clineMessages[messageIndex]
+			const targetMessage = currentMeowCode.meowCodeMessages[messageIndex]
 
 			// If checkpoint restoration is requested, find and restore to the last checkpoint before this message
 			if (restoreCheckpoint) {
 				// Find the last checkpoint before this message
-				const checkpoints = currentCline.clineMessages.filter(
+				const checkpoints = currentMeowCode.meowCodeMessages.filter(
 					(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 				)
 
@@ -290,7 +288,7 @@ export const webviewMessageHandler = async (
 				if (nextCheckpoint && nextCheckpoint.text) {
 					await handleCheckpointRestoreOperation({
 						provider,
-						currentCline,
+						currentMeowCode,
 						messageTs: targetMessage.ts!,
 						messageIndex,
 						checkpoint: { hash: nextCheckpoint.text },
@@ -306,27 +304,27 @@ export const webviewMessageHandler = async (
 				// Store checkpoints from messages that will be preserved
 				const preservedCheckpoints = new Map<number, any>()
 				for (let i = 0; i < messageIndex; i++) {
-					const msg = currentCline.clineMessages[i]
+					const msg = currentMeowCode.meowCodeMessages[i]
 					if (msg?.checkpoint && msg.ts) {
 						preservedCheckpoints.set(msg.ts, msg.checkpoint)
 					}
 				}
 
 				// Delete this message and all subsequent messages using MessageManager
-				await currentCline.messageManager.rewindToTimestamp(targetMessage.ts!, { includeTargetMessage: false })
+				await currentMeowCode.messageManager.rewindToTimestamp(targetMessage.ts!, { includeTargetMessage: false })
 
 				// Restore checkpoint associations for preserved messages
 				for (const [ts, checkpoint] of preservedCheckpoints) {
-					const msgIndex = currentCline.clineMessages.findIndex((msg) => msg.ts === ts)
+					const msgIndex = currentMeowCode.meowCodeMessages.findIndex((msg) => msg.ts === ts)
 					if (msgIndex !== -1) {
-						currentCline.clineMessages[msgIndex].checkpoint = checkpoint
+						currentMeowCode.meowCodeMessages[msgIndex].checkpoint = checkpoint
 					}
 				}
 
 				// Save the updated messages with restored checkpoints
 				await saveTaskMessages({
-					messages: currentCline.clineMessages,
-					taskId: currentCline.taskId,
+					messages: currentMeowCode.meowCodeMessages,
+					taskId: currentMeowCode.taskId,
 					globalStoragePath: provider.contextProxy.globalStorageUri.fsPath,
 				})
 
@@ -348,22 +346,22 @@ export const webviewMessageHandler = async (
 	 */
 	const handleEditOperation = async (messageTs: number, editedContent: string, images?: string[]): Promise<void> => {
 		// Check if there's a checkpoint before this message
-		const currentCline = provider.getCurrentTask()
+		const currentMeowCode = provider.getCurrentTask()
 		let hasCheckpoint = false
-		if (currentCline) {
-			const { messageIndex } = findMessageIndices(messageTs, currentCline)
+		if (currentMeowCode) {
+			const { messageIndex } = findMessageIndices(messageTs, currentMeowCode)
 			if (messageIndex !== -1) {
 				// Find the last checkpoint before this message
-				const checkpoints = currentCline.clineMessages.filter(
+				const checkpoints = currentMeowCode.meowCodeMessages.filter(
 					(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 				)
 
 				hasCheckpoint = checkpoints.length > 0
 			} else {
-				console.log("[webviewMessageHandler] Edit - Message not found in clineMessages!")
+				console.log("[webviewMessageHandler] Edit - Message not found in meowCodeMessages!")
 			}
 		} else {
-			console.log("[webviewMessageHandler] Edit - No currentCline available!")
+			console.log("[webviewMessageHandler] Edit - No currentMeowCode available!")
 		}
 
 		// Send message to webview to show edit confirmation dialog
@@ -385,14 +383,14 @@ export const webviewMessageHandler = async (
 		restoreCheckpoint?: boolean,
 		images?: string[],
 	): Promise<void> => {
-		const currentCline = provider.getCurrentTask()
-		if (!currentCline) {
-			console.error("[handleEditMessageConfirm] No current cline available")
+		const currentMeowCode = provider.getCurrentTask()
+		if (!currentMeowCode) {
+			console.error("[handleEditMessageConfirm] No current meowCode available")
 			return
 		}
 
 		// Use findMessageIndices to find messages based on timestamp
-		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentCline)
+		const { messageIndex, apiConversationHistoryIndex } = findMessageIndices(messageTs, currentMeowCode)
 
 		if (messageIndex === -1) {
 			const errorMessage = t("common:errors.message.message_not_found", { messageTs })
@@ -402,12 +400,12 @@ export const webviewMessageHandler = async (
 		}
 
 		try {
-			const targetMessage = currentCline.clineMessages[messageIndex]
+			const targetMessage = currentMeowCode.meowCodeMessages[messageIndex]
 
 			// If checkpoint restoration is requested, find and restore to the last checkpoint before this message
 			if (restoreCheckpoint) {
 				// Find the last checkpoint before this message
-				const checkpoints = currentCline.clineMessages.filter(
+				const checkpoints = currentMeowCode.meowCodeMessages.filter(
 					(msg) => msg.say === "checkpoint_saved" && msg.ts > messageTs,
 				)
 
@@ -416,7 +414,7 @@ export const webviewMessageHandler = async (
 				if (nextCheckpoint && nextCheckpoint.text) {
 					await handleCheckpointRestoreOperation({
 						provider,
-						currentCline,
+						currentMeowCode,
 						messageTs: targetMessage.ts!,
 						messageIndex,
 						checkpoint: { hash: nextCheckpoint.text },
@@ -445,13 +443,13 @@ export const webviewMessageHandler = async (
 
 			// Find the nearest preceding user message to ensure we replace the original, not just the assistant reply
 			for (let i = messageIndex; i >= 0; i--) {
-				const m = currentCline.clineMessages[i]
+				const m = currentMeowCode.meowCodeMessages[i]
 				if (m?.say === "user_feedback") {
 					deleteFromMessageIndex = i
 					// Align API history truncation to the same user message timestamp if present
 					const userTs = m.ts
 					if (typeof userTs === "number") {
-						const apiIdx = currentCline.apiConversationHistory.findIndex(
+						const apiIdx = currentMeowCode.apiConversationHistory.findIndex(
 							(am: ApiMessage) => am.ts === userTs,
 						)
 						if (apiIdx !== -1) {
@@ -464,46 +462,46 @@ export const webviewMessageHandler = async (
 
 			// Timestamp fallback for API history when exact user message isn't present
 			if (deleteFromApiIndex === -1) {
-				const tsThresholdForEdit = currentCline.clineMessages[deleteFromMessageIndex]?.ts
+				const tsThresholdForEdit = currentMeowCode.meowCodeMessages[deleteFromMessageIndex]?.ts
 				if (typeof tsThresholdForEdit === "number") {
-					deleteFromApiIndex = findFirstApiIndexAtOrAfter(tsThresholdForEdit, currentCline)
+					deleteFromApiIndex = findFirstApiIndexAtOrAfter(tsThresholdForEdit, currentMeowCode)
 				}
 			}
 
 			// Store checkpoints from messages that will be preserved
 			const preservedCheckpoints = new Map<number, any>()
 			for (let i = 0; i < deleteFromMessageIndex; i++) {
-				const msg = currentCline.clineMessages[i]
+				const msg = currentMeowCode.meowCodeMessages[i]
 				if (msg?.checkpoint && msg.ts) {
 					preservedCheckpoints.set(msg.ts, msg.checkpoint)
 				}
 			}
 
 			// Delete the original (user) message and all subsequent messages using MessageManager
-			const rewindTs = currentCline.clineMessages[deleteFromMessageIndex]?.ts
+			const rewindTs = currentMeowCode.meowCodeMessages[deleteFromMessageIndex]?.ts
 			if (rewindTs) {
-				await currentCline.messageManager.rewindToTimestamp(rewindTs, { includeTargetMessage: false })
+				await currentMeowCode.messageManager.rewindToTimestamp(rewindTs, { includeTargetMessage: false })
 			}
 
 			// Restore checkpoint associations for preserved messages
 			for (const [ts, checkpoint] of preservedCheckpoints) {
-				const msgIndex = currentCline.clineMessages.findIndex((msg) => msg.ts === ts)
+				const msgIndex = currentMeowCode.meowCodeMessages.findIndex((msg) => msg.ts === ts)
 				if (msgIndex !== -1) {
-					currentCline.clineMessages[msgIndex].checkpoint = checkpoint
+					currentMeowCode.meowCodeMessages[msgIndex].checkpoint = checkpoint
 				}
 			}
 
 			// Save the updated messages with restored checkpoints
 			await saveTaskMessages({
-				messages: currentCline.clineMessages,
-				taskId: currentCline.taskId,
+				messages: currentMeowCode.meowCodeMessages,
+				taskId: currentMeowCode.taskId,
 				globalStoragePath: provider.contextProxy.globalStorageUri.fsPath,
 			})
 
 			// Update the UI to reflect the deletion
 			await provider.postStateToWebview()
 
-			await currentCline.submitUserMessage(editedContent, images)
+			await currentMeowCode.submitUserMessage(editedContent, images)
 		} catch (error) {
 			console.error("Error in edit message:", error)
 			vscode.window.showErrorMessage(
@@ -616,7 +614,7 @@ export const webviewMessageHandler = async (
 			provider.isViewLaunched = true
 			break
 		case "newTask":
-			// Initializing new instance of Cline will make sure that any
+			// Initializing new instance of MeowCode will make sure that any
 			// agentically running promises in old instance don't affect our new
 			// task. This essentially creates a fresh slate for the new task.
 			try {
@@ -742,7 +740,7 @@ export const webviewMessageHandler = async (
 						}
 					}
 
-					await provider.contextProxy.setValue(key as keyof RooCodeSettings, newValue)
+					await provider.contextProxy.setValue(key as keyof MeowCodeSettings, newValue)
 				}
 
 				await provider.postStateToWebview()
@@ -779,51 +777,6 @@ export const webviewMessageHandler = async (
 			const currentTaskId = provider.getCurrentTask()?.taskId
 			if (currentTaskId) {
 				provider.exportTaskWithId(currentTaskId)
-			}
-			break
-		case "shareCurrentTask":
-			const shareTaskId = provider.getCurrentTask()?.taskId
-			const clineMessages = provider.getCurrentTask()?.clineMessages
-
-			if (!shareTaskId) {
-				vscode.window.showErrorMessage(t("common:errors.share_no_active_task"))
-				break
-			}
-
-			try {
-				const visibility = message.visibility || "organization"
-				const result = await CloudService.instance.shareTask(shareTaskId, visibility, clineMessages)
-
-				if (result.success && result.shareUrl) {
-					// Show success notification
-					const messageKey =
-						visibility === "public"
-							? "common:info.public_share_link_copied"
-							: "common:info.organization_share_link_copied"
-					vscode.window.showInformationMessage(t(messageKey))
-
-					// Send success feedback to webview for inline display
-					await provider.postMessageToWebview({
-						type: "shareTaskSuccess",
-						visibility,
-						text: result.shareUrl,
-					})
-				} else {
-					// Handle error
-					const errorMessage = result.error || "Failed to create share link"
-					if (errorMessage.includes("Authentication")) {
-						vscode.window.showErrorMessage(t("common:errors.share_auth_required"))
-					} else if (errorMessage.includes("sharing is not enabled")) {
-						vscode.window.showErrorMessage(t("common:errors.share_not_enabled"))
-					} else if (errorMessage.includes("not found")) {
-						vscode.window.showErrorMessage(t("common:errors.share_task_not_found"))
-					} else {
-						vscode.window.showErrorMessage(errorMessage)
-					}
-				}
-			} catch (error) {
-				provider.log(`[shareCurrentTask] Unexpected error: ${error}`)
-				vscode.window.showErrorMessage(t("common:errors.share_task_failed"))
 			}
 			break
 		case "showTaskWithId":
@@ -993,10 +946,8 @@ export const webviewMessageHandler = async (
 					key: "roo",
 					options: {
 						provider: "roo",
-						baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
-						apiKey: CloudService.hasInstance()
-							? CloudService.instance.authService?.getSessionToken()
-							: undefined,
+						baseUrl: process.env.MEOW_CODE_PROVIDER_URL ?? "https://api.TODOURL/proxy",
+						apiKey: undefined,
 					},
 				},
 			]
@@ -1118,10 +1069,8 @@ export const webviewMessageHandler = async (
 			try {
 				const rooOptions = {
 					provider: "roo" as const,
-					baseUrl: process.env.ROO_CODE_PROVIDER_URL ?? "https://api.roocode.com/proxy",
-					apiKey: CloudService.hasInstance()
-						? CloudService.instance.authService?.getSessionToken()
-						: undefined,
+					baseUrl: process.env.MEOW_CODE_PROVIDER_URL ?? "https://api.TODOURL/proxy",
+					apiKey: undefined,
 				}
 				// Flush cache and refresh to ensure fresh models with current auth state
 				await flushModels(rooOptions, true)
@@ -1142,31 +1091,6 @@ export const webviewMessageHandler = async (
 					success: false,
 					error: errorMessage,
 					values: { provider: "roo" },
-				})
-			}
-			break
-		}
-		case "requestRooCreditBalance": {
-			// Fetch Roo credit balance using CloudAPI
-			const requestId = message.requestId
-			try {
-				if (!CloudService.hasInstance() || !CloudService.instance.cloudAPI) {
-					throw new Error("Cloud service not available")
-				}
-
-				const balance = await CloudService.instance.cloudAPI.creditBalance()
-
-				provider.postMessageToWebview({
-					type: "rooCreditBalance",
-					requestId,
-					values: { balance },
-				})
-			} catch (error) {
-				const errorMessage = error instanceof Error ? error.message : String(error)
-				provider.postMessageToWebview({
-					type: "rooCreditBalance",
-					requestId,
-					values: { error: errorMessage },
 				})
 			}
 			break
@@ -1350,7 +1274,7 @@ export const webviewMessageHandler = async (
 			break
 		}
 		case "openKeyboardShortcuts": {
-			// Open VSCode keyboard shortcuts settings and optionally filter to show the Roo Code commands
+			// Open VSCode keyboard shortcuts settings and optionally filter to show the MeowCode commands
 			const searchQuery = message.text || ""
 			if (searchQuery) {
 				// Open with a search query pre-filled
@@ -1474,18 +1398,6 @@ export const webviewMessageHandler = async (
 			}
 			break
 		}
-		case "taskSyncEnabled":
-			const enabled = message.bool ?? false
-			const updatedSettings: Partial<UserSettingsConfig> = { taskSyncEnabled: enabled }
-
-			try {
-				await CloudService.instance.updateUserSettings(updatedSettings)
-			} catch (error) {
-				provider.log(`Failed to update cloud settings for task sync: ${error}`)
-			}
-
-			break
-
 		case "refreshAllMcpServers": {
 			const mcpHub = provider.getMcpHub()
 
@@ -1671,7 +1583,7 @@ export const webviewMessageHandler = async (
 						includeTaskHistoryInEnhance,
 					} = state
 
-					const currentCline = provider.getCurrentTask()
+					const currentMeowCode = provider.getCurrentTask()
 
 					const result = await MessageEnhancer.enhanceMessage({
 						text: message.text,
@@ -1680,12 +1592,12 @@ export const webviewMessageHandler = async (
 						listApiConfigMeta,
 						enhancementApiConfigId,
 						includeTaskHistoryInEnhance,
-						currentClineMessages: currentCline?.clineMessages,
+						currentMeowCodeMessages: currentMeowCode?.meowCodeMessages,
 						providerSettingsManager: provider.providerSettingsManager,
 					})
 
 					if (result.success && result.enhancedText) {
-						MessageEnhancer.captureTelemetry(currentCline?.taskId, includeTaskHistoryInEnhance)
+						MessageEnhancer.captureTelemetry(currentMeowCode?.taskId, includeTaskHistoryInEnhance)
 						await provider.postMessageToWebview({ type: "enhancedPrompt", text: result.enhancedText })
 					} else {
 						throw new Error(result.error || "Unknown error")
@@ -1768,14 +1680,14 @@ export const webviewMessageHandler = async (
 					20, // Use default limit, as filtering is now done in the backend
 				)
 
-				// Get the RooIgnoreController from the current task, or create a new one
+				// Get the MeowIgnoreController from the current task, or create a new one
 				const currentTask = provider.getCurrentTask()
 				let rooIgnoreController = currentTask?.rooIgnoreController
-				let tempController: RooIgnoreController | undefined
+				let tempController: MeowIgnoreController | undefined
 
 				// If no current task or no controller, create a temporary one
 				if (!rooIgnoreController) {
-					tempController = new RooIgnoreController(workspacePath)
+					tempController = new MeowIgnoreController(workspacePath)
 					await tempController.initialize()
 					rooIgnoreController = tempController
 				}
@@ -1784,7 +1696,7 @@ export const webviewMessageHandler = async (
 					// Get showRooIgnoredFiles setting from state
 					const { showRooIgnoredFiles = false } = (await provider.getState()) ?? {}
 
-					// Filter results using RooIgnoreController if showRooIgnoredFiles is false
+					// Filter results using MeowIgnoreController if showRooIgnoredFiles is false
 					let filteredResults = results
 					if (!showRooIgnoredFiles && rooIgnoreController) {
 						const allowedPaths = rooIgnoreController.filterPaths(results.map((r) => r.path))
@@ -2329,166 +2241,6 @@ export const webviewMessageHandler = async (
 			await provider.postStateToWebview()
 			break
 		}
-		case "cloudButtonClicked": {
-			// Navigate to the cloud tab.
-			provider.postMessageToWebview({ type: "action", action: "cloudButtonClicked" })
-			break
-		}
-		case "rooCloudSignIn": {
-			try {
-				TelemetryService.instance.captureEvent(TelemetryEventName.AUTHENTICATION_INITIATED)
-				// Use provider signup flow if useProviderSignup is explicitly true
-				await CloudService.instance.login(undefined, message.useProviderSignup ?? false)
-			} catch (error) {
-				provider.log(`AuthService#login failed: ${error}`)
-				vscode.window.showErrorMessage("Sign in failed.")
-			}
-
-			break
-		}
-		case "cloudLandingPageSignIn": {
-			try {
-				const landingPageSlug = message.text || "supernova"
-				TelemetryService.instance.captureEvent(TelemetryEventName.AUTHENTICATION_INITIATED)
-				await CloudService.instance.login(landingPageSlug)
-			} catch (error) {
-				provider.log(`CloudService#login failed: ${error}`)
-				vscode.window.showErrorMessage("Sign in failed.")
-			}
-			break
-		}
-		case "rooCloudSignOut": {
-			try {
-				await CloudService.instance.logout()
-				await provider.postStateToWebview()
-				provider.postMessageToWebview({ type: "authenticatedUser", userInfo: undefined })
-			} catch (error) {
-				provider.log(`AuthService#logout failed: ${error}`)
-				vscode.window.showErrorMessage("Sign out failed.")
-			}
-
-			break
-		}
-		case "openAiCodexSignIn": {
-			try {
-				const { openAiCodexOAuthManager } = await import("../../integrations/openai-codex/oauth")
-				const authUrl = openAiCodexOAuthManager.startAuthorizationFlow()
-
-				// Open the authorization URL in the browser
-				await vscode.env.openExternal(vscode.Uri.parse(authUrl))
-
-				// Wait for the callback in a separate promise (non-blocking)
-				openAiCodexOAuthManager
-					.waitForCallback()
-					.then(async () => {
-						vscode.window.showInformationMessage("Successfully signed in to OpenAI Codex")
-						await provider.postStateToWebview()
-					})
-					.catch((error) => {
-						provider.log(`OpenAI Codex OAuth callback failed: ${error}`)
-						if (!String(error).includes("timed out")) {
-							vscode.window.showErrorMessage(`OpenAI Codex sign in failed: ${error.message || error}`)
-						}
-					})
-			} catch (error) {
-				provider.log(`OpenAI Codex OAuth failed: ${error}`)
-				vscode.window.showErrorMessage("OpenAI Codex sign in failed.")
-			}
-			break
-		}
-		case "openAiCodexSignOut": {
-			try {
-				const { openAiCodexOAuthManager } = await import("../../integrations/openai-codex/oauth")
-				await openAiCodexOAuthManager.clearCredentials()
-				vscode.window.showInformationMessage("Signed out from OpenAI Codex")
-				await provider.postStateToWebview()
-			} catch (error) {
-				provider.log(`OpenAI Codex sign out failed: ${error}`)
-				vscode.window.showErrorMessage("OpenAI Codex sign out failed.")
-			}
-			break
-		}
-		case "rooCloudManualUrl": {
-			try {
-				if (!message.text) {
-					vscode.window.showErrorMessage(t("common:errors.manual_url_empty"))
-					break
-				}
-
-				// Parse the callback URL to extract parameters
-				const callbackUrl = message.text.trim()
-				const uri = vscode.Uri.parse(callbackUrl)
-
-				if (!uri.query) {
-					throw new Error(t("common:errors.manual_url_no_query"))
-				}
-
-				const query = new URLSearchParams(uri.query)
-				const code = query.get("code")
-				const state = query.get("state")
-				const organizationId = query.get("organizationId")
-
-				if (!code || !state) {
-					throw new Error(t("common:errors.manual_url_missing_params"))
-				}
-
-				// Reuse the existing authentication flow
-				await CloudService.instance.handleAuthCallback(
-					code,
-					state,
-					organizationId === "null" ? null : organizationId,
-				)
-
-				await provider.postStateToWebview()
-			} catch (error) {
-				provider.log(`ManualUrl#handleAuthCallback failed: ${error}`)
-				const errorMessage = error instanceof Error ? error.message : t("common:errors.manual_url_auth_failed")
-
-				// Show error message through VS Code UI
-				vscode.window.showErrorMessage(`${t("common:errors.manual_url_auth_error")}: ${errorMessage}`)
-			}
-
-			break
-		}
-		case "clearCloudAuthSkipModel": {
-			// Clear the flag that indicates auth completed without model selection
-			await provider.context.globalState.update("roo-auth-skip-model", undefined)
-			await provider.postStateToWebview()
-			break
-		}
-		case "switchOrganization": {
-			try {
-				const organizationId = message.organizationId ?? null
-
-				// Switch to the new organization context
-				await CloudService.instance.switchOrganization(organizationId)
-
-				// Refresh the state to update UI
-				await provider.postStateToWebview()
-
-				// Send success response back to webview
-				await provider.postMessageToWebview({
-					type: "organizationSwitchResult",
-					success: true,
-					organizationId: organizationId,
-				})
-			} catch (error) {
-				provider.log(`Organization switch failed: ${error}`)
-				const errorMessage = error instanceof Error ? error.message : String(error)
-
-				// Send error response back to webview
-				await provider.postMessageToWebview({
-					type: "organizationSwitchResult",
-					success: false,
-					error: errorMessage,
-					organizationId: message.organizationId ?? null,
-				})
-
-				vscode.window.showErrorMessage(`Failed to switch organization: ${errorMessage}`)
-			}
-			break
-		}
-
 		case "saveCodeIndexSettingsAtomic": {
 			if (!message.codeIndexSettings) {
 				break
@@ -3213,12 +2965,6 @@ export const webviewMessageHandler = async (
 			}
 			break
 		}
-		case "showMdmAuthRequiredNotification": {
-			// Show notification that organization requires authentication
-			vscode.window.showWarningMessage(t("common:mdm.info.organization_requires_auth"))
-			break
-		}
-
 		/**
 		 * Chat Message Queue
 		 */

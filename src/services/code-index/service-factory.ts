@@ -1,16 +1,16 @@
 import * as vscode from "vscode"
 import { Ignore } from "ignore"
 
-import type { EmbedderProvider } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
-import { TelemetryEventName } from "@roo-code/types"
+import type { EmbedderProvider } from "@meow-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
+import { TelemetryEventName } from "@meow-code/types"
 
 import { t } from "../../i18n"
 
 import { getDefaultModelId, getModelDimension } from "../../shared/embeddingModels"
 import { Package } from "../../shared/package"
 
-import { RooIgnoreController } from "../../core/ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../../core/ignore/MeowIgnoreController"
 
 import { OpenAiEmbedder } from "./embedders/openai"
 import { CodeIndexOllamaEmbedder } from "./embedders/ollama"
@@ -204,7 +204,7 @@ export class CodeIndexServiceFactory {
 		vectorStore: IVectorStore,
 		cacheManager: CacheManager,
 		ignoreInstance: Ignore,
-		rooIgnoreController?: RooIgnoreController,
+		rooIgnoreController?: MeowIgnoreController,
 	): IFileWatcher {
 		// Get the configurable batch size from VSCode settings
 		let batchSize: number
@@ -236,7 +236,7 @@ export class CodeIndexServiceFactory {
 		context: vscode.ExtensionContext,
 		cacheManager: CacheManager,
 		ignoreInstance: Ignore,
-		rooIgnoreController?: RooIgnoreController,
+		rooIgnoreController?: MeowIgnoreController,
 	): {
 		embedder: IEmbedder
 		vectorStore: IVectorStore

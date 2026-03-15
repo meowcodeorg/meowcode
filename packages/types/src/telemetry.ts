@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { providerNames } from "./provider-settings.js"
-import { clineMessageSchema } from "./message.js"
+import { meowCodeMessageSchema } from "./message.js"
 
 /**
  * TelemetrySetting
@@ -158,10 +158,10 @@ export type TelemetryEvent = {
 }
 
 /**
- * RooCodeTelemetryEvent
+ * MeowCodeTelemetryEvent
  */
 
-export const rooCodeTelemetryEventSchema = z.discriminatedUnion("type", [
+export const meowCodeTelemetryEventSchema = z.discriminatedUnion("type", [
 	z.object({
 		type: z.enum([
 			TelemetryEventName.TASK_CREATED,
@@ -221,7 +221,7 @@ export const rooCodeTelemetryEventSchema = z.discriminatedUnion("type", [
 		properties: z.object({
 			...telemetryPropertiesSchema.shape,
 			taskId: z.string(),
-			message: clineMessageSchema,
+			message: meowCodeMessageSchema,
 		}),
 	}),
 	z.object({
@@ -237,7 +237,7 @@ export const rooCodeTelemetryEventSchema = z.discriminatedUnion("type", [
 	}),
 ])
 
-export type RooCodeTelemetryEvent = z.infer<typeof rooCodeTelemetryEventSchema>
+export type MeowCodeTelemetryEvent = z.infer<typeof meowCodeTelemetryEventSchema>
 
 /**
  * TelemetryEventSubscription

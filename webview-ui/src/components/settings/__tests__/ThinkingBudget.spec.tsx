@@ -2,7 +2,7 @@
 
 import { render, screen, fireEvent } from "@/utils/test-utils"
 
-import type { ModelInfo } from "@roo-code/types"
+import type { ModelInfo } from "@meow-code/types"
 
 import { ThinkingBudget } from "../ThinkingBudget"
 

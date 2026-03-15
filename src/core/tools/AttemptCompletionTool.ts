@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
 
-import { RooCodeEventName, type HistoryItem } from "@roo-code/types"
-import { TelemetryService } from "@roo-code/telemetry"
+import { MeowCodeEventName, type HistoryItem } from "@meow-code/types"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { Task } from "../task/Task"
 import { formatResponse } from "../prompts/responses"
@@ -182,7 +182,7 @@ export class AttemptCompletionTool extends BaseTool<"attempt_completion"> {
 		const result: string | undefined = block.params.result
 		const command: string | undefined = block.params.command
 
-		const lastMessage = task.clineMessages.at(-1)
+		const lastMessage = task.meowCodeMessages.at(-1)
 
 		if (command) {
 			if (lastMessage && lastMessage.ask === "command") {
@@ -202,7 +202,7 @@ export class AttemptCompletionTool extends BaseTool<"attempt_completion"> {
 		task.emitFinalTokenUsageUpdate()
 
 		TelemetryService.instance.captureTaskCompleted(task.taskId)
-		task.emit(RooCodeEventName.TaskCompleted, task.taskId, task.getTokenUsage(), task.toolUsage)
+		task.emit(MeowCodeEventName.TaskCompleted, task.taskId, task.getTokenUsage(), task.toolUsage)
 	}
 }
 

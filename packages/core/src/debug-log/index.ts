@@ -5,13 +5,13 @@
  * which would break TUI applications. The log format is timestamped JSON.
  *
  * Usage:
- *   import { debugLog, DebugLogger } from "@roo-code/core/cli"
+ *   import { debugLog, DebugLogger } from "@meow-code/core/cli"
  *
  *   // Simple logging
  *   debugLog("handleModeSwitch", { mode: newMode, configId })
  *
  *   // Or create a named logger for a component
- *   const log = new DebugLogger("ClineProvider")
+ *   const log = new DebugLogger("MeowCodeProvider")
  *   log.info("handleModeSwitch", { mode: newMode })
  */
 

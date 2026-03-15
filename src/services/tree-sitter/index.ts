@@ -3,7 +3,7 @@ import * as path from "path"
 import { LanguageParser, loadRequiredLanguageParsers } from "./languageParser"
 import { fileExistsAtPath } from "../../utils/fs"
 import { parseMarkdown } from "./markdownParser"
-import { RooIgnoreController } from "../../core/ignore/RooIgnoreController"
+import { MeowIgnoreController } from "../../core/ignore/MeowIgnoreController"
 import { QueryCapture } from "web-tree-sitter"
 
 // Private constant
@@ -96,7 +96,7 @@ export { extensions }
 
 export async function parseSourceCodeDefinitionsForFile(
 	filePath: string,
-	rooIgnoreController?: RooIgnoreController,
+	rooIgnoreController?: MeowIgnoreController,
 ): Promise<string | undefined> {
 	// check if the file exists
 	const fileExists = await fileExistsAtPath(path.resolve(filePath))
@@ -294,7 +294,7 @@ function processCaptures(captures: QueryCapture[], lines: string[], language: st
 async function parseFile(
 	filePath: string,
 	languageParsers: LanguageParser,
-	rooIgnoreController?: RooIgnoreController,
+	rooIgnoreController?: MeowIgnoreController,
 ): Promise<string | null> {
 	// Check if we have permission to access this file
 	if (rooIgnoreController && !rooIgnoreController.validateAccess(filePath)) {

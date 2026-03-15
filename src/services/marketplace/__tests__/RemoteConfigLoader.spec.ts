@@ -2,16 +2,14 @@
 
 import axios from "axios"
 import { RemoteConfigLoader } from "../RemoteConfigLoader"
-import type { MarketplaceItemType } from "@roo-code/types"
+import type { MarketplaceItemType } from "@meow-code/types"
 
 // Mock axios
 vi.mock("axios")
 const mockedAxios = axios as any
 
-// Mock the cloud config
-vi.mock("@roo-code/cloud", () => ({
-	getRooCodeApiUrl: () => "https://test.api.com",
-}))
+// Set the API URL for tests
+process.env.MEOW_CODE_API_URL = "https://test.api.com"
 
 describe("RemoteConfigLoader", () => {
 	let loader: RemoteConfigLoader

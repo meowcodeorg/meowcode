@@ -1,21 +1,21 @@
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline"><img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=flat&logo=visualstudiocode&logoColor=white" alt="VS Code Marketplace"></a>
-  <a href="https://x.com/roocode"><img src="https://img.shields.io/badge/roocode-000000?style=flat&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://youtube.com/@roocodeyt?feature=shared"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube"></a>
-  <a href="https://discord.gg/roocode"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Join Discord"></a>
-  <a href="https://www.reddit.com/r/RooCode/"><img src="https://img.shields.io/badge/Join%20r%2FRooCode-FF4500?style=flat&logo=reddit&logoColor=white" alt="Join r/RooCode"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=MeowCodeOrg.meow-code"><img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=flat&logo=visualstudiocode&logoColor=white" alt="VS Code Marketplace"></a>
+  <a href="https://x.com/meowcode"><img src="https://img.shields.io/badge/meowcode-000000?style=flat&logo=x&logoColor=white" alt="X"></a>
+  <a href="https://youtube.com/@meowcodeyt?feature=shared"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat&logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://discord.gg/meowcode"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Join Discord"></a>
+  <a href="https://www.reddit.com/r/MeowCode/"><img src="https://img.shields.io/badge/Join%20r%2FMeowCode-FF4500?style=flat&logo=reddit&logoColor=white" alt="Join r/MeowCode"></a>
 </p>
 <p align="center">
-  <em>Obté ajuda ràpidament → <a href="https://discord.gg/roocode">Uneix-te a Discord</a> • Prefereixes l'asíncron? → <a href="https://www.reddit.com/r/RooCode/">Uneix-te a r/RooCode</a></em>
+  <em>Obté ajuda ràpidament → <a href="https://discord.gg/meowcode">Uneix-te a Discord</a> • Prefereixes l'asíncron? → <a href="https://www.reddit.com/r/MeowCode/">Uneix-te a r/MeowCode</a></em>
 </p>
 
-# Roo Code
+# MeowCode
 
 > El teu equip de desenvolupament impulsat per IA, directament al teu editor
 
 ## Novetats de la v3.51.0
 
-- S'ha afegit compatibilitat amb OpenAI GPT-5.4 i GPT-5.3 Chat Latest perquè puguis utilitzar els models de xat més nous d'OpenAI a Roo Code.
+- S'ha afegit compatibilitat amb OpenAI GPT-5.4 i GPT-5.3 Chat Latest perquè puguis utilitzar els models de xat més nous d'OpenAI a MeowCode.
 - Les skills es poden exposar com a ordres slash amb execució de reserva perquè els fluxos de treball reutilitzables s'activin més de pressa.
 
 <details>
@@ -44,7 +44,7 @@
 
 ---
 
-## Què pot fer Roo Code per TU?
+## Què pot fer MeowCode per TU?
 
 - Generar codi a partir de descripcions en llenguatge natural
 - Adaptar-se amb modes: Codi, Arquitecte, Pregunta, Depuració i Modes personalitzats
@@ -56,7 +56,7 @@
 
 ## Modes
 
-Roo Code s'adapta a la teva manera de treballar, no a l'inrevés:
+MeowCode s'adapta a la teva manera de treballar, no a l'inrevés:
 
 - Mode Codi: codificació diària, edicions i operacions de fitxers
 - Mode Arquitecte: planificar sistemes, especificacions i migracions
@@ -64,7 +64,7 @@ Roo Code s'adapta a la teva manera de treballar, no a l'inrevés:
 - Mode Depuració: rastrejar problemes, afegir registres, aïllar les causes arrel
 - Modes personalitzats: crea modes especialitzats per al teu equip o flux de treball
 
-Més informació: [Ús de Modes](https://docs.roocode.com/basic-usage/using-modes) • [Modes personalitzats](https://docs.roocode.com/advanced-usage/custom-modes)
+Més informació: [Ús de Modes](https://docs.TODOURL/basic-usage/using-modes) • [Modes personalitzats](https://docs.TODOURL/advanced-usage/custom-modes)
 
 ## Tutorials i vídeos de funcionalitats
 
@@ -72,22 +72,22 @@ Més informació: [Ús de Modes](https://docs.roocode.com/basic-usage/using-mode
 
 |                                                                                                                                                                            |                                                                                                                                                                           |                                                                                                                                                                                    |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <a href="https://www.youtube.com/watch?v=Mcq3r1EPZ-4"><img src="https://img.youtube.com/vi/Mcq3r1EPZ-4/maxresdefault.jpg" width="100%"></a><br><b>Instal·lant Roo Code</b> | <a href="https://www.youtube.com/watch?v=ZBML8h5cCgo"><img src="https://img.youtube.com/vi/ZBML8h5cCgo/maxresdefault.jpg" width="100%"></a><br><b>Configurant perfils</b> | <a href="https://www.youtube.com/watch?v=r1bpod1VWhg"><img src="https://img.youtube.com/vi/r1bpod1VWhg/maxresdefault.jpg" width="100%"></a><br><b>Indexació de la base de codi</b> |
+| <a href="https://www.youtube.com/watch?v=Mcq3r1EPZ-4"><img src="https://img.youtube.com/vi/Mcq3r1EPZ-4/maxresdefault.jpg" width="100%"></a><br><b>Instal·lant MeowCode</b> | <a href="https://www.youtube.com/watch?v=ZBML8h5cCgo"><img src="https://img.youtube.com/vi/ZBML8h5cCgo/maxresdefault.jpg" width="100%"></a><br><b>Configurant perfils</b> | <a href="https://www.youtube.com/watch?v=r1bpod1VWhg"><img src="https://img.youtube.com/vi/r1bpod1VWhg/maxresdefault.jpg" width="100%"></a><br><b>Indexació de la base de codi</b> |
 | <a href="https://www.youtube.com/watch?v=iiAv1eKOaxk"><img src="https://img.youtube.com/vi/iiAv1eKOaxk/maxresdefault.jpg" width="100%"></a><br><b>Modes personalitzats</b> |  <a href="https://www.youtube.com/watch?v=Ho30nyY332E"><img src="https://img.youtube.com/vi/Ho30nyY332E/maxresdefault.jpg" width="100%"></a><br><b>Punts de control</b>   |      <a href="https://www.youtube.com/watch?v=HmnNSasv7T8"><img src="https://img.youtube.com/vi/HmnNSasv7T8/maxresdefault.jpg" width="100%"></a><br><b>Gestió de Context</b>       |
 
 </div>
 <p align="center">
-<a href="https://docs.roocode.com/tutorial-videos">Més tutorials ràpids i vídeos de funcionalitats...</a>
+<a href="https://docs.TODOURL/tutorial-videos">Més tutorials ràpids i vídeos de funcionalitats...</a>
 </p>
 
 ## Recursos
 
-- **[Documentació](https://docs.roocode.com):** La guia oficial per instal·lar, configurar i dominar Roo Code.
-- **[Canal de YouTube](https://youtube.com/@roocodeyt?feature=shared):** Mira tutorials i veu les funcionalitats en acció.
-- **[Servidor de Discord](https://discord.gg/roocode):** Uneix-te a la comunitat per obtenir ajuda i discutir en temps real.
-- **[Comunitat de Reddit](https://www.reddit.com/r/RooCode):** Comparteix les teves experiències i veu què estan construint altres.
-- **[Incidències de GitHub](https://github.com/RooCodeInc/Roo-Code/issues):** Informa d'errors i segueix el desenvolupament.
-- **[Sol·licituds de funcionalitats](https://github.com/RooCodeInc/Roo-Code/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop):** Tens una idea? Comparteix-la amb els desenvolupadors.
+- **[Documentació](https://docs.TODOURL):** La guia oficial per instal·lar, configurar i dominar MeowCode.
+- **[Canal de YouTube](https://youtube.com/@meowcodeyt?feature=shared):** Mira tutorials i veu les funcionalitats en acció.
+- **[Servidor de Discord](https://discord.gg/meowcode):** Uneix-te a la comunitat per obtenir ajuda i discutir en temps real.
+- **[Comunitat de Reddit](https://www.reddit.com/r/MeowCode):** Comparteix les teves experiències i veu què estan construint altres.
+- **[Incidències de GitHub](https://github.com/MeowCodeInc/MeowCode/issues):** Informa d'errors i segueix el desenvolupament.
+- **[Sol·licituds de funcionalitats](https://github.com/MeowCodeInc/MeowCode/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop):** Tens una idea? Comparteix-la amb els desenvolupadors.
 
 ---
 
@@ -96,7 +96,7 @@ Més informació: [Ús de Modes](https://docs.roocode.com/basic-usage/using-mode
 1. **Clona** el repositori:
 
 ```sh
-git clone https://github.com/RooCodeInc/Roo-Code.git
+git clone https://github.com/MeowCodeInc/MeowCode.git
 ```
 
 2. **Instal·la les dependències**:
@@ -107,13 +107,13 @@ pnpm install
 
 3. **Executa l'extensió**:
 
-Hi ha diverses maneres d'executar l'extensió Roo Code:
+Hi ha diverses maneres d'executar l'extensió MeowCode:
 
 ### Mode de desenvolupament (F5)
 
 Per al desenvolupament actiu, utilitza la depuració integrada de VSCode:
 
-Prem `F5` (o ves a **Executa** → **Inicia la depuració**) a VSCode. Això obrirà una nova finestra de VSCode amb l'extensió Roo Code en funcionament.
+Prem `F5` (o ves a **Executa** → **Inicia la depuració**) a VSCode. Això obrirà una nova finestra de VSCode amb l'extensió MeowCode en funcionament.
 
 - Els canvis a la vista web apareixeran immediatament.
 - Els canvis a l'extensió principal també es recarregaran automàticament.
@@ -147,10 +147,10 @@ Si prefereixes instal·lar el paquet VSIX manualment:
     ```sh
     pnpm vsix
     ```
-2.  Es generarà un fitxer `.vsix` al directori `bin/` (p. ej., `bin/roo-cline-<versió>.vsix`).
+2.  Es generarà un fitxer `.vsix` al directori `bin/` (p. ej., `bin/meow-code-<versió>.vsix`).
 3.  Instal·la'l manualment utilitzant la CLI de VSCode:
     ```sh
-    code --install-extension bin/roo-cline-<versió>.vsix
+    code --install-extension bin/meow-code-<versió>.vsix
     ```
 
 ---
@@ -161,7 +161,7 @@ Utilitzem [changesets](https://github.com/changesets/changesets) per al versiona
 
 ## Avís legal
 
-**Tingueu en compte** que Roo Code, Inc **no** fa cap representació ni garantia pel que fa a cap codi, model o altres eines proporcionades o posades a disposició en relació amb Roo Code, qualsevol eina de tercers associada, o qualsevol resultat. Assumiu **tots els riscos** associats amb l'ús d'aquestes eines o resultats; aquestes eines es proporcionen **"TAL QUAL"** i **"SEGONS DISPONIBILITAT"**. Aquests riscos poden incloure, sense limitació, infraccions de propietat intel·lectual, vulnerabilitats o atacs cibernètics, biaix, inexactituds, errors, defectes, virus, temps d'inactivitat, pèrdua o dany de propietat i/o lesions personals. Sou l'únic responsable del vostre ús d'aquestes eines o resultats (incloent, sense limitació, la legalitat, idoneïtat i resultats dels mateixos).
+**Tingueu en compte** que MeowCode, Inc **no** fa cap representació ni garantia pel que fa a cap codi, model o altres eines proporcionades o posades a disposició en relació amb MeowCode, qualsevol eina de tercers associada, o qualsevol resultat. Assumiu **tots els riscos** associats amb l'ús d'aquestes eines o resultats; aquestes eines es proporcionen **"TAL QUAL"** i **"SEGONS DISPONIBILITAT"**. Aquests riscos poden incloure, sense limitació, infraccions de propietat intel·lectual, vulnerabilitats o atacs cibernètics, biaix, inexactituds, errors, defectes, virus, temps d'inactivitat, pèrdua o dany de propietat i/o lesions personals. Sou l'únic responsable del vostre ús d'aquestes eines o resultats (incloent, sense limitació, la legalitat, idoneïtat i resultats dels mateixos).
 
 ---
 
@@ -173,8 +173,8 @@ Ens encanten les contribucions de la comunitat! Comença llegint el nostre [CONT
 
 ## Llicència
 
-[Apache 2.0 © 2025 Roo Code, Inc.](../../LICENSE)
+[Apache 2.0 © 2025 MeowCode, Inc.](../../LICENSE)
 
 ---
 
-**Gaudeix de Roo Code!** Tant si el mantens amb una corretja curta com si el deixes moure's de forma autònoma, estem impacients per veure què construeixes. Si tens preguntes o idees sobre funcionalitats, passa't per la nostra [comunitat de Reddit](https://www.reddit.com/r/RooCode/) o [Discord](https://discord.gg/roocode). Feliç programació!
+**Gaudeix de MeowCode!** Tant si el mantens amb una corretja curta com si el deixes moure's de forma autònoma, estem impacients per veure què construeixes. Si tens preguntes o idees sobre funcionalitats, passa't per la nostra [comunitat de Reddit](https://www.reddit.com/r/MeowCode/) o [Discord](https://discord.gg/meowcode). Feliç programació!

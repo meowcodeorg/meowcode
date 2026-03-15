@@ -1,4 +1,4 @@
-// pnpm --filter @roo-code/vscode-webview test src/components/chat/__tests__/ChatView.spec.tsx
+// pnpm --filter @meow-code/vscode-webview test src/components/chat/__tests__/ChatView.spec.tsx
 
 import React from "react"
 import { render, waitFor, act, fireEvent } from "@/utils/test-utils"
@@ -10,7 +10,7 @@ import { vscode } from "@src/utils/vscode"
 import ChatView, { ChatViewProps } from "../ChatView"
 
 // Define minimal types needed for testing
-interface ClineMessage {
+interface MeowCodeMessage {
 	type: "say" | "ask"
 	say?: string
 	ask?: string
@@ -21,7 +21,7 @@ interface ClineMessage {
 
 interface ExtensionState {
 	version: string
-	clineMessages: ClineMessage[]
+	meowCodeMessages: MeowCodeMessage[]
 	taskHistory: any[]
 	shouldShowAnnouncement: boolean
 	allowedCommands: string[]
@@ -46,7 +46,7 @@ vi.mock("use-sound", () => ({
 
 // Mock components that use ESM dependencies
 vi.mock("../ChatRow", () => ({
-	default: function MockChatRow({ message }: { message: ClineMessage }) {
+	default: function MockChatRow({ message }: { message: MeowCodeMessage }) {
 		return <div data-testid="chat-row">{JSON.stringify(message)}</div>
 	},
 }))
@@ -62,8 +62,8 @@ vi.mock("react-virtuoso", () => ({
 		data,
 		itemContent,
 	}: {
-		data: ClineMessage[]
-		itemContent: (index: number, item: ClineMessage) => React.ReactNode
+		data: MeowCodeMessage[]
+		itemContent: (index: number, item: MeowCodeMessage) => React.ReactNode
 	}) {
 		return (
 			<div data-testid="virtuoso-item-list">
@@ -98,13 +98,6 @@ vi.mock("../Announcement", () => ({
 	},
 }))
 
-// Mock DismissibleUpsell component
-vi.mock("@/components/common/DismissibleUpsell", () => ({
-	default: function MockDismissibleUpsell({ children }: { children: React.ReactNode }) {
-		return <div data-testid="dismissible-upsell">{children}</div>
-	},
-}))
-
 // Mock QueuedMessages component
 vi.mock("../QueuedMessages", () => ({
 	QueuedMessages: function MockQueuedMessages({
@@ -133,16 +126,16 @@ vi.mock("../QueuedMessages", () => ({
 	},
 }))
 
-// Mock RooTips component
-vi.mock("@src/components/welcome/RooTips", () => ({
-	default: function MockRooTips() {
+// Mock MeowTips component
+vi.mock("@src/components/welcome/MeowTips", () => ({
+	default: function MockMeowTips() {
 		return <div data-testid="roo-tips">Tips content</div>
 	},
 }))
 
-// Mock RooHero component
-vi.mock("@src/components/welcome/RooHero", () => ({
-	default: function MockRooHero() {
+// Mock MeowHero component
+vi.mock("@src/components/welcome/MeowHero", () => ({
+	default: function MockMeowHero() {
 		return <div data-testid="roo-hero">Hero content</div>
 	},
 }))
@@ -277,12 +270,11 @@ const mockPostMessage = (state: Partial<ExtensionState>) => {
 			type: "state",
 			state: {
 				version: "1.0.0",
-				clineMessages: [],
+				meowCodeMessages: [],
 				taskHistory: [],
 				shouldShowAnnouncement: false,
 				allowedCommands: [],
 				alwaysAllowExecute: false,
-				cloudIsAuthenticated: false,
 				telemetrySetting: "enabled",
 				...state,
 			},
@@ -318,7 +310,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		// First hydrate state with initial task
 		mockPostMessage({
 			soundEnabled: true, // Enable sound
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -334,7 +326,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		// Add completion result
 		mockPostMessage({
 			soundEnabled: true, // Enable sound
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -363,7 +355,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		// First hydrate state with initial task
 		mockPostMessage({
 			soundEnabled: true, // Enable sound
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -379,7 +371,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		// Add API failure
 		mockPostMessage({
 			soundEnabled: true, // Enable sound
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -411,7 +403,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		// Hydrate state with a task that has a resumeTaskId (indicating it's resumed from history)
 		mockPostMessage({
 			resumeTaskId: "task-123",
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -440,7 +432,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		// Hydrate state with a completed task that has a resumeTaskId
 		mockPostMessage({
 			resumeTaskId: "task-123",
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -469,7 +461,7 @@ describe("ChatView - Focus Grabbing Tests", () => {
 
 		// First hydrate state with initial task
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -494,7 +486,7 @@ describe("ChatView - Focus Grabbing Tests", () => {
 
 		// Add follow-up question
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -542,7 +534,7 @@ describe("ChatView - Version Indicator Tests", () => {
 		// Hydrate state with no active task
 		mockPostMessage({
 			version: "1.0.0",
-			clineMessages: [],
+			meowCodeMessages: [],
 		})
 
 		// Should display version indicator
@@ -563,7 +555,7 @@ describe("ChatView - Version Indicator Tests", () => {
 		// Hydrate state
 		mockPostMessage({
 			version: "1.0.0",
-			clineMessages: [],
+			meowCodeMessages: [],
 		})
 
 		// Wait for component to render
@@ -597,7 +589,7 @@ describe("ChatView - Version Indicator Tests", () => {
 		// Hydrate state
 		mockPostMessage({
 			version: "1.0.0",
-			clineMessages: [],
+			meowCodeMessages: [],
 		})
 
 		const versionIndicator = getByTestId("version-indicator")
@@ -622,7 +614,7 @@ describe("ChatView - Version Indicator Tests", () => {
 		// Hydrate state
 		mockPostMessage({
 			version: "1.0.0",
-			clineMessages: [],
+			meowCodeMessages: [],
 		})
 
 		const versionIndicator = getByTestId("version-indicator")
@@ -639,7 +631,7 @@ describe("ChatView - Version Indicator Tests", () => {
 		// Hydrate state with active task
 		mockPostMessage({
 			version: "1.0.0",
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -662,148 +654,11 @@ describe("ChatView - Version Indicator Tests", () => {
 		// Hydrate state with no active task
 		mockPostMessage({
 			version: "1.0.0",
-			clineMessages: [],
+			meowCodeMessages: [],
 		})
 
 		// Should display version indicator on welcome screen
 		expect(queryByTestId("version-indicator")).toBeInTheDocument()
-	})
-})
-
-describe("ChatView - DismissibleUpsell Display Tests", () => {
-	beforeEach(() => vi.clearAllMocks())
-
-	it("does not show DismissibleUpsell when user is authenticated to Cloud", () => {
-		const { queryByTestId } = renderChatView()
-
-		// Hydrate state with user authenticated to cloud
-		mockPostMessage({
-			cloudIsAuthenticated: true,
-			taskHistory: [
-				{ id: "1", ts: Date.now() - 3000 },
-				{ id: "2", ts: Date.now() - 2000 },
-				{ id: "3", ts: Date.now() - 1000 },
-				{ id: "4", ts: Date.now() },
-			],
-			clineMessages: [], // No active task
-		})
-
-		// Should not show DismissibleUpsell when authenticated
-		expect(queryByTestId("dismissible-upsell")).not.toBeInTheDocument()
-	})
-
-	it("does not show DismissibleUpsell when user has only run 3 tasks in their history", () => {
-		const { queryByTestId } = renderChatView()
-
-		// Hydrate state with user not authenticated but only 3 tasks
-		mockPostMessage({
-			cloudIsAuthenticated: false,
-			taskHistory: [
-				{ id: "1", ts: Date.now() - 2000 },
-				{ id: "2", ts: Date.now() - 1000 },
-				{ id: "3", ts: Date.now() },
-			],
-			clineMessages: [], // No active task
-		})
-
-		// Should not show DismissibleUpsell with less than 4 tasks
-		expect(queryByTestId("dismissible-upsell")).not.toBeInTheDocument()
-	})
-
-	it("shows DismissibleUpsell when user is not authenticated and has run 6 or more tasks", async () => {
-		const { getByTestId } = renderChatView()
-
-		// Hydrate state with user not authenticated and 4 tasks
-		mockPostMessage({
-			cloudIsAuthenticated: false,
-			taskHistory: [
-				{ id: "1", ts: Date.now() - 6000 },
-				{ id: "2", ts: Date.now() - 5000 },
-				{ id: "3", ts: Date.now() - 4000 },
-				{ id: "4", ts: Date.now() - 3000 },
-				{ id: "5", ts: Date.now() - 2000 },
-				{ id: "6", ts: Date.now() - 1000 },
-				{ id: "7", ts: Date.now() },
-			],
-			clineMessages: [], // No active task
-		})
-
-		// Wait for component to render and show DismissibleUpsell
-		await waitFor(() => {
-			expect(getByTestId("dismissible-upsell")).toBeInTheDocument()
-		})
-	})
-
-	it("does not show DismissibleUpsell when there is an active task (regardless of auth status)", async () => {
-		const { queryByTestId } = renderChatView()
-
-		// Hydrate state with active task
-		mockPostMessage({
-			cloudIsAuthenticated: false,
-			taskHistory: [
-				{ id: "1", ts: Date.now() - 3000 },
-				{ id: "2", ts: Date.now() - 2000 },
-				{ id: "3", ts: Date.now() - 1000 },
-				{ id: "4", ts: Date.now() },
-			],
-			clineMessages: [
-				{
-					type: "say",
-					say: "task",
-					ts: Date.now(),
-					text: "Active task",
-				},
-			],
-		})
-
-		// Wait for component to render with active task
-		await waitFor(() => {
-			// Should not show DismissibleUpsell during active task
-			expect(queryByTestId("dismissible-upsell")).not.toBeInTheDocument()
-			// Should not show RooTips either since the entire welcome screen is hidden during active tasks
-			expect(queryByTestId("roo-tips")).not.toBeInTheDocument()
-			// Should not show RooHero either since the entire welcome screen is hidden during active tasks
-			expect(queryByTestId("roo-hero")).not.toBeInTheDocument()
-		})
-	})
-
-	it("shows RooTips when user is authenticated (instead of DismissibleUpsell)", () => {
-		const { queryByTestId, getByTestId } = renderChatView()
-
-		// Hydrate state with user authenticated to cloud
-		mockPostMessage({
-			cloudIsAuthenticated: true,
-			taskHistory: [
-				{ id: "1", ts: Date.now() - 3000 },
-				{ id: "2", ts: Date.now() - 2000 },
-				{ id: "3", ts: Date.now() - 1000 },
-				{ id: "4", ts: Date.now() },
-			],
-			clineMessages: [], // No active task
-		})
-
-		// Should not show DismissibleUpsell but should show RooTips
-		expect(queryByTestId("dismissible-upsell")).not.toBeInTheDocument()
-		expect(getByTestId("roo-tips")).toBeInTheDocument()
-	})
-
-	it("shows RooTips when user has fewer than 6 tasks (instead of DismissibleUpsell)", () => {
-		const { queryByTestId, getByTestId } = renderChatView()
-
-		// Hydrate state with user not authenticated but fewer than 4 tasks
-		mockPostMessage({
-			cloudIsAuthenticated: false,
-			taskHistory: [
-				{ id: "1", ts: Date.now() - 2000 },
-				{ id: "2", ts: Date.now() - 1000 },
-				{ id: "3", ts: Date.now() },
-			],
-			clineMessages: [], // No active task
-		})
-
-		// Should not show DismissibleUpsell but should show RooTips
-		expect(queryByTestId("dismissible-upsell")).not.toBeInTheDocument()
-		expect(getByTestId("roo-tips")).toBeInTheDocument()
 	})
 })
 
@@ -819,7 +674,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// Hydrate state with active task that should disable sending
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -849,7 +704,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// Hydrate state with completed task
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "ask",
 					ask: "completion_result",
@@ -876,7 +731,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// First hydrate state with initial task
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -891,7 +746,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// Add api_req_started without cost (spinner state - API request in progress)
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -951,7 +806,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// Hydrate state with completed API request (cost present)
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -1021,7 +876,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// Hydrate state with API request in progress and existing queue
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -1081,7 +936,7 @@ describe("ChatView - Message Queueing Tests", () => {
 
 		// Hydrate state with command_output ask (Proceed While Running state)
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -1099,12 +954,12 @@ describe("ChatView - Message Queueing Tests", () => {
 		})
 
 		// Wait for state to be updated - need to allow time for React effects to propagate
-		// (clineAsk state update -> clineAskRef.current update)
+		// (meowCodeAsk state update -> meowCodeAskRef.current update)
 		await waitFor(() => {
 			expect(getByTestId("chat-textarea")).toBeInTheDocument()
 		})
 
-		// Allow React effects to complete (clineAsk -> clineAskRef sync)
+		// Allow React effects to complete (meowCodeAsk -> meowCodeAskRef sync)
 		await act(async () => {
 			await new Promise((resolve) => setTimeout(resolve, 50))
 		})
@@ -1152,7 +1007,7 @@ describe("ChatView - Context Condensing Indicator Tests", () => {
 
 		// First hydrate state with an active task
 		mockPostMessage({
-			clineMessages: [
+			meowCodeMessages: [
 				{
 					type: "say",
 					say: "task",

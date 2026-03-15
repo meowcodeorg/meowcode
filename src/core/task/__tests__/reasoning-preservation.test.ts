@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import type { ClineProvider } from "../../webview/ClineProvider"
-import type { ProviderSettings, ModelInfo } from "@roo-code/types"
+import type { MeowCodeProvider } from "../../webview/MeowCodeProvider"
+import type { ProviderSettings, ModelInfo } from "@meow-code/types"
 
 // All vi.mock() calls are hoisted to the top of the file by Vitest
 // and are applied before any imports are resolved
@@ -63,7 +63,7 @@ vi.mock("../../integrations/terminal/TerminalRegistry", () => ({
 	},
 }))
 
-vi.mock("@roo-code/telemetry", () => ({
+vi.mock("@meow-code/telemetry", () => ({
 	TelemetryService: {
 		instance: {
 			captureTaskCreated: vi.fn(),
@@ -75,7 +75,7 @@ vi.mock("@roo-code/telemetry", () => ({
 	},
 }))
 
-vi.mock("@roo-code/cloud", () => ({
+vi.mock("@meow-code/cloud", () => ({
 	CloudService: {
 		isEnabled: () => false,
 	},
@@ -123,8 +123,8 @@ vi.mock("../../environment/getEnvironmentDetails", () => ({
 	getEnvironmentDetails: vi.fn().mockResolvedValue(""),
 }))
 
-// Mock RooIgnoreController
-vi.mock("../../ignore/RooIgnoreController")
+// Mock MeowIgnoreController
+vi.mock("../../ignore/MeowIgnoreController")
 
 // Mock condense
 vi.mock("../../condense", () => ({
@@ -155,7 +155,7 @@ vi.mock("../../../utils/fs", () => ({
 import { Task } from "../Task"
 
 describe("Task reasoning preservation", () => {
-	let mockProvider: Partial<ClineProvider>
+	let mockProvider: Partial<MeowCodeProvider>
 	let mockApiConfiguration: ProviderSettings
 
 	beforeEach(() => {
@@ -185,7 +185,7 @@ describe("Task reasoning preservation", () => {
 	it("should append reasoning to assistant message when preserveReasoning is true", async () => {
 		// Create a task instance
 		const task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			task: "Test task",
 			startTask: false,
@@ -252,7 +252,7 @@ describe("Task reasoning preservation", () => {
 	it("should NOT append reasoning to assistant message when preserveReasoning is false", async () => {
 		// Create a task instance
 		const task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			task: "Test task",
 			startTask: false,
@@ -310,7 +310,7 @@ describe("Task reasoning preservation", () => {
 	it("should handle empty reasoning message gracefully when preserveReasoning is true", async () => {
 		// Create a task instance
 		const task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			task: "Test task",
 			startTask: false,
@@ -364,7 +364,7 @@ describe("Task reasoning preservation", () => {
 	it("should handle undefined preserveReasoning (defaults to false)", async () => {
 		// Create a task instance
 		const task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			task: "Test task",
 			startTask: false,
@@ -408,7 +408,7 @@ describe("Task reasoning preservation", () => {
 
 	it("should embed encrypted reasoning as first assistant content block", async () => {
 		const task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			task: "Test task",
 			startTask: false,
@@ -454,7 +454,7 @@ describe("Task reasoning preservation", () => {
 
 	it("should store plain text reasoning from streaming for all providers", async () => {
 		const task = new Task({
-			provider: mockProvider as ClineProvider,
+			provider: mockProvider as MeowCodeProvider,
 			apiConfiguration: mockApiConfiguration,
 			task: "Test task",
 			startTask: false,

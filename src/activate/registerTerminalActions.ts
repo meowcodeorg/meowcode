@@ -1,9 +1,9 @@
 import * as vscode from "vscode"
 
-import { TerminalActionId, TerminalActionPromptType } from "@roo-code/types"
+import { TerminalActionId, TerminalActionPromptType } from "@meow-code/types"
 
 import { getTerminalCommand } from "../utils/commands"
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { MeowCodeProvider } from "../core/webview/MeowCodeProvider"
 import { Terminal } from "../integrations/terminal/Terminal"
 import { t } from "../i18n"
 
@@ -31,7 +31,7 @@ const registerTerminalAction = (
 				return
 			}
 
-			await ClineProvider.handleTerminalAction(command, promptType, {
+			await MeowCodeProvider.handleTerminalAction(command, promptType, {
 				terminalContent: content,
 			})
 		}),

@@ -4,9 +4,9 @@ import {
 	type ProviderSettings,
 	type ExperimentId,
 	type ExtensionState,
-	type ClineMessage,
+	type MeowCodeMessage,
 	DEFAULT_CHECKPOINT_TIMEOUT_SECONDS,
-} from "@roo-code/types"
+} from "@meow-code/types"
 
 import { ExtensionStateContextProvider, useExtensionState, mergeExtensionState } from "../ExtensionStateContext"
 
@@ -188,7 +188,7 @@ describe("mergeExtensionState", () => {
 		const baseState: ExtensionState = {
 			version: "",
 			mcpEnabled: false,
-			clineMessages: [],
+			meowCodeMessages: [],
 			taskHistory: [],
 			shouldShowAnnouncement: false,
 			enableCheckpoints: true,
@@ -253,11 +253,11 @@ describe("mergeExtensionState", () => {
 		})
 	})
 
-	describe("clineMessagesSeq protection", () => {
+	describe("meowCodeMessagesSeq protection", () => {
 		const baseState: ExtensionState = {
 			version: "",
 			mcpEnabled: false,
-			clineMessages: [],
+			meowCodeMessages: [],
 			taskHistory: [],
 			shouldShowAnnouncement: false,
 			enableCheckpoints: true,
@@ -288,115 +288,115 @@ describe("mergeExtensionState", () => {
 			maxReadFileLine: -1,
 		}
 
-		const makeMessage = (ts: number, text: string): ClineMessage =>
-			({ ts, type: "say", say: "text", text }) as ClineMessage
+		const makeMessage = (ts: number, text: string): MeowCodeMessage =>
+			({ ts, type: "say", say: "text", text }) as MeowCodeMessage
 
-		it("rejects stale clineMessages when seq is not newer", () => {
+		it("rejects stale meowCodeMessages when seq is not newer", () => {
 			const newerMessages = [makeMessage(1, "hello"), makeMessage(2, "world")]
 			const staleMessages = [makeMessage(1, "hello")]
 
 			const prevState: ExtensionState = {
 				...baseState,
-				clineMessages: newerMessages,
-				clineMessagesSeq: 5,
+				meowCodeMessages: newerMessages,
+				meowCodeMessagesSeq: 5,
 			}
 
 			const result = mergeExtensionState(prevState, {
-				clineMessages: staleMessages,
-				clineMessagesSeq: 3, // stale seq
+				meowCodeMessages: staleMessages,
+				meowCodeMessagesSeq: 3, // stale seq
 			})
 
 			// Should keep the newer messages
-			expect(result.clineMessages).toBe(newerMessages)
-			expect(result.clineMessagesSeq).toBe(5)
+			expect(result.meowCodeMessages).toBe(newerMessages)
+			expect(result.meowCodeMessagesSeq).toBe(5)
 		})
 
-		it("rejects clineMessages when seq equals current (not strictly greater)", () => {
+		it("rejects meowCodeMessages when seq equals current (not strictly greater)", () => {
 			const currentMessages = [makeMessage(1, "hello"), makeMessage(2, "world")]
 			const sameSeqMessages = [makeMessage(1, "hello")]
 
 			const prevState: ExtensionState = {
 				...baseState,
-				clineMessages: currentMessages,
-				clineMessagesSeq: 5,
+				meowCodeMessages: currentMessages,
+				meowCodeMessagesSeq: 5,
 			}
 
 			const result = mergeExtensionState(prevState, {
-				clineMessages: sameSeqMessages,
-				clineMessagesSeq: 5, // same seq, not strictly greater
+				meowCodeMessages: sameSeqMessages,
+				meowCodeMessagesSeq: 5, // same seq, not strictly greater
 			})
 
-			expect(result.clineMessages).toBe(currentMessages)
-			expect(result.clineMessagesSeq).toBe(5)
+			expect(result.meowCodeMessages).toBe(currentMessages)
+			expect(result.meowCodeMessagesSeq).toBe(5)
 		})
 
-		it("accepts clineMessages when seq is strictly greater", () => {
+		it("accepts meowCodeMessages when seq is strictly greater", () => {
 			const oldMessages = [makeMessage(1, "hello")]
 			const newMessages = [makeMessage(1, "hello"), makeMessage(2, "world")]
 
 			const prevState: ExtensionState = {
 				...baseState,
-				clineMessages: oldMessages,
-				clineMessagesSeq: 3,
+				meowCodeMessages: oldMessages,
+				meowCodeMessagesSeq: 3,
 			}
 
 			const result = mergeExtensionState(prevState, {
-				clineMessages: newMessages,
-				clineMessagesSeq: 4, // newer seq
+				meowCodeMessages: newMessages,
+				meowCodeMessagesSeq: 4, // newer seq
 			})
 
-			expect(result.clineMessages).toBe(newMessages)
-			expect(result.clineMessagesSeq).toBe(4)
+			expect(result.meowCodeMessages).toBe(newMessages)
+			expect(result.meowCodeMessagesSeq).toBe(4)
 		})
 
-		it("preserves clineMessages when newState does not include them (cloud event path)", () => {
+		it("preserves meowCodeMessages when newState does not include them (cloud event path)", () => {
 			const existingMessages = [makeMessage(1, "hello"), makeMessage(2, "world")]
 
 			const prevState: ExtensionState = {
 				...baseState,
-				clineMessages: existingMessages,
-				clineMessagesSeq: 5,
+				meowCodeMessages: existingMessages,
+				meowCodeMessagesSeq: 5,
 			}
 
-			// Simulate a cloud event push that omits clineMessages and clineMessagesSeq
+			// Simulate a cloud event push that omits meowCodeMessages and meowCodeMessagesSeq
 			const result = mergeExtensionState(prevState, {
 				cloudIsAuthenticated: true,
 			})
 
-			expect(result.clineMessages).toBe(existingMessages)
-			expect(result.clineMessagesSeq).toBe(5)
+			expect(result.meowCodeMessages).toBe(existingMessages)
+			expect(result.meowCodeMessagesSeq).toBe(5)
 		})
 
-		it("applies clineMessages normally when neither state has seq (backward compat)", () => {
+		it("applies meowCodeMessages normally when neither state has seq (backward compat)", () => {
 			const oldMessages = [makeMessage(1, "hello")]
 			const newMessages = [makeMessage(1, "hello"), makeMessage(2, "world")]
 
 			const prevState: ExtensionState = {
 				...baseState,
-				clineMessages: oldMessages,
+				meowCodeMessages: oldMessages,
 			}
 
 			const result = mergeExtensionState(prevState, {
-				clineMessages: newMessages,
+				meowCodeMessages: newMessages,
 			})
 
-			expect(result.clineMessages).toBe(newMessages)
+			expect(result.meowCodeMessages).toBe(newMessages)
 		})
 
-		it("applies clineMessages when prevState has no seq but newState does (first push)", () => {
+		it("applies meowCodeMessages when prevState has no seq but newState does (first push)", () => {
 			const prevState: ExtensionState = {
 				...baseState,
-				clineMessages: [],
+				meowCodeMessages: [],
 			}
 
 			const newMessages = [makeMessage(1, "hello")]
 			const result = mergeExtensionState(prevState, {
-				clineMessages: newMessages,
-				clineMessagesSeq: 1,
+				meowCodeMessages: newMessages,
+				meowCodeMessagesSeq: 1,
 			})
 
-			expect(result.clineMessages).toBe(newMessages)
-			expect(result.clineMessagesSeq).toBe(1)
+			expect(result.meowCodeMessages).toBe(newMessages)
+			expect(result.meowCodeMessagesSeq).toBe(1)
 		})
 	})
 })

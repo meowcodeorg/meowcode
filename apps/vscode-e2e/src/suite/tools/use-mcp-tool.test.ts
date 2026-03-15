@@ -4,12 +4,12 @@ import * as path from "path"
 import * as os from "os"
 import * as vscode from "vscode"
 
-import { RooCodeEventName, type ClineMessage } from "@roo-code/types"
+import { MeowCodeEventName, type MeowCodeMessage } from "@meow-code/types"
 
 import { waitFor, sleep } from "../utils"
 import { setDefaultSuiteTimeout } from "../test-utils"
 
-suite.skip("Roo Code use_mcp_tool Tool", function () {
+suite.skip("MeowCode use_mcp_tool Tool", function () {
 	setDefaultSuiteTimeout(this)
 
 	let tempDir: string
@@ -114,7 +114,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 
 	test("Should request MCP filesystem read_file tool and complete successfully", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let taskStarted = false
 		let _taskCompleted = false
 		let mcpToolRequested = false
@@ -124,7 +124,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 		let errorOccurred: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for MCP tool request
@@ -167,7 +167,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.error("Error:", message.text)
 			}
 		}
-		api.on(RooCodeEventName.Message, messageHandler)
+		api.on(MeowCodeEventName.Message, messageHandler)
 
 		// Listen for task events
 		const taskStartedHandler = (id: string) => {
@@ -176,7 +176,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.log("Task started:", id)
 			}
 		}
-		api.on(RooCodeEventName.TaskStarted, taskStartedHandler)
+		api.on(MeowCodeEventName.TaskStarted, taskStartedHandler)
 
 		const taskCompletedHandler = (id: string) => {
 			if (id === taskId) {
@@ -184,7 +184,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.log("Task completed:", id)
 			}
 		}
-		api.on(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+		api.on(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		await sleep(2000) // Wait for Roo Code to fully initialize
 
 		// Trigger MCP server detection by opening and modifying the file
@@ -284,15 +284,15 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 			console.log("Test passed! MCP read_file tool used successfully and task completed")
 		} finally {
 			// Clean up
-			api.off(RooCodeEventName.Message, messageHandler)
-			api.off(RooCodeEventName.TaskStarted, taskStartedHandler)
-			api.off(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+			api.off(MeowCodeEventName.Message, messageHandler)
+			api.off(MeowCodeEventName.TaskStarted, taskStartedHandler)
+			api.off(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		}
 	})
 
 	test("Should request MCP filesystem write_file tool and complete successfully", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let _taskCompleted = false
 		let mcpToolRequested = false
 		let mcpToolName: string | null = null
@@ -301,7 +301,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 		let errorOccurred: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for MCP tool request
@@ -344,7 +344,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.error("Error:", message.text)
 			}
 		}
-		api.on(RooCodeEventName.Message, messageHandler)
+		api.on(MeowCodeEventName.Message, messageHandler)
 
 		// Listen for task completion
 		const taskCompletedHandler = (id: string) => {
@@ -352,7 +352,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				_taskCompleted = true
 			}
 		}
-		api.on(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+		api.on(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 
 		let taskId: string
 		try {
@@ -413,14 +413,14 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 			console.log("Test passed! MCP write_file tool used successfully and task completed")
 		} finally {
 			// Clean up
-			api.off(RooCodeEventName.Message, messageHandler)
-			api.off(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+			api.off(MeowCodeEventName.Message, messageHandler)
+			api.off(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		}
 	})
 
 	test("Should request MCP filesystem list_directory tool and complete successfully", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let _taskCompleted = false
 		let mcpToolRequested = false
 		let mcpToolName: string | null = null
@@ -429,7 +429,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 		let errorOccurred: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for MCP tool request
@@ -472,7 +472,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.error("Error:", message.text)
 			}
 		}
-		api.on(RooCodeEventName.Message, messageHandler)
+		api.on(MeowCodeEventName.Message, messageHandler)
 
 		// Listen for task completion
 		const taskCompletedHandler = (id: string) => {
@@ -480,7 +480,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				_taskCompleted = true
 			}
 		}
-		api.on(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+		api.on(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 
 		let taskId: string
 		try {
@@ -552,14 +552,14 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 			console.log("Test passed! MCP list_directory tool used successfully and task completed")
 		} finally {
 			// Clean up
-			api.off(RooCodeEventName.Message, messageHandler)
-			api.off(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+			api.off(MeowCodeEventName.Message, messageHandler)
+			api.off(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		}
 	})
 
 	test.skip("Should request MCP filesystem directory_tree tool and complete successfully", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let _taskCompleted = false
 		let mcpToolRequested = false
 		let mcpToolName: string | null = null
@@ -568,7 +568,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 		let errorOccurred: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for MCP tool request
@@ -611,7 +611,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.error("Error:", message.text)
 			}
 		}
-		api.on(RooCodeEventName.Message, messageHandler)
+		api.on(MeowCodeEventName.Message, messageHandler)
 
 		// Listen for task completion
 		const taskCompletedHandler = (id: string) => {
@@ -619,7 +619,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				_taskCompleted = true
 			}
 		}
-		api.on(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+		api.on(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 
 		let taskId: string
 		try {
@@ -691,8 +691,8 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 			console.log("Test passed! MCP directory_tree tool used successfully and task completed")
 		} finally {
 			// Clean up
-			api.off(RooCodeEventName.Message, messageHandler)
-			api.off(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+			api.off(MeowCodeEventName.Message, messageHandler)
+			api.off(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		}
 	})
 
@@ -700,14 +700,14 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 		// Skipped: This test requires interactive approval for non-whitelisted MCP servers
 		// which cannot be automated in the test environment
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let _taskCompleted = false
 		let _mcpToolRequested = false
 		let _errorHandled = false
 		let attemptCompletionCalled = false
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for MCP tool request
@@ -730,7 +730,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.log("Attempt completion called:", message.text?.substring(0, 200))
 			}
 		}
-		api.on(RooCodeEventName.Message, messageHandler)
+		api.on(MeowCodeEventName.Message, messageHandler)
 
 		// Listen for task completion
 		const taskCompletedHandler = (id: string) => {
@@ -738,7 +738,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				_taskCompleted = true
 			}
 		}
-		api.on(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+		api.on(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 
 		let taskId: string
 		try {
@@ -762,14 +762,14 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 			console.log("Test passed! MCP error handling verified and task completed")
 		} finally {
 			// Clean up
-			api.off(RooCodeEventName.Message, messageHandler)
-			api.off(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+			api.off(MeowCodeEventName.Message, messageHandler)
+			api.off(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		}
 	})
 
 	test.skip("Should validate MCP request message format and complete successfully", async function () {
 		const api = globalThis.api
-		const messages: ClineMessage[] = []
+		const messages: MeowCodeMessage[] = []
 		let _taskCompleted = false
 		let mcpToolRequested = false
 		let validMessageFormat = false
@@ -779,7 +779,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 		let errorOccurred: string | null = null
 
 		// Listen for messages
-		const messageHandler = ({ message }: { message: ClineMessage }) => {
+		const messageHandler = ({ message }: { message: MeowCodeMessage }) => {
 			messages.push(message)
 
 			// Check for MCP tool request and validate format
@@ -787,7 +787,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				mcpToolRequested = true
 				console.log("MCP tool request:", message.text?.substring(0, 200))
 
-				// Validate the message format matches ClineAskUseMcpServer interface
+				// Validate the message format matches MeowCodeAskUseMcpServer interface
 				if (message.text) {
 					try {
 						const mcpRequest = JSON.parse(message.text)
@@ -832,7 +832,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				console.error("Error:", message.text)
 			}
 		}
-		api.on(RooCodeEventName.Message, messageHandler)
+		api.on(MeowCodeEventName.Message, messageHandler)
 
 		// Listen for task completion
 		const taskCompletedHandler = (id: string) => {
@@ -840,7 +840,7 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 				_taskCompleted = true
 			}
 		}
-		api.on(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+		api.on(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 
 		let taskId: string
 		try {
@@ -921,8 +921,8 @@ suite.skip("Roo Code use_mcp_tool Tool", function () {
 			console.log("Test passed! MCP message format validation successful and task completed")
 		} finally {
 			// Clean up
-			api.off(RooCodeEventName.Message, messageHandler)
-			api.off(RooCodeEventName.TaskCompleted, taskCompletedHandler)
+			api.off(MeowCodeEventName.Message, messageHandler)
+			api.off(MeowCodeEventName.TaskCompleted, taskCompletedHandler)
 		}
 	})
 })

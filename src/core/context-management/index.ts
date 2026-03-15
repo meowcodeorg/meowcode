@@ -1,13 +1,13 @@
 import { Anthropic } from "@anthropic-ai/sdk"
 import crypto from "crypto"
 
-import { TelemetryService } from "@roo-code/telemetry"
+import { TelemetryService } from "@meow-code/telemetry"
 
 import { ApiHandler, ApiHandlerCreateMessageMetadata } from "../../api"
 import { MAX_CONDENSE_THRESHOLD, MIN_CONDENSE_THRESHOLD, summarizeConversation, SummarizeResponse } from "../condense"
 import { ApiMessage } from "../task-persistence/apiMessages"
-import { ANTHROPIC_DEFAULT_MAX_TOKENS } from "@roo-code/types"
-import { RooIgnoreController } from "../ignore/RooIgnoreController"
+import { ANTHROPIC_DEFAULT_MAX_TOKENS } from "@meow-code/types"
+import { MeowIgnoreController } from "../ignore/MeowIgnoreController"
 
 /**
  * Context Management
@@ -228,7 +228,7 @@ export type ContextManagementOptions = {
 	/** Optional current working directory for resolving file paths (required if filesReadByRoo is provided) */
 	cwd?: string
 	/** Optional controller for file access validation */
-	rooIgnoreController?: RooIgnoreController
+	rooIgnoreController?: MeowIgnoreController
 }
 
 export type ContextManagementResult = SummarizeResponse & {

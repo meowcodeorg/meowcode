@@ -7,9 +7,9 @@ import { SYSTEM_PROMPT } from "../prompts/system"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
 import { Package } from "../../shared/package"
 
-import { ClineProvider } from "./ClineProvider"
+import { MeowCodeProvider } from "./MeowCodeProvider"
 
-export const generateSystemPrompt = async (provider: ClineProvider, message: WebviewMessage) => {
+export const generateSystemPrompt = async (provider: MeowCodeProvider, message: WebviewMessage) => {
 	const {
 		apiConfiguration,
 		customModePrompts,
@@ -30,7 +30,7 @@ export const generateSystemPrompt = async (provider: ClineProvider, message: Web
 	const rooIgnoreInstructions = provider.getCurrentTask()?.rooIgnoreController?.getInstructions()
 
 	// Create a temporary API handler to check model info for stealth mode.
-	// This avoids relying on an active Cline instance which might not exist during preview.
+	// This avoids relying on an active MeowCode instance which might not exist during preview.
 	let modelInfo: { isStealthModel?: boolean } | undefined
 	try {
 		const tempApiHandler = buildApiHandler(apiConfiguration)

@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next"
 
 import {
 	type ExtensionMessage,
-	type ClineAskUseMcpServer,
+	type MeowCodeAskUseMcpServer,
 	type McpExecutionStatus,
 	mcpExecutionStatusSchema,
-} from "@roo-code/types"
+} from "@meow-code/types"
 
 import { safeJsonParse } from "@roo/core"
 
@@ -34,7 +34,7 @@ interface McpExecutionProps {
 		}>
 		source?: "global" | "project"
 	}
-	useMcpServer?: ClineAskUseMcpServer
+	useMcpServer?: MeowCodeAskUseMcpServer
 	alwaysAllowMcp?: boolean
 }
 
